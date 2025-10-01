@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd frontend && pnpm install && pnpm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && pnpm install",
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
