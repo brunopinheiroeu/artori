@@ -15,7 +15,7 @@ def seed_database():
         return
     
     client = MongoClient(MONGODB_URI)
-    db = client.artee
+    db = client.artori
     
     # Clear existing data
     db.exams.delete_many({})

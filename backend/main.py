@@ -56,7 +56,7 @@ if MONGODB_URI:
     try:
         logger.info("Attempting to connect to MongoDB...")
         client = MongoClient(MONGODB_URI)
-        db = client.artee
+        db = client.artori
         # Test the connection
         client.admin.command('ping')
         logger.info("✅ MongoDB connection successful!")
