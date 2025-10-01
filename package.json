@@ -1,6 +1,9 @@
 {
   "name": "artori",
   "version": "1.0.0",
+  "engines": {
+    "python": "3.12"
+  },
   "scripts": {
     "install:frontend": "npm install --prefix frontend",
     "install:backend": "python3 -m venv backend/venv && backend/venv/bin/pip install -r backend/requirements.txt",
