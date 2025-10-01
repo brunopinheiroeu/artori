@@ -1,21 +1,16 @@
 {
-  "functions": {
-    "backend/main.py": {
-      "runtime": "python3.9"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
-      "destination": "/backend/main.py"
+      "destination": "/api/index.py"
     },
     {
       "source": "/healthz",
-      "destination": "/backend/main.py"
+      "destination": "/api/index.py"
     },
     {
       "source": "/",
-      "destination": "/backend/main.py"
+      "destination": "/api/index.py"
     }
   ]
 }
