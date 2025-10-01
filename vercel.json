@@ -1,12 +1,20 @@
 {
   "functions": {
     "backend/main.py": {
-      "runtime": "python@3.9"
+      "runtime": "python3.9"
     }
   },
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/healthz",
+      "destination": "/backend/main.py"
+    },
+    {
+      "source": "/",
       "destination": "/backend/main.py"
     }
   ]
