@@ -132,7 +132,7 @@ const Question = () => {
               <Brain className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Artee
+              artori.app
             </span>
           </Link>
           <div className="flex items-center space-x-4">

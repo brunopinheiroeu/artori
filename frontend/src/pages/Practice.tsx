@@ -296,7 +296,7 @@ const Practice = () => {
               <Brain className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Artee
+              artori.app
             </span>
           </Link>
 
@@ -902,7 +902,7 @@ const Practice = () => {
               <Brain className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Artee
+              artori.app
             </span>
           </div>
           <div className="flex items-center space-x-6 text-gray-600">
@@ -933,7 +933,7 @@ const Practice = () => {
           </div>
         </div>
         <div className="text-center mt-8 text-gray-500">
-          © 2025 Artee. Responsible AI for better learning. 🌟
+          © 2025 artori.app. Responsible AI for better learning. 🌟
         </div>
       </footer>
     </div>

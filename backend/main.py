@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
-app = FastAPI(title="Artee API", version="1.0.0")
+app = FastAPI(title="artori.app API", version="1.0.0")
 
 # Configure CORS
 app.add_middleware(
@@ -278,7 +278,7 @@ async def health_check():
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {"message": "Artee API is running"}
+    return {"message": "artori.app API is running"}
 
 @app.post("/api/v1/auth/signup", response_model=Token)
 async def signup(user_data: UserCreate):

@@ -15,7 +15,7 @@ const Footer = ({
   const isSchool = variant === "school";
   const logoGradient = schoolColors || "from-indigo-500 to-purple-600";
   const textGradient = schoolColors || "from-indigo-600 to-purple-600";
-  const brandName = schoolName || "Artee";
+  const brandName = schoolName || "artori.app";
   const LogoIcon = isSchool ? GraduationCap : Brain;
 
   return (
@@ -34,7 +34,7 @@ const Footer = ({
               {brandName}
             </span>
             {isSchool && (
-              <p className="text-xs text-gray-500">Powered by Artee</p>
+              <p className="text-xs text-gray-500">Powered by artori.app</p>
             )}
           </div>
         </div>
@@ -74,8 +74,8 @@ const Footer = ({
         </div>
       </div>
       <div className="text-center mt-8 text-gray-500">
-        © 2025 {brandName}. {isSchool ? "Powered by Artee - " : ""}Responsible
-        AI for better learning. 🌟
+        © 2025 {brandName}. {isSchool ? "Powered by artori.app - " : ""}
+        Responsible AI for better learning. 🌟
       </div>
     </footer>
   );

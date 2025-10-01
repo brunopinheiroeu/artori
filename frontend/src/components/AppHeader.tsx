@@ -21,7 +21,7 @@ const AppHeader = ({
   const textGradient = isSchool
     ? "from-green-600 to-blue-600"
     : "from-indigo-600 to-purple-600";
-  const brandName = schoolName || "Artee";
+  const brandName = schoolName || "artori.app";
   const LogoIcon = isSchool ? GraduationCap : Brain;
 
   return (
@@ -40,7 +40,7 @@ const AppHeader = ({
               {brandName}
             </span>
             {isSchool && (
-              <p className="text-xs text-gray-500">Powered by Artee</p>
+              <p className="text-xs text-gray-500">Powered by artori.app</p>
             )}
           </div>
         </Link>

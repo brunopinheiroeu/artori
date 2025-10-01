@@ -111,7 +111,7 @@ const Login = () => {
         await signupMutation.mutateAsync({ name, email, password });
         toast({
           title: "Account created",
-          description: "Welcome to Artee!",
+          description: "Welcome to artori.app!",
         });
         navigate("/practice");
       }
@@ -137,7 +137,7 @@ const Login = () => {
             <Brain className="h-6 w-6 text-white" />
           </div>
           <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Artee
+            artori.app
           </span>
         </Link>
       </div>
@@ -165,7 +165,7 @@ const Login = () => {
               </div>
               <CardTitle className="text-2xl font-bold">
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {isLogin ? "Welcome Back!" : "Join Artee"}
+                  {isLogin ? "Welcome Back!" : "Join artori.app"}
                 </span>
               </CardTitle>
               <CardDescription>

@@ -1,15 +1,30 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GraduationCap, ArrowLeft, Mail, Lock, Eye, EyeOff, Users, BarChart3 } from "lucide-react";
+import {
+  GraduationCap,
+  ArrowLeft,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Users,
+  BarChart3,
+} from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 const DemoLogin = () => {
   const [searchParams] = useSearchParams();
-  const initialRole = searchParams.get('role') || 'student';
+  const initialRole = searchParams.get("role") || "student";
   const [selectedRole, setSelectedRole] = useState(initialRole);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,17 +34,20 @@ const DemoLogin = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock login for demo
-    localStorage.setItem('demoUser', JSON.stringify({ 
-      email, 
-      name: selectedRole === 'student' ? 'Alex Johnson' : 'Ms. Sarah Wilson',
-      role: selectedRole,
-      school: 'Riverside Academy'
-    }));
-    
-    if (selectedRole === 'student') {
-      navigate('/demo-practice');
+    localStorage.setItem(
+      "demoUser",
+      JSON.stringify({
+        email,
+        name: selectedRole === "student" ? "Alex Johnson" : "Ms. Sarah Wilson",
+        role: selectedRole,
+        school: "Riverside Academy",
+      })
+    );
+
+    if (selectedRole === "student") {
+      navigate("/demo-practice");
     } else {
-      navigate('/demo-tutor');
+      navigate("/demo-tutor");
     }
   };
 
@@ -46,7 +64,7 @@ const DemoLogin = () => {
             <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
               Riverside Academy
             </span>
-            <p className="text-xs text-gray-500">Powered by Artee</p>
+            <p className="text-xs text-gray-500">Powered by artori.app</p>
           </div>
         </Link>
       </div>
@@ -55,7 +73,7 @@ const DemoLogin = () => {
       <div className="w-full max-w-md">
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"></div>
-          
+
           <Card className="relative z-10 backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
             <CardHeader className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center shadow-lg">
@@ -73,19 +91,21 @@ const DemoLogin = () => {
                 🎯 Demo Environment
               </Badge>
             </CardHeader>
-            
+
             <CardContent>
               {/* Role Selection */}
               <div className="mb-6">
-                <Label className="text-sm font-medium mb-3 block">Choose your role:</Label>
+                <Label className="text-sm font-medium mb-3 block">
+                  Choose your role:
+                </Label>
                 <div className="grid grid-cols-2 gap-3">
-                  <Card 
+                  <Card
                     className={`cursor-pointer transition-all ${
-                      selectedRole === 'student' 
-                        ? 'border-2 border-green-500 bg-green-50/80' 
-                        : 'border border-gray-200 hover:border-gray-300 bg-white/40'
+                      selectedRole === "student"
+                        ? "border-2 border-green-500 bg-green-50/80"
+                        : "border border-gray-200 hover:border-gray-300 bg-white/40"
                     }`}
-                    onClick={() => setSelectedRole('student')}
+                    onClick={() => setSelectedRole("student")}
                   >
                     <CardContent className="p-4 text-center">
                       <Users className="h-8 w-8 mx-auto mb-2 text-green-600" />
@@ -93,14 +113,14 @@ const DemoLogin = () => {
                       <p className="text-xs text-gray-600">Practice & Learn</p>
                     </CardContent>
                   </Card>
-                  
-                  <Card 
+
+                  <Card
                     className={`cursor-pointer transition-all ${
-                      selectedRole === 'teacher' 
-                        ? 'border-2 border-blue-500 bg-blue-50/80' 
-                        : 'border border-gray-200 hover:border-gray-300 bg-white/40'
+                      selectedRole === "teacher"
+                        ? "border-2 border-blue-500 bg-blue-50/80"
+                        : "border border-gray-200 hover:border-gray-300 bg-white/40"
                     }`}
-                    onClick={() => setSelectedRole('teacher')}
+                    onClick={() => setSelectedRole("teacher")}
                   >
                     <CardContent className="p-4 text-center">
                       <BarChart3 className="h-8 w-8 mx-auto mb-2 text-blue-600" />
@@ -119,7 +139,11 @@ const DemoLogin = () => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder={selectedRole === 'student' ? 'alex.johnson@riverside.edu' : 'sarah.wilson@riverside.edu'}
+                      placeholder={
+                        selectedRole === "student"
+                          ? "alex.johnson@riverside.edu"
+                          : "sarah.wilson@riverside.edu"
+                      }
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -127,7 +151,7 @@ const DemoLogin = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
@@ -146,24 +170,30 @@ const DemoLogin = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className={`w-full shadow-lg ${
-                    selectedRole === 'student' 
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-                      : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700'
+                    selectedRole === "student"
+                      ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
                   }`}
                   size="lg"
                 >
-                  {selectedRole === 'student' ? '🎓 Enter as Student' : '👩‍🏫 Enter as Teacher'}
+                  {selectedRole === "student"
+                    ? "🎓 Enter as Student"
+                    : "👩‍🏫 Enter as Teacher"}
                 </Button>
               </form>
-              
+
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 mb-2">
                   💡 This is a demo environment
@@ -175,10 +205,10 @@ const DemoLogin = () => {
             </CardContent>
           </Card>
         </div>
-        
+
         <div className="mt-8 text-center">
           <Badge className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
-            🏫 Experience whitelabeled Artee platform
+            🏫 Experience whitelabeled artori.app platform
           </Badge>
         </div>
       </div>

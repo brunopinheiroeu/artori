@@ -1,6 +1,6 @@
 # 1) Executive Summary
 
-- This document outlines the backend development plan for Artee, an AI-powered exam preparation platform.
+- This document outlines the backend development plan for artori.app, an AI-powered exam preparation platform.
 - The backend will be built with FastAPI and MongoDB Atlas, following a `main`-only Git workflow.
 - The plan is divided into dynamic sprints to cover all frontend features.
 

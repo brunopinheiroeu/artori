@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -11,22 +17,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  GraduationCap, 
-  ArrowLeft, 
-  Play, 
-  BookOpen, 
-  Target, 
-  User, 
-  LogOut, 
-  Calendar, 
-  Clock, 
+import {
+  GraduationCap,
+  ArrowLeft,
+  Play,
+  BookOpen,
+  Target,
+  User,
+  LogOut,
+  Calendar,
+  Clock,
   TrendingUp,
   Settings,
   CreditCard,
   BarChart3,
   HelpCircle,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -35,23 +41,23 @@ const DemoPractice = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem('demoUser');
+    const userData = localStorage.getItem("demoUser");
     if (!userData) {
-      navigate('/demo-login');
+      navigate("/demo-login");
       return;
     }
-    
+
     const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'student') {
-      navigate('/demo-tutor');
+    if (parsedUser.role !== "student") {
+      navigate("/demo-tutor");
       return;
     }
     setUser(parsedUser);
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('demoUser');
-    navigate('/solutions');
+    localStorage.removeItem("demoUser");
+    navigate("/solutions");
   };
 
   // SAT Subject Structure for demo
@@ -59,13 +65,14 @@ const DemoPractice = () => {
     {
       id: "reading",
       name: "Evidence-Based Reading",
-      description: "Reading comprehension, vocabulary in context, and analysis of texts",
+      description:
+        "Reading comprehension, vocabulary in context, and analysis of texts",
       questions: 52,
       progress: 68,
       duration: "65 minutes",
       gradient: "from-green-500 to-emerald-500",
       bgColor: "bg-green-50",
-      icon: "📖"
+      icon: "📖",
     },
     {
       id: "writing",
@@ -76,18 +83,19 @@ const DemoPractice = () => {
       duration: "35 minutes",
       gradient: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-50",
-      icon: "✍️"
+      icon: "✍️",
     },
     {
       id: "math-no-calc",
       name: "Math (No Calculator)",
-      description: "Algebra, advanced math, and problem-solving without calculator",
+      description:
+        "Algebra, advanced math, and problem-solving without calculator",
       questions: 20,
       progress: 72,
       duration: "25 minutes",
       gradient: "from-teal-500 to-green-500",
       bgColor: "bg-teal-50",
-      icon: "🧮"
+      icon: "🧮",
     },
     {
       id: "math-calc",
@@ -98,8 +106,8 @@ const DemoPractice = () => {
       duration: "55 minutes",
       gradient: "from-emerald-500 to-blue-500",
       bgColor: "bg-emerald-50",
-      icon: "📊"
-    }
+      icon: "📊",
+    },
   ];
 
   if (!user) {
@@ -119,53 +127,63 @@ const DemoPractice = () => {
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                 Riverside Academy
               </span>
-              <p className="text-xs text-gray-500">Powered by Artee</p>
+              <p className="text-xs text-gray-500">Powered by artori.app</p>
             </div>
           </Link>
-          
+
           {/* User Dropdown Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-green-600">
+              <Button
+                variant="ghost"
+                className="flex items-center space-x-2 text-gray-600 hover:text-green-600"
+              >
                 <User className="h-4 w-4" />
                 <span className="hidden md:inline">{user.name}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 backdrop-blur-sm bg-white/90 border-white/20" align="end">
+            <DropdownMenuContent
+              className="w-56 backdrop-blur-sm bg-white/90 border-white/20"
+              align="end"
+            >
               <DropdownMenuLabel className="font-semibold">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user.name}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
                   <Badge className="bg-gradient-to-r from-green-500 to-blue-500 text-white text-xs w-fit">
                     {user.school}
                   </Badge>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <BarChart3 className="mr-2 h-4 w-4" />
                 <span>Study Analytics</span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <Calendar className="mr-2 h-4 w-4" />
                 <span>Study Schedule</span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuSeparator />
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <CreditCard className="mr-2 h-4 w-4" />
                 <span>School Plan</span>
@@ -173,15 +191,15 @@ const DemoPractice = () => {
                   Premium
                 </Badge>
               </DropdownMenuItem>
-              
+
               <DropdownMenuItem className="cursor-pointer">
                 <HelpCircle className="mr-2 h-4 w-4" />
                 <span>Help & Support</span>
               </DropdownMenuItem>
-              
+
               <DropdownMenuSeparator />
-              
-              <DropdownMenuItem 
+
+              <DropdownMenuItem
                 className="cursor-pointer text-red-600 focus:text-red-600"
                 onClick={handleLogout}
               >
@@ -224,7 +242,9 @@ const DemoPractice = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-xl">Overall Progress</CardTitle>
-                  <CardDescription>Your performance across all sections</CardDescription>
+                  <CardDescription>
+                    Your performance across all sections
+                  </CardDescription>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="text-center">
@@ -265,8 +285,8 @@ const DemoPractice = () => {
         {/* Subject Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {satSubjects.map((subject) => (
-            <Card 
-              key={subject.id} 
+            <Card
+              key={subject.id}
               className={`hover:shadow-2xl transition-all duration-300 cursor-pointer ${subject.bgColor} backdrop-blur-sm bg-white/60 border-white/20 hover:scale-105`}
             >
               <CardHeader>
@@ -277,7 +297,9 @@ const DemoPractice = () => {
                   </Badge>
                 </div>
                 <CardTitle className="text-lg">{subject.name}</CardTitle>
-                <CardDescription className="text-sm">{subject.description}</CardDescription>
+                <CardDescription className="text-sm">
+                  {subject.description}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -288,7 +310,7 @@ const DemoPractice = () => {
                     </div>
                     <Progress value={subject.progress} className="h-2" />
                   </div>
-                  
+
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>{subject.questions} questions</span>
                     <span className="flex items-center">
@@ -296,9 +318,11 @@ const DemoPractice = () => {
                       +7% this week
                     </span>
                   </div>
-                  
+
                   <Link to={`/question/sat/${subject.id}`}>
-                    <Button className={`w-full bg-gradient-to-r ${subject.gradient} hover:shadow-lg transition-all`}>
+                    <Button
+                      className={`w-full bg-gradient-to-r ${subject.gradient} hover:shadow-lg transition-all`}
+                    >
                       Continue Studying
                     </Button>
                   </Link>
@@ -318,8 +342,13 @@ const DemoPractice = () => {
               <CardTitle className="text-lg">Full Practice Test</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-sm text-gray-600 mb-4">Take a complete SAT practice test under timed conditions</p>
-              <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
+              <p className="text-sm text-gray-600 mb-4">
+                Take a complete SAT practice test under timed conditions
+              </p>
+              <Button
+                variant="outline"
+                className="w-full border-green-200 hover:bg-green-50"
+              >
                 Start Practice Test
               </Button>
             </CardContent>
@@ -333,8 +362,13 @@ const DemoPractice = () => {
               <CardTitle className="text-lg">Smart Review</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-sm text-gray-600 mb-4">Review questions you got wrong with AI explanations</p>
-              <Button variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
+              <p className="text-sm text-gray-600 mb-4">
+                Review questions you got wrong with AI explanations
+              </p>
+              <Button
+                variant="outline"
+                className="w-full border-blue-200 hover:bg-blue-50"
+              >
                 Start Review
               </Button>
             </CardContent>
@@ -348,8 +382,13 @@ const DemoPractice = () => {
               <CardTitle className="text-lg">Study Plan</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-sm text-gray-600 mb-4">View your personalized schedule until test day</p>
-              <Button variant="outline" className="w-full border-teal-200 hover:bg-teal-50">
+              <p className="text-sm text-gray-600 mb-4">
+                View your personalized schedule until test day
+              </p>
+              <Button
+                variant="outline"
+                className="w-full border-teal-200 hover:bg-teal-50"
+              >
                 View Schedule
               </Button>
             </CardContent>
@@ -368,17 +407,33 @@ const DemoPractice = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                 Riverside Academy
               </span>
-              <p className="text-xs text-gray-500">Powered by Artee</p>
+              <p className="text-xs text-gray-500">Powered by artori.app</p>
             </div>
           </div>
           <div className="flex items-center space-x-6 text-gray-600">
-            <Link to="/about" className="hover:text-green-600 transition-colors">About</Link>
-            <Link to="/privacy" className="hover:text-green-600 transition-colors">Privacy</Link>
-            <Link to="/contact" className="hover:text-green-600 transition-colors">Contact</Link>
+            <Link
+              to="/about"
+              className="hover:text-green-600 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              to="/privacy"
+              className="hover:text-green-600 transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              to="/contact"
+              className="hover:text-green-600 transition-colors"
+            >
+              Contact
+            </Link>
           </div>
         </div>
         <div className="text-center mt-8 text-gray-500">
-          © 2025 Riverside Academy. Powered by Artee - Responsible AI for better learning. 🌟
+          © 2025 Riverside Academy. Powered by artori.app - Responsible AI for
+          better learning. 🌟
         </div>
       </footer>
     </div>
