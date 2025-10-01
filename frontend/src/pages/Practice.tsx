@@ -427,16 +427,17 @@ const Practice = () => {
                           Subjects:
                         </p>
                         <div className="flex flex-wrap gap-2">
-                          {exam.subjects.slice(0, 3).map((subject) => (
-                            <Badge
-                              key={subject}
-                              variant="secondary"
-                              className="text-xs"
-                            >
-                              {subject}
-                            </Badge>
-                          ))}
-                          {exam.subjects.length > 3 && (
+                          {exam.subjects &&
+                            exam.subjects.slice(0, 3).map((subject) => (
+                              <Badge
+                                key={subject}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {subject}
+                              </Badge>
+                            ))}
+                          {exam.subjects && exam.subjects.length > 3 && (
                             <Badge variant="outline" className="text-xs">
                               +{exam.subjects.length - 3} more
                             </Badge>
