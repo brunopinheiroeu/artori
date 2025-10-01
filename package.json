@@ -1,0 +1,15 @@
+{
+  "name": "artori",
+  "version": "1.0.0",
+  "scripts": {
+    "install:frontend": "npm install --prefix frontend",
+    "install:backend": "python3 -m venv backend/venv && backend/venv/bin/pip install -r backend/requirements.txt",
+    "install": "npm run install:frontend && npm run install:backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "backend/venv/bin/python3 backend/main.py",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
