@@ -159,24 +159,32 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-slate-700" />
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                  <Link to="/admin/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
+                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                  <Link to="/admin/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  <span>Analytics</span>
+                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                  <Link to="/admin/analytics">
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    <span>Analytics</span>
+                  </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  <span>Help & Support</span>
+                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                  <Link to="/admin/help">
+                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <span>Help & Support</span>
+                  </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator className="bg-slate-700" />

@@ -15,6 +15,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminExams from "./pages/AdminExams";
 import AdminUsers from "./pages/AdminUsers";
 import AdminSettings from "./pages/AdminSettings";
+import AdminProfile from "./pages/AdminProfile";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminHelp from "./pages/AdminHelp";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +41,9 @@ const App = () => (
           <Route path="/admin/exams" element={<AdminExams />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/help" element={<AdminHelp />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
