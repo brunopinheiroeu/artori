@@ -21,6 +21,7 @@ def seed_database():
     db.exams.delete_many({})
     db.questions.delete_many({})
     db.user_progress.delete_many({})
+    db.user_answers.delete_many({})
     print("✅ Database cleared successfully")
     
     # Create subject IDs for all exams
@@ -44,16 +45,31 @@ def seed_database():
             "name": "SAT",
             "country": "USA",
             "description": "Scholastic Assessment Test - College entrance exam used in the United States",
+            "total_questions": 154,
+            "gradient": "from-blue-500 to-red-500",
+            "borderColor": "border-blue-500",
+            "bgColor": "bg-blue-50",
+            "flag": "🇺🇸",
             "subjects": [
                 {
                     "_id": sat_math_subject_id,
                     "name": "Math",
-                    "description": "Mathematics section covering algebra, geometry, and data analysis"
+                    "description": "Mathematics section covering algebra, geometry, and data analysis",
+                    "total_questions": 58,
+                    "duration": "80 minutes",
+                    "icon": "🧮",
+                    "gradient": "from-indigo-500 to-purple-500",
+                    "bgColor": "bg-indigo-50"
                 },
                 {
                     "_id": sat_reading_subject_id,
                     "name": "Evidence-Based Reading and Writing",
-                    "description": "Reading comprehension and writing skills"
+                    "description": "Reading comprehension and writing skills",
+                    "total_questions": 96,
+                    "duration": "100 minutes",
+                    "icon": "📖",
+                    "gradient": "from-blue-500 to-cyan-500",
+                    "bgColor": "bg-blue-50"
                 }
             ]
         },
@@ -62,16 +78,31 @@ def seed_database():
             "name": "GMAT",
             "country": "USA",
             "description": "Graduate Management Admission Test - MBA entrance exam",
+            "total_questions": 80,
+            "gradient": "from-purple-500 to-pink-500",
+            "borderColor": "border-purple-500",
+            "bgColor": "bg-purple-50",
+            "flag": "🇺🇸",
             "subjects": [
                 {
                     "_id": gmat_quant_subject_id,
                     "name": "Quantitative Reasoning",
-                    "description": "Problem solving and data sufficiency"
+                    "description": "Problem solving and data sufficiency",
+                    "total_questions": 31,
+                    "duration": "62 minutes",
+                    "icon": "📊",
+                    "gradient": "from-orange-500 to-red-500",
+                    "bgColor": "bg-orange-50"
                 },
                 {
                     "_id": gmat_verbal_subject_id,
                     "name": "Verbal Reasoning",
-                    "description": "Critical reasoning and reading comprehension"
+                    "description": "Critical reasoning and reading comprehension",
+                    "total_questions": 36,
+                    "duration": "65 minutes",
+                    "icon": "📝",
+                    "gradient": "from-purple-500 to-pink-500",
+                    "bgColor": "bg-purple-50"
                 }
             ]
         },
@@ -80,26 +111,51 @@ def seed_database():
             "name": "ENEM",
             "country": "Brazil",
             "description": "Exame Nacional do Ensino Médio - Brazilian national high school exam",
+            "total_questions": 180,
+            "gradient": "from-green-400 to-yellow-400",
+            "borderColor": "border-green-500",
+            "bgColor": "bg-green-50",
+            "flag": "🇧🇷",
             "subjects": [
                 {
                     "_id": enem_linguagens_subject_id,
                     "name": "Linguagens, Códigos e suas Tecnologias",
-                    "description": "Languages, codes and their technologies including Portuguese, Literature, Arts, and Foreign Languages"
+                    "description": "Languages, codes and their technologies including Portuguese, Literature, Arts, and Foreign Languages",
+                    "total_questions": 45,
+                    "duration": "Primeiro Dia",
+                    "icon": "📚",
+                    "gradient": "from-blue-500 to-cyan-500",
+                    "bgColor": "bg-blue-50"
                 },
                 {
                     "_id": enem_humanas_subject_id,
                     "name": "Ciências Humanas e suas Tecnologias",
-                    "description": "Human sciences and their technologies including History, Geography, Philosophy, and Sociology"
+                    "description": "Human sciences and their technologies including History, Geography, Philosophy, and Sociology",
+                    "total_questions": 45,
+                    "duration": "Primeiro Dia",
+                    "icon": "🌍",
+                    "gradient": "from-purple-500 to-pink-500",
+                    "bgColor": "bg-purple-50"
                 },
                 {
                     "_id": enem_natureza_subject_id,
                     "name": "Ciências da Natureza e suas Tecnologias",
-                    "description": "Natural sciences and their technologies including Physics, Chemistry, and Biology"
+                    "description": "Natural sciences and their technologies including Physics, Chemistry, and Biology",
+                    "total_questions": 45,
+                    "duration": "Segundo Dia",
+                    "icon": "🧪",
+                    "gradient": "from-green-500 to-emerald-500",
+                    "bgColor": "bg-green-50"
                 },
                 {
                     "_id": enem_matematica_subject_id,
                     "name": "Matemática e suas Tecnologias",
-                    "description": "Mathematics and its technologies"
+                    "description": "Mathematics and its technologies",
+                    "total_questions": 45,
+                    "duration": "Segundo Dia",
+                    "icon": "📊",
+                    "gradient": "from-indigo-500 to-purple-500",
+                    "bgColor": "bg-indigo-50"
                 }
             ]
         }

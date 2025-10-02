@@ -7,7 +7,7 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from pymongo import MongoClient
@@ -22,6 +22,16 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = FastAPI(title="artori.app API", version="1.0.0")
+
+# Add startup event to log all routes
+@app.on_event("startup")
+async def startup_event():
+    logger.info("=== FastAPI Application Starting ===")
+    logger.info("Registered routes:")
+    for route in app.routes:
+        if hasattr(route, 'methods') and hasattr(route, 'path'):
+            logger.info(f"  {route.methods} {route.path}")
+    logger.info("=== Route Registration Complete ===")
 
 # Configure CORS
 app.add_middleware(
@@ -93,7 +103,8 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     
-    @validator('password')
+    @field_validator('password')
+    @classmethod
     def validate_password(cls, v):
         return validate_password_strength(v)
 
@@ -118,6 +129,11 @@ class Subject(BaseModel):
     id: str
     name: str
     description: str
+    total_questions: Optional[int] = None
+    duration: Optional[str] = None
+    icon: Optional[str] = None
+    gradient: Optional[str] = None
+    bgColor: Optional[str] = None
 
 class Exam(BaseModel):
     id: str
@@ -125,6 +141,11 @@ class Exam(BaseModel):
     country: str
     description: str
     subjects: List[Subject]
+    total_questions: Optional[int] = None
+    gradient: Optional[str] = None
+    borderColor: Optional[str] = None
+    bgColor: Optional[str] = None
+    flag: Optional[str] = None
 
 class ExamResponse(BaseModel):
     id: str
@@ -132,15 +153,48 @@ class ExamResponse(BaseModel):
     country: str
     description: str
     subjects: List[Subject]
+    total_questions: Optional[int] = None
+    gradient: Optional[str] = None
+    borderColor: Optional[str] = None
+    bgColor: Optional[str] = None
+    flag: Optional[str] = None
 
 class ExamListResponse(BaseModel):
     id: str
     name: str
     country: str
     description: str
+    total_questions: Optional[int] = None
+    gradient: Optional[str] = None
+    borderColor: Optional[str] = None
+    bgColor: Optional[str] = None
+    flag: Optional[str] = None
 
 class UserExamSelection(BaseModel):
     exam_id: str
+
+# User progress models
+class SubjectProgress(BaseModel):
+    subject_id: str
+    progress: float
+    questions_solved: int
+    correct_answers: int
+    accuracy_rate: float
+
+class UserProgress(BaseModel):
+    user_id: str
+    exam_id: str
+    overall_progress: float
+    questions_solved: int
+    accuracy_rate: float
+    study_time_hours: float
+    current_streak_days: int
+    last_studied_date: Optional[datetime] = None
+    subject_progress: List[SubjectProgress]
+
+class DashboardResponse(BaseModel):
+    selected_exam: ExamResponse
+    user_progress: Optional[UserProgress] = None
 
 # Question-related models
 class Option(BaseModel):
@@ -179,6 +233,14 @@ class AnswerResponse(BaseModel):
 # Helper functions
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
+    # Truncate password to 72 bytes for bcrypt compatibility (same as in get_password_hash)
+    password_bytes = plain_password.encode('utf-8')
+    if len(password_bytes) > 72:
+        # Truncate to 72 bytes, being careful not to split multi-byte characters
+        password_bytes = password_bytes[:72]
+        # Decode back, ignoring any incomplete characters at the end
+        plain_password = password_bytes.decode('utf-8', errors='ignore')
+    
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
@@ -389,7 +451,12 @@ async def get_exams():
             id=str(exam["_id"]),
             name=exam["name"],
             country=exam["country"],
-            description=exam["description"]
+            description=exam["description"],
+            total_questions=exam.get("total_questions"),
+            gradient=exam.get("gradient"),
+            borderColor=exam.get("borderColor"),
+            bgColor=exam.get("bgColor"),
+            flag=exam.get("flag")
         )
         for exam in exams
     ]
@@ -421,7 +488,12 @@ async def get_exam(exam_id: str):
         Subject(
             id=str(subject["_id"]),
             name=subject["name"],
-            description=subject["description"]
+            description=subject["description"],
+            total_questions=subject.get("total_questions"),
+            duration=subject.get("duration"),
+            icon=subject.get("icon"),
+            gradient=subject.get("gradient"),
+            bgColor=subject.get("bgColor")
         )
         for subject in exam.get("subjects", [])
     ]
@@ -431,7 +503,12 @@ async def get_exam(exam_id: str):
         name=exam["name"],
         country=exam["country"],
         description=exam["description"],
-        subjects=subjects
+        subjects=subjects,
+        total_questions=exam.get("total_questions"),
+        gradient=exam.get("gradient"),
+        borderColor=exam.get("borderColor"),
+        bgColor=exam.get("bgColor"),
+        flag=exam.get("flag")
     )
 
 # User exam selection endpoint
@@ -474,6 +551,123 @@ async def set_user_exam(
     )
     
     return {"message": "Exam selected successfully"}
+
+# Dashboard endpoint
+@app.get("/api/v1/users/me/dashboard", response_model=DashboardResponse)
+async def get_user_dashboard(current_user = Depends(get_current_user)):
+    """Get user's dashboard data including selected exam and progress"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    # Get user's selected exam
+    if not current_user.get("selected_exam_id"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No exam selected"
+        )
+    
+    try:
+        exam = db.exams.find_one({"_id": ObjectId(current_user["selected_exam_id"])})
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid exam ID"
+        )
+    
+    if not exam:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Selected exam not found"
+        )
+    
+    # Build exam response
+    subjects = [
+        Subject(
+            id=str(subject["_id"]),
+            name=subject["name"],
+            description=subject["description"],
+            total_questions=subject.get("total_questions"),
+            duration=subject.get("duration"),
+            icon=subject.get("icon"),
+            gradient=subject.get("gradient"),
+            bgColor=subject.get("bgColor")
+        )
+        for subject in exam.get("subjects", [])
+    ]
+    
+    selected_exam = ExamResponse(
+        id=str(exam["_id"]),
+        name=exam["name"],
+        country=exam["country"],
+        description=exam["description"],
+        subjects=subjects,
+        total_questions=exam.get("total_questions"),
+        gradient=exam.get("gradient"),
+        borderColor=exam.get("borderColor"),
+        bgColor=exam.get("bgColor"),
+        flag=exam.get("flag")
+    )
+    
+    # Get user progress for this exam
+    user_progress = None
+    progress_records = list(db.user_progress.find({
+        "user_id": ObjectId(current_user["_id"]),
+        "exam_id": ObjectId(current_user["selected_exam_id"])
+    }))
+    
+    if progress_records:
+        # Calculate overall statistics
+        total_questions_solved = sum(record.get("questions_solved", 0) for record in progress_records)
+        total_correct_answers = sum(record.get("correct_answers", 0) for record in progress_records)
+        overall_accuracy = (total_correct_answers / total_questions_solved * 100) if total_questions_solved > 0 else 0
+        
+        # Calculate overall progress based on total questions in exam
+        total_exam_questions = exam.get("total_questions", 1)
+        overall_progress = min((total_questions_solved / total_exam_questions * 100), 100) if total_exam_questions > 0 else 0
+        
+        # Build subject progress
+        subject_progress = []
+        for record in progress_records:
+            subject_id = str(record["subject_id"])
+            questions_solved = record.get("questions_solved", 0)
+            correct_answers = record.get("correct_answers", 0)
+            accuracy_rate = record.get("accuracy_rate", 0)
+            
+            # Find subject total questions for progress calculation
+            subject_total = 1
+            for subject in exam.get("subjects", []):
+                if str(subject["_id"]) == subject_id:
+                    subject_total = subject.get("total_questions", 1)
+                    break
+            
+            progress_percentage = min((questions_solved / subject_total * 100), 100) if subject_total > 0 else 0
+            
+            subject_progress.append(SubjectProgress(
+                subject_id=subject_id,
+                progress=progress_percentage,
+                questions_solved=questions_solved,
+                correct_answers=correct_answers,
+                accuracy_rate=accuracy_rate
+            ))
+        
+        user_progress = UserProgress(
+            user_id=str(current_user["_id"]),
+            exam_id=str(current_user["selected_exam_id"]),
+            overall_progress=overall_progress,
+            questions_solved=total_questions_solved,
+            accuracy_rate=overall_accuracy,
+            study_time_hours=25.5,  # Mock data for now
+            current_streak_days=7,  # Mock data for now
+            subject_progress=subject_progress
+        )
+    
+    return DashboardResponse(
+        selected_exam=selected_exam,
+        user_progress=user_progress
+    )
 
 # Question endpoints
 @app.get("/api/v1/exams/{exam_id}/subjects/{subject_id}/questions", response_model=List[QuestionResponse])
@@ -565,43 +759,60 @@ async def submit_answer(
     # Check if answer is correct
     is_correct = answer_submission.answer == question["correct_answer"]
     
-    # Update user progress
-    subject_id = question["subject_id"]
+    # Record user answer
     user_id = ObjectId(current_user["_id"])
+    subject_id = question["subject_id"]
     
-    # Find or create user progress record
-    progress = db.user_progress.find_one({
+    # Insert answer record
+    db.user_answers.insert_one({
         "user_id": user_id,
-        "subject_id": subject_id
+        "question_id": ObjectId(question_id),
+        "selected_option_id": answer_submission.answer,
+        "is_correct": is_correct,
+        "answered_at": datetime.utcnow()
     })
     
-    if progress:
-        # Update existing progress
-        completed_questions = progress.get("completed_questions", [])
-        if ObjectId(question_id) not in completed_questions:
-            completed_questions.append(ObjectId(question_id))
-            
-        # Update score (simple scoring: +1 for correct, 0 for incorrect)
-        current_score = progress.get("score", 0)
-        new_score = current_score + (1 if is_correct else 0)
-        
-        db.user_progress.update_one(
-            {"_id": progress["_id"]},
-            {
-                "$set": {
-                    "score": new_score,
-                    "completed_questions": completed_questions
-                }
-            }
-        )
+    # Get user's selected exam ID
+    exam_id = current_user.get("selected_exam_id")
+    if not exam_id:
+        # If no exam selected, we can't update progress properly
+        pass
     else:
-        # Create new progress record
-        db.user_progress.insert_one({
+        # Find or create user progress record for this exam and subject
+        progress = db.user_progress.find_one({
             "user_id": user_id,
-            "subject_id": subject_id,
-            "score": 1 if is_correct else 0,
-            "completed_questions": [ObjectId(question_id)]
+            "exam_id": ObjectId(exam_id),
+            "subject_id": subject_id
         })
+        
+        if progress:
+            # Update existing progress
+            questions_solved = progress.get("questions_solved", 0) + 1
+            correct_answers = progress.get("correct_answers", 0) + (1 if is_correct else 0)
+            accuracy_rate = (correct_answers / questions_solved * 100) if questions_solved > 0 else 0
+            
+            db.user_progress.update_one(
+                {"_id": progress["_id"]},
+                {
+                    "$set": {
+                        "questions_solved": questions_solved,
+                        "correct_answers": correct_answers,
+                        "accuracy_rate": accuracy_rate,
+                        "last_studied_date": datetime.utcnow()
+                    }
+                }
+            )
+        else:
+            # Create new progress record
+            db.user_progress.insert_one({
+                "user_id": user_id,
+                "exam_id": ObjectId(exam_id),
+                "subject_id": subject_id,
+                "questions_solved": 1,
+                "correct_answers": 1 if is_correct else 0,
+                "accuracy_rate": 100.0 if is_correct else 0.0,
+                "last_studied_date": datetime.utcnow()
+            })
     
     # Return answer result with explanation
     explanation = Explanation(

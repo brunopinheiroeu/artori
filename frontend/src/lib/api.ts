@@ -16,6 +16,11 @@ export interface Subject {
   id: string;
   name: string;
   description: string;
+  total_questions?: number;
+  duration?: string;
+  icon?: string;
+  gradient?: string;
+  bgColor?: string;
 }
 
 export interface Exam {
@@ -24,6 +29,11 @@ export interface Exam {
   country: string;
   description: string;
   subjects?: Subject[];
+  total_questions?: number;
+  gradient?: string;
+  borderColor?: string;
+  bgColor?: string;
+  flag?: string;
 }
 
 export interface Option {
@@ -71,6 +81,31 @@ export interface SignupRequest {
 export interface AuthResponse {
   access_token: string;
   token_type: string;
+}
+
+export interface SubjectProgress {
+  subject_id: string;
+  progress: number;
+  questions_solved: number;
+  correct_answers: number;
+  accuracy_rate: number;
+}
+
+export interface UserProgress {
+  user_id: string;
+  exam_id: string;
+  overall_progress: number;
+  questions_solved: number;
+  accuracy_rate: number;
+  study_time_hours: number;
+  current_streak_days: number;
+  last_studied_date?: string;
+  subject_progress: SubjectProgress[];
+}
+
+export interface DashboardResponse {
+  selected_exam: Exam;
+  user_progress?: UserProgress;
 }
 
 // API Client class
@@ -166,6 +201,10 @@ class ApiClient {
       method: "POST",
       body: JSON.stringify({ exam_id: examId }),
     });
+  }
+
+  async getDashboard(): Promise<DashboardResponse> {
+    return this.request<DashboardResponse>("/users/me/dashboard");
   }
 
   // Question methods
