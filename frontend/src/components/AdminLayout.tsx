@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import AdminSidebar from "./AdminSidebar";
+import Footer from "./Footer";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -14,7 +15,7 @@ const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
 
       {/* Main content with proper mobile spacing */}
       <div className="lg:ml-64">
-        <div className="px-4 py-8 lg:px-8 pt-20 lg:pt-8"> {/* Added pt-20 for mobile to account for menu button */}
+        <div className="px-4 py-8 lg:px-8 pt-20 lg:pt-8">
           {(title || description) && (
             <div className="mb-8">
               {title && (
@@ -29,6 +30,9 @@ const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
           )}
           {children}
         </div>
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );
