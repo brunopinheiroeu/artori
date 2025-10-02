@@ -11,6 +11,10 @@ import Solutions from "./pages/Solutions";
 import DemoLogin from "./pages/DemoLogin";
 import DemoPractice from "./pages/DemoPractice";
 import DemoTutor from "./pages/DemoTutor";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminExams from "./pages/AdminExams";
+import AdminUsers from "./pages/AdminUsers";
+import AdminSettings from "./pages/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +34,10 @@ const App = () => (
           <Route path="/demo-login" element={<DemoLogin />} />
           <Route path="/demo-practice" element={<DemoPractice />} />
           <Route path="/demo-tutor" element={<DemoTutor />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/exams" element={<AdminExams />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
