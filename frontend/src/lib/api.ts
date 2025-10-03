@@ -284,6 +284,40 @@ export interface PasswordChangeRequest {
   new_password: string;
 }
 
+// New types for the additional endpoints
+export interface AdminPreferences {
+  system_alerts: boolean;
+  user_activity: boolean;
+  weekly_reports: boolean;
+  emergency_alerts: boolean;
+  maintenance_updates: boolean;
+  feature_updates: boolean;
+  two_factor: boolean;
+  login_alerts: boolean;
+}
+
+export interface AnalyticsPerformance {
+  response_time: number;
+  throughput: number;
+  error_rate: number;
+  uptime: number;
+  active_connections: number;
+  memory_usage: number;
+  cpu_usage: number;
+  database_connections: number;
+}
+
+export interface AnalyticsTrends {
+  metric: string;
+  timeRange: string;
+  data: Array<{
+    timestamp: string;
+    value: number;
+  }>;
+  trend: "up" | "down" | "stable";
+  change_percentage: number;
+}
+
 // API Client class
 class ApiClient {
   private baseUrl: string;
@@ -615,6 +649,53 @@ class ApiClient {
       method: "PUT",
       body: JSON.stringify(passwordData),
     });
+  }
+
+  // Admin Preferences methods
+  async getAdminPreferences(): Promise<AdminPreferences> {
+    return this.request<AdminPreferences>("/admin/preferences");
+  }
+
+  async updateAdminPreferences(
+    preferences: AdminPreferences
+  ): Promise<{ message: string }> {
+    return this.request<{ message: string }>("/admin/preferences", {
+      method: "PUT",
+      body: JSON.stringify(preferences),
+    });
+  }
+
+  // Admin Settings methods (by category)
+  async getAdminSettings(category: string): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>(`/admin/settings/${category}`);
+  }
+
+  async updateAdminSettings(
+    category: string,
+    settings: Record<string, unknown>
+  ): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/settings/${category}`, {
+      method: "PUT",
+      body: JSON.stringify(settings),
+    });
+  }
+
+  // Admin Analytics methods
+  async getAnalyticsPerformance(
+    timeRange: string
+  ): Promise<AnalyticsPerformance> {
+    return this.request<AnalyticsPerformance>(
+      `/admin/analytics/performance?timeRange=${timeRange}`
+    );
+  }
+
+  async getAnalyticsTrends(
+    metric: string,
+    timeRange: string
+  ): Promise<AnalyticsTrends> {
+    return this.request<AnalyticsTrends>(
+      `/admin/analytics/trends?metric=${metric}&timeRange=${timeRange}`
+    );
   }
 
   // Helper method to check if user has admin role

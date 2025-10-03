@@ -14,6 +14,8 @@ import {
   useAdminProfile,
   useUpdateAdminProfile,
   useChangePassword,
+  useAdminPreferences,
+  useUpdateAdminPreferences,
 } from "@/hooks/useAdminApi";
 import { useState, useEffect } from "react";
 import {
@@ -67,6 +69,14 @@ const AdminProfile = () => {
     confirm_password: "",
   });
 
+  const {
+    data: preferences,
+    isLoading: preferencesLoading,
+    error: preferencesError,
+  } = useAdminPreferences();
+
+  const updatePreferencesMutation = useUpdateAdminPreferences();
+
   const [notificationSettings, setNotificationSettings] = useState({
     system_alerts: true,
     user_activity: true,
@@ -89,6 +99,12 @@ const AdminProfile = () => {
       });
     }
   }, [profile]);
+
+  useEffect(() => {
+    if (preferences) {
+      setNotificationSettings(preferences);
+    }
+  }, [preferences]);
 
   const handleProfileSave = async () => {
     try {
@@ -149,12 +165,21 @@ const AdminProfile = () => {
     }
   };
 
-  const handleNotificationSave = () => {
-    // In a real app, this would save to backend
-    toast({
-      title: "Preferences saved",
-      description: "Notification preferences have been updated.",
-    });
+  const handleNotificationSave = async () => {
+    try {
+      await updatePreferencesMutation.mutateAsync(notificationSettings);
+      toast({
+        title: "Preferences saved",
+        description: "Notification preferences have been updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          "Failed to save notification preferences. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -631,9 +656,14 @@ const AdminProfile = () => {
             <div className="mt-6">
               <Button
                 onClick={handleNotificationSave}
+                disabled={updatePreferencesMutation.isPending}
                 className="bg-gradient-to-r from-green-500 to-emerald-600"
               >
-                <Bell className="h-4 w-4 mr-2" />
+                {updatePreferencesMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Bell className="h-4 w-4 mr-2" />
+                )}
                 Save Preferences
               </Button>
             </div>

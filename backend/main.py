@@ -486,6 +486,51 @@ class TrendingData(BaseModel):
     trend_direction: str  # "up", "down", "stable"
     percentage_change: float
 
+# Test Results Models
+class TestResultDetail(BaseModel):
+    question_id: str
+    question_number: int
+    question_text: str
+    selected_answer: str
+    correct_answer: str
+    is_correct: bool
+    explanation: Explanation
+    topic: str
+    difficulty: str
+    time_spent: Optional[int] = None  # in seconds
+
+class TopicBreakdown(BaseModel):
+    topic: str
+    correct: int
+    total: int
+    percentage: float
+
+class StudyRecommendation(BaseModel):
+    area: str
+    suggestion: str
+    priority: str  # "High", "Medium", "Low"
+    estimated_time: str
+
+class TestSessionResult(BaseModel):
+    session_id: str
+    user_id: str
+    exam_id: str
+    subject_id: str
+    exam_name: str
+    subject_name: str
+    start_time: datetime
+    end_time: datetime
+    total_questions: int
+    correct_answers: int
+    score_percentage: float
+    grade: str
+    time_spent: str  # formatted as "MM:SS"
+    question_details: List[TestResultDetail]
+    topic_breakdown: List[TopicBreakdown]
+    recommendations: List[StudyRecommendation]
+    percentile: int
+    improvement: float
+
 # Helper functions
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash"""
@@ -2685,12 +2730,12 @@ async def update_system_settings_by_category(
             upsert=True
         )
         
-        # Log admin activity
+        # Log admin activity (don't convert category to ObjectId)
         log_admin_activity(
             admin_id=str(current_admin["_id"]),
             action="update",
             resource_type="system_settings",
-            resource_id=category,
+            resource_id=None,  # Category is not an ObjectId
             details={"category": category}
         )
         
@@ -2854,6 +2899,260 @@ async def get_trending_data(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve trending data"
+        )
+
+# Test Results Endpoints
+@app.post("/api/v1/test-sessions", response_model=dict)
+async def create_test_session(
+    exam_id: str,
+    subject_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Create a new test session"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Validate exam and subject exist
+        exam = db.exams.find_one({"_id": ObjectId(exam_id)})
+        if not exam:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Exam not found"
+            )
+        
+        # Check if subject exists in exam
+        subject_exists = any(
+            str(subject["_id"]) == subject_id
+            for subject in exam.get("subjects", [])
+        )
+        
+        if not subject_exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subject not found in exam"
+            )
+        
+        # Create test session
+        session_doc = {
+            "user_id": ObjectId(current_user["_id"]),
+            "exam_id": ObjectId(exam_id),
+            "subject_id": ObjectId(subject_id),
+            "start_time": datetime.utcnow(),
+            "end_time": None,
+            "status": "in_progress",
+            "answers": [],
+            "created_at": datetime.utcnow()
+        }
+        
+        result = db.test_sessions.insert_one(session_doc)
+        session_id = str(result.inserted_id)
+        
+        return {"session_id": session_id, "status": "created"}
+    except Exception as e:
+        logger.error(f"Failed to create test session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create test session"
+        )
+
+@app.put("/api/v1/test-sessions/{session_id}/complete")
+async def complete_test_session(
+    session_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Complete a test session"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Update test session
+        db.test_sessions.update_one(
+            {"_id": ObjectId(session_id), "user_id": ObjectId(current_user["_id"])},
+            {
+                "$set": {
+                    "end_time": datetime.utcnow(),
+                    "status": "completed"
+                }
+            }
+        )
+        
+        return {"message": "Test session completed"}
+    except Exception as e:
+        logger.error(f"Failed to complete test session: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to complete test session"
+        )
+
+@app.get("/api/v1/test-results/{exam_id}/{subject_id}", response_model=TestSessionResult)
+async def get_test_results(
+    exam_id: str,
+    subject_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Get detailed test results for a user's most recent session"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Get the most recent completed test session for this user, exam, and subject
+        session = db.test_sessions.find_one({
+            "user_id": ObjectId(current_user["_id"]),
+            "exam_id": ObjectId(exam_id),
+            "subject_id": ObjectId(subject_id),
+            "status": "completed"
+        }, sort=[("end_time", -1)])
+        
+        if not session:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No completed test session found"
+            )
+        
+        # Get exam and subject details
+        exam = db.exams.find_one({"_id": ObjectId(exam_id)})
+        subject = next((s for s in exam.get("subjects", []) if str(s["_id"]) == subject_id), None)
+        
+        if not exam or not subject:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Exam or subject not found"
+            )
+        
+        # Get user answers for this session
+        user_answers = list(db.user_answers.find({
+            "user_id": ObjectId(current_user["_id"]),
+            "answered_at": {
+                "$gte": session["start_time"],
+                "$lte": session["end_time"]
+            }
+        }))
+        
+        # Get questions and build detailed results
+        question_details = []
+        topic_stats = {}
+        correct_count = 0
+        
+        for i, answer in enumerate(user_answers):
+            question = db.questions.find_one({"_id": answer["question_id"]})
+            if question:
+                is_correct = answer["is_correct"]
+                if is_correct:
+                    correct_count += 1
+                
+                # Track topic statistics
+                topic = "General"  # Default topic, could be enhanced with actual topic data
+                if topic not in topic_stats:
+                    topic_stats[topic] = {"correct": 0, "total": 0}
+                topic_stats[topic]["total"] += 1
+                if is_correct:
+                    topic_stats[topic]["correct"] += 1
+                
+                question_details.append(TestResultDetail(
+                    question_id=str(question["_id"]),
+                    question_number=i + 1,
+                    question_text=question["question"],
+                    selected_answer=answer["selected_option_id"],
+                    correct_answer=question["correct_answer"],
+                    is_correct=is_correct,
+                    explanation=Explanation(
+                        reasoning=question["explanation"]["reasoning"],
+                        concept=question["explanation"]["concept"],
+                        sources=question["explanation"]["sources"],
+                        bias_check=question["explanation"]["bias_check"],
+                        reflection=question["explanation"]["reflection"]
+                    ),
+                    topic=topic,
+                    difficulty=question.get("difficulty", "medium"),
+                    time_spent=None  # Could be calculated if we track timing
+                ))
+        
+        total_questions = len(user_answers)
+        score_percentage = (correct_count / total_questions * 100) if total_questions > 0 else 0
+        
+        # Calculate grade
+        if score_percentage >= 90:
+            grade = "A"
+        elif score_percentage >= 80:
+            grade = "B"
+        elif score_percentage >= 70:
+            grade = "C"
+        elif score_percentage >= 60:
+            grade = "D"
+        else:
+            grade = "F"
+        
+        # Build topic breakdown
+        topic_breakdown = []
+        for topic, stats in topic_stats.items():
+            percentage = (stats["correct"] / stats["total"] * 100) if stats["total"] > 0 else 0
+            topic_breakdown.append(TopicBreakdown(
+                topic=topic,
+                correct=stats["correct"],
+                total=stats["total"],
+                percentage=percentage
+            ))
+        
+        # Generate study recommendations based on performance
+        recommendations = []
+        for topic_data in topic_breakdown:
+            if topic_data.percentage < 70:
+                priority = "High" if topic_data.percentage < 50 else "Medium"
+                recommendations.append(StudyRecommendation(
+                    area=topic_data.topic,
+                    suggestion=f"Focus on {topic_data.topic.lower()} concepts and practice more problems",
+                    priority=priority,
+                    estimated_time="2-3 hours" if priority == "High" else "1-2 hours"
+                ))
+        
+        # Calculate time spent
+        time_diff = session["end_time"] - session["start_time"]
+        total_seconds = int(time_diff.total_seconds())
+        minutes = total_seconds // 60
+        seconds = total_seconds % 60
+        time_spent = f"{minutes}:{seconds:02d}"
+        
+        # Calculate percentile (mock calculation)
+        percentile = min(95, int(score_percentage + 5))
+        
+        # Calculate improvement (mock calculation)
+        improvement = 5.0  # Could be calculated from previous sessions
+        
+        return TestSessionResult(
+            session_id=str(session["_id"]),
+            user_id=str(session["user_id"]),
+            exam_id=str(session["exam_id"]),
+            subject_id=str(session["subject_id"]),
+            exam_name=exam["name"],
+            subject_name=subject["name"],
+            start_time=session["start_time"],
+            end_time=session["end_time"],
+            total_questions=total_questions,
+            correct_answers=correct_count,
+            score_percentage=score_percentage,
+            grade=grade,
+            time_spent=time_spent,
+            question_details=question_details,
+            topic_breakdown=topic_breakdown,
+            recommendations=recommendations,
+            percentile=percentile,
+            improvement=improvement
+        )
+    except Exception as e:
+        logger.error(f"Failed to get test results: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve test results"
         )
 
 def get_default_settings_for_category(category: str) -> Dict[str, Any]:

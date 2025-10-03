@@ -21,8 +21,8 @@ import {
   Loader2,
 } from "lucide-react";
 import {
-  useSystemSettings,
-  useUpdateSystemSettings,
+  useAdminSettings,
+  useUpdateAdminSettingsCategory,
 } from "@/hooks/useAdminApi";
 
 interface SettingsState {
@@ -106,32 +106,99 @@ const AdminSettings = () => {
     },
   });
 
+  // Load settings for each category
   const {
-    data: systemSettings,
-    isLoading: settingsLoading,
-    error: settingsError,
-  } = useSystemSettings();
+    data: generalSettings,
+    isLoading: generalLoading,
+    error: generalError,
+  } = useAdminSettings("general");
 
-  const updateSettingsMutation = useUpdateSystemSettings();
+  const {
+    data: databaseSettings,
+    isLoading: databaseLoading,
+    error: databaseError,
+  } = useAdminSettings("database");
+
+  const {
+    data: emailSettings,
+    isLoading: emailLoading,
+    error: emailError,
+  } = useAdminSettings("email");
+
+  const {
+    data: securitySettings,
+    isLoading: securityLoading,
+    error: securityError,
+  } = useAdminSettings("security");
+
+  const {
+    data: localizationSettings,
+    isLoading: localizationLoading,
+    error: localizationError,
+  } = useAdminSettings("localization");
+
+  const {
+    data: themeSettings,
+    isLoading: themeLoading,
+    error: themeError,
+  } = useAdminSettings("theme");
+
+  const updateSettingsMutation = useUpdateAdminSettingsCategory();
 
   // Load settings from API when available
   useEffect(() => {
-    if (systemSettings && systemSettings.length > 0) {
-      const settingsMap: Record<string, Record<string, unknown>> = {};
-      systemSettings.forEach((setting) => {
-        settingsMap[setting.category] = setting.settings;
-      });
-
+    if (generalSettings) {
       setSettings((prev) => ({
-        general: { ...prev.general, ...settingsMap.general },
-        database: { ...prev.database, ...settingsMap.database },
-        email: { ...prev.email, ...settingsMap.email },
-        security: { ...prev.security, ...settingsMap.security },
-        localization: { ...prev.localization, ...settingsMap.localization },
-        theme: { ...prev.theme, ...settingsMap.theme },
+        ...prev,
+        general: { ...prev.general, ...generalSettings },
       }));
     }
-  }, [systemSettings]);
+  }, [generalSettings]);
+
+  useEffect(() => {
+    if (databaseSettings) {
+      setSettings((prev) => ({
+        ...prev,
+        database: { ...prev.database, ...databaseSettings },
+      }));
+    }
+  }, [databaseSettings]);
+
+  useEffect(() => {
+    if (emailSettings) {
+      setSettings((prev) => ({
+        ...prev,
+        email: { ...prev.email, ...emailSettings },
+      }));
+    }
+  }, [emailSettings]);
+
+  useEffect(() => {
+    if (securitySettings) {
+      setSettings((prev) => ({
+        ...prev,
+        security: { ...prev.security, ...securitySettings },
+      }));
+    }
+  }, [securitySettings]);
+
+  useEffect(() => {
+    if (localizationSettings) {
+      setSettings((prev) => ({
+        ...prev,
+        localization: { ...prev.localization, ...localizationSettings },
+      }));
+    }
+  }, [localizationSettings]);
+
+  useEffect(() => {
+    if (themeSettings) {
+      setSettings((prev) => ({
+        ...prev,
+        theme: { ...prev.theme, ...themeSettings },
+      }));
+    }
+  }, [themeSettings]);
 
   const handleSave = (category: keyof SettingsState) => {
     const categorySettings = settings[category];
@@ -155,7 +222,7 @@ const AdminSettings = () => {
   const updateSetting = (
     category: keyof SettingsState,
     key: string,
-    value: any
+    value: unknown
   ) => {
     setSettings((prev) => ({
       ...prev,
@@ -165,6 +232,21 @@ const AdminSettings = () => {
       },
     }));
   };
+
+  const settingsLoading =
+    generalLoading ||
+    databaseLoading ||
+    emailLoading ||
+    securityLoading ||
+    localizationLoading ||
+    themeLoading;
+  const settingsError =
+    generalError ||
+    databaseError ||
+    emailError ||
+    securityError ||
+    localizationError ||
+    themeError;
 
   if (settingsError) {
     return (
@@ -356,38 +438,91 @@ const AdminSettings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="smtp-host">SMTP Host</Label>
-                <Input id="smtp-host" placeholder="smtp.gmail.com" />
+            {emailLoading ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-10 w-40" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="smtp-port">SMTP Port</Label>
-                <Input id="smtp-port" defaultValue="587" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="smtp-user">SMTP Username</Label>
-                <Input id="smtp-user" placeholder="your-email@gmail.com" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="from-email">From Email</Label>
-                <Input id="from-email" placeholder="noreply@artori.com" />
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch id="email-notifications" defaultChecked />
-              <Label htmlFor="email-notifications">
-                Enable Email Notifications
-              </Label>
-            </div>
-            <Button
-              onClick={() => handleSave("email")}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600"
-            >
-              Save Email Settings
-            </Button>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="smtp-host">SMTP Host</Label>
+                    <Input
+                      id="smtp-host"
+                      value={settings.email.smtp_host}
+                      onChange={(e) =>
+                        updateSetting("email", "smtp_host", e.target.value)
+                      }
+                      placeholder="smtp.gmail.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="smtp-port">SMTP Port</Label>
+                    <Input
+                      id="smtp-port"
+                      value={settings.email.smtp_port}
+                      onChange={(e) =>
+                        updateSetting("email", "smtp_port", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="smtp-user">SMTP Username</Label>
+                    <Input
+                      id="smtp-user"
+                      value={settings.email.smtp_user}
+                      onChange={(e) =>
+                        updateSetting("email", "smtp_user", e.target.value)
+                      }
+                      placeholder="your-email@gmail.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="from-email">From Email</Label>
+                    <Input
+                      id="from-email"
+                      value={settings.email.from_email}
+                      onChange={(e) =>
+                        updateSetting("email", "from_email", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="email-notifications"
+                    checked={settings.email.notifications_enabled}
+                    onCheckedChange={(checked) =>
+                      updateSetting("email", "notifications_enabled", checked)
+                    }
+                  />
+                  <Label htmlFor="email-notifications">
+                    Enable Email Notifications
+                  </Label>
+                </div>
+                <Button
+                  onClick={() => handleSave("email")}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  {updateSettingsMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Email Settings
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -400,42 +535,109 @@ const AdminSettings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="session-timeout">
-                  Session Timeout (minutes)
-                </Label>
-                <Input id="session-timeout" defaultValue="60" type="number" />
+            {securityLoading ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-6 w-32" />
+                </div>
+                <Skeleton className="h-10 w-40" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="max-login-attempts">Max Login Attempts</Label>
-                <Input id="max-login-attempts" defaultValue="5" type="number" />
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Switch id="two-factor" />
-                <Label htmlFor="two-factor">
-                  Enable Two-Factor Authentication
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch id="password-complexity" defaultChecked />
-                <Label htmlFor="password-complexity">
-                  Enforce Password Complexity
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch id="audit-logging" defaultChecked />
-                <Label htmlFor="audit-logging">Enable Audit Logging</Label>
-              </div>
-            </div>
-            <Button
-              onClick={() => handleSave("security")}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600"
-            >
-              Save Security Settings
-            </Button>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="session-timeout">
+                      Session Timeout (minutes)
+                    </Label>
+                    <Input
+                      id="session-timeout"
+                      value={settings.security.session_timeout}
+                      onChange={(e) =>
+                        updateSetting(
+                          "security",
+                          "session_timeout",
+                          parseInt(e.target.value) || 60
+                        )
+                      }
+                      type="number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="max-login-attempts">
+                      Max Login Attempts
+                    </Label>
+                    <Input
+                      id="max-login-attempts"
+                      value={settings.security.max_login_attempts}
+                      onChange={(e) =>
+                        updateSetting(
+                          "security",
+                          "max_login_attempts",
+                          parseInt(e.target.value) || 5
+                        )
+                      }
+                      type="number"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="two-factor"
+                      checked={settings.security.two_factor_enabled}
+                      onCheckedChange={(checked) =>
+                        updateSetting("security", "two_factor_enabled", checked)
+                      }
+                    />
+                    <Label htmlFor="two-factor">
+                      Enable Two-Factor Authentication
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="password-complexity"
+                      checked={settings.security.password_complexity}
+                      onCheckedChange={(checked) =>
+                        updateSetting(
+                          "security",
+                          "password_complexity",
+                          checked
+                        )
+                      }
+                    />
+                    <Label htmlFor="password-complexity">
+                      Enforce Password Complexity
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="audit-logging"
+                      checked={settings.security.audit_logging}
+                      onCheckedChange={(checked) =>
+                        updateSetting("security", "audit_logging", checked)
+                      }
+                    />
+                    <Label htmlFor="audit-logging">Enable Audit Logging</Label>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => handleSave("security")}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  {updateSettingsMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Security Settings
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -448,32 +650,92 @@ const AdminSettings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="default-language">Default Language</Label>
-                <Input id="default-language" defaultValue="English" />
+            {localizationLoading ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-10 w-40" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Default Timezone</Label>
-                <Input id="timezone" defaultValue="UTC" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="date-format">Date Format</Label>
-                <Input id="date-format" defaultValue="MM/DD/YYYY" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="currency">Currency</Label>
-                <Input id="currency" defaultValue="USD" />
-              </div>
-            </div>
-            <Button
-              onClick={() => handleSave("localization")}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600"
-            >
-              Save Localization Settings
-            </Button>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="default-language">Default Language</Label>
+                    <Input
+                      id="default-language"
+                      value={settings.localization.default_language}
+                      onChange={(e) =>
+                        updateSetting(
+                          "localization",
+                          "default_language",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Default Timezone</Label>
+                    <Input
+                      id="timezone"
+                      value={settings.localization.timezone}
+                      onChange={(e) =>
+                        updateSetting(
+                          "localization",
+                          "timezone",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date-format">Date Format</Label>
+                    <Input
+                      id="date-format"
+                      value={settings.localization.date_format}
+                      onChange={(e) =>
+                        updateSetting(
+                          "localization",
+                          "date_format",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="currency">Currency</Label>
+                    <Input
+                      id="currency"
+                      value={settings.localization.currency}
+                      onChange={(e) =>
+                        updateSetting(
+                          "localization",
+                          "currency",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={() => handleSave("localization")}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  {updateSettingsMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Localization Settings
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -486,30 +748,67 @@ const AdminSettings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="primary-color">Primary Color</Label>
-                <Input id="primary-color" defaultValue="#6366f1" type="color" />
+            {themeLoading ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-10 w-40" />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="secondary-color">Secondary Color</Label>
-                <Input
-                  id="secondary-color"
-                  defaultValue="#8b5cf6"
-                  type="color"
-                />
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch id="dark-mode" />
-              <Label htmlFor="dark-mode">Enable Dark Mode by Default</Label>
-            </div>
-            <Button
-              onClick={() => handleSave("theme")}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600"
-            >
-              Save Theme Settings
-            </Button>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="primary-color">Primary Color</Label>
+                    <Input
+                      id="primary-color"
+                      value={settings.theme.primary_color}
+                      onChange={(e) =>
+                        updateSetting("theme", "primary_color", e.target.value)
+                      }
+                      type="color"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="secondary-color">Secondary Color</Label>
+                    <Input
+                      id="secondary-color"
+                      value={settings.theme.secondary_color}
+                      onChange={(e) =>
+                        updateSetting(
+                          "theme",
+                          "secondary_color",
+                          e.target.value
+                        )
+                      }
+                      type="color"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="dark-mode"
+                    checked={settings.theme.dark_mode_default}
+                    onCheckedChange={(checked) =>
+                      updateSetting("theme", "dark_mode_default", checked)
+                    }
+                  />
+                  <Label htmlFor="dark-mode">Enable Dark Mode by Default</Label>
+                </div>
+                <Button
+                  onClick={() => handleSave("theme")}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                  disabled={updateSettingsMutation.isPending}
+                >
+                  {updateSettingsMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Theme Settings
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

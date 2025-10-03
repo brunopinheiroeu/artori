@@ -33,6 +33,8 @@ import {
   useAdminActivityLogs,
   useSystemHealth,
   useUserAnalytics,
+  useAdminAnalyticsPerformance,
+  useAdminAnalyticsTrends,
 } from "@/hooks/useAdminApi";
 import { formatDistanceToNow } from "date-fns";
 
@@ -62,6 +64,19 @@ const AdminAnalytics = () => {
     isLoading: activityLoading,
     error: activityError,
   } = useAdminActivityLogs(10, 0);
+
+  // New analytics hooks
+  const {
+    data: performanceData,
+    isLoading: performanceLoading,
+    error: performanceError,
+  } = useAdminAnalyticsPerformance(timeRange);
+
+  const {
+    data: trendsData,
+    isLoading: trendsLoading,
+    error: trendsError,
+  } = useAdminAnalyticsTrends("user_activity", timeRange);
 
   // Helper function to get activity icon and color
   const getActivityDisplay = (action: string, resourceType: string) => {
@@ -105,7 +120,7 @@ const AdminAnalytics = () => {
         {/* Time Range Selector */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Select defaultValue="7d">
+            <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Time range" />
               </SelectTrigger>
@@ -256,6 +271,46 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Performance Metrics Card */}
+        {performanceData && (
+          <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Activity className="h-5 w-5" />
+                <span>Performance Metrics</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">
+                    {performanceData.response_time.toFixed(0)}ms
+                  </p>
+                  <p className="text-sm text-gray-600">Response Time</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">
+                    {performanceData.throughput.toFixed(0)}
+                  </p>
+                  <p className="text-sm text-gray-600">Throughput</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-red-600">
+                    {(performanceData.error_rate * 100).toFixed(2)}%
+                  </p>
+                  <p className="text-sm text-gray-600">Error Rate</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-purple-600">
+                    {performanceData.uptime.toFixed(1)}%
+                  </p>
+                  <p className="text-sm text-gray-600">Uptime</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Performing Exams */}

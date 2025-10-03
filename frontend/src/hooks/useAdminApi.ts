@@ -20,6 +20,9 @@ import {
   type AdminProfile,
   type AdminProfileUpdate,
   type PasswordChangeRequest,
+  type AdminPreferences,
+  type AnalyticsPerformance,
+  type AnalyticsTrends,
 } from "@/lib/api";
 
 // Admin Dashboard hooks
@@ -389,6 +392,88 @@ export const useChangePassword = () => {
     onError: (error: Error) => {
       toast.error(`Failed to change password: ${error.message}`);
     },
+  });
+};
+
+// Admin Preferences hooks
+export const useAdminPreferences = () => {
+  return useQuery({
+    queryKey: ["admin", "preferences"],
+    queryFn: () => apiClient.getAdminPreferences(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+  });
+};
+
+export const useUpdateAdminPreferences = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (preferences: AdminPreferences) =>
+      apiClient.updateAdminPreferences(preferences),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "preferences"] });
+      toast.success("Preferences updated successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to update preferences: ${error.message}`);
+    },
+  });
+};
+
+// Admin Settings hooks (by category)
+export const useAdminSettings = (category: string) => {
+  return useQuery({
+    queryKey: ["admin", "settings", category],
+    queryFn: () => apiClient.getAdminSettings(category),
+    enabled: !!category,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+  });
+};
+
+export const useUpdateAdminSettingsCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      category,
+      settings,
+    }: {
+      category: string;
+      settings: Record<string, unknown>;
+    }) => apiClient.updateAdminSettings(category, settings),
+    onSuccess: (_, { category }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "settings", category],
+      });
+      toast.success("Settings updated successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to update settings: ${error.message}`);
+    },
+  });
+};
+
+// Admin Analytics Performance hooks
+export const useAdminAnalyticsPerformance = (timeRange: string) => {
+  return useQuery({
+    queryKey: ["admin", "analytics", "performance", timeRange],
+    queryFn: () => apiClient.getAnalyticsPerformance(timeRange),
+    enabled: !!timeRange,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 2,
+  });
+};
+
+// Admin Analytics Trends hooks
+export const useAdminAnalyticsTrends = (metric: string, timeRange: string) => {
+  return useQuery({
+    queryKey: ["admin", "analytics", "trends", metric, timeRange],
+    queryFn: () => apiClient.getAnalyticsTrends(metric, timeRange),
+    enabled: !!metric && !!timeRange,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 2,
   });
 };
 
