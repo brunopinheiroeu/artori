@@ -23,8 +23,11 @@ import {
   BarChart3,
   HelpCircle,
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { apiClient } from "@/lib/api";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useApi";
 
 interface AdminSidebarProps {
   className?: string;
@@ -33,6 +36,31 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ className }: AdminSidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(true); // Start collapsed on mobile
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isLoading: authLoading } = useAuth();
+
+  const handleLogout = () => {
+    try {
+      // Call the API client logout method to clear tokens and localStorage
+      apiClient.logout();
+
+      // Show success message
+      toast({
+        title: "Logged out successfully",
+        description: "You have been signed out of your account.",
+      });
+
+      // Redirect to login page
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout Error",
+        description: "There was an issue logging out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const navigation = [
     {
@@ -61,12 +89,23 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
     },
   ];
 
-  // Mock admin user data
-  const adminUser = {
-    name: "Admin User",
-    email: "admin@artori.app",
-    role: "Super Admin",
-  };
+  // Use real authenticated user data
+  const adminUser = user
+    ? {
+        name: user.name,
+        email: user.email,
+        role:
+          user.role === "super_admin"
+            ? "Super Admin"
+            : user.role === "admin"
+            ? "Admin"
+            : user.role || "User",
+      }
+    : {
+        name: "Loading...",
+        email: "Loading...",
+        role: "Loading...",
+      };
 
   return (
     <>
@@ -159,28 +198,40 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-slate-700" />
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                <DropdownMenuItem
+                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                  asChild
+                >
                   <Link to="/admin/profile">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                <DropdownMenuItem
+                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                  asChild
+                >
                   <Link to="/admin/settings">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                <DropdownMenuItem
+                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                  asChild
+                >
                   <Link to="/admin/analytics">
                     <BarChart3 className="mr-2 h-4 w-4" />
                     <span>Analytics</span>
                   </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700" asChild>
+                <DropdownMenuItem
+                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                  asChild
+                >
                   <Link to="/admin/help">
                     <HelpCircle className="mr-2 h-4 w-4" />
                     <span>Help & Support</span>
@@ -189,7 +240,10 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
 
                 <DropdownMenuSeparator className="bg-slate-700" />
 
-                <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-slate-700">
+                <DropdownMenuItem
+                  className="text-red-400 hover:text-red-300 hover:bg-slate-700 cursor-pointer"
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

@@ -33,6 +33,7 @@ import {
   BarChart3,
   HelpCircle,
   ChevronDown,
+  Shield,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -53,9 +54,12 @@ const Practice = () => {
   const { data: selectedExamData } = useExam(user?.selected_exam_id);
   const setUserExamMutation = useSetUserExam();
   const logoutMutation = useLogout();
-
   const hasSelectedExam = !!user?.selected_exam_id;
   const isNewUser = !hasSelectedExam;
+
+  // Check if user is admin based on user role
+  const isAdmin =
+    user && ["admin", "super_admin"].includes(user.role || "student");
 
   // Fetch dashboard data for users with selected exam
   const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
@@ -155,6 +159,19 @@ const Practice = () => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+
+              {isAdmin && (
+                <>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => navigate("/admin")}
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
 
               <DropdownMenuItem className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />

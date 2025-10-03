@@ -21,97 +21,81 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
-import { User, Mail, Calendar, TrendingUp, Target, Clock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
+import {
+  User,
+  Mail,
+  Calendar,
+  TrendingUp,
+  Target,
+  Clock,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import {
+  useAdminUsers,
+  useCreateAdminUser,
+  useUpdateAdminUser,
+  useDeleteAdminUser,
+  useUserProgressDetail,
+} from "@/hooks/useAdminApi";
+import { useExams } from "@/hooks/useApi";
+import type {
+  AdminUserResponse,
+  AdminUserCreate,
+  AdminUserUpdate,
+} from "@/lib/api";
+import { formatDistanceToNow } from "date-fns";
 
 const AdminUsers = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserResponse | null>(
+    null
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
-  // Mock user data
-  const users = [
-    {
-      id: "1",
-      name: "Alex Johnson",
-      email: "alex.johnson@email.com",
-      role: "Student",
-      exam: "SAT",
-      progress: 68,
-      questions_solved: 1247,
-      accuracy: 82,
-      study_time: 31,
-      streak: 18,
-      last_active: "2024-01-15",
-      created_at: "2024-01-01",
-      status: "Active",
-    },
-    {
-      id: "2",
-      name: "Maria Santos",
-      email: "maria.santos@email.com",
-      role: "Student",
-      exam: "ENEM",
-      progress: 45,
-      questions_solved: 892,
-      accuracy: 76,
-      study_time: 22,
-      streak: 7,
-      last_active: "2024-01-14",
-      created_at: "2024-01-05",
-      status: "Active",
-    },
-    {
-      id: "3",
-      name: "Dr. Sarah Wilson",
-      email: "sarah.wilson@school.edu",
-      role: "Teacher",
-      exam: "SAT",
-      students: 45,
-      classes: 3,
-      last_active: "2024-01-15",
-      created_at: "2023-12-15",
-      status: "Active",
-    },
-    {
-      id: "4",
-      name: "Emma Davis",
-      email: "emma.davis@email.com",
-      role: "Student",
-      exam: "A-levels",
-      progress: 72,
-      questions_solved: 1456,
-      accuracy: 89,
-      study_time: 45,
-      streak: 25,
-      last_active: "2024-01-15",
-      created_at: "2023-11-20",
-      status: "Active",
-    },
-    {
-      id: "5",
-      name: "Michael Chen",
-      email: "michael.chen@email.com",
-      role: "Student",
-      exam: "SAT",
-      progress: 23,
-      questions_solved: 234,
-      accuracy: 65,
-      study_time: 8,
-      streak: 3,
-      last_active: "2024-01-10",
-      created_at: "2024-01-08",
-      status: "Inactive",
-    },
-  ];
+  // Form states
+  const [createForm, setCreateForm] = useState<AdminUserCreate>({
+    name: "",
+    email: "",
+    password: "",
+    role: "student",
+    status: "active",
+  });
+  const [editForm, setEditForm] = useState<AdminUserUpdate>({});
+
+  // API hooks
+  const {
+    data: users,
+    isLoading: usersLoading,
+    error: usersError,
+  } = useAdminUsers({
+    search: searchQuery || undefined,
+    role: roleFilter || undefined,
+    status: statusFilter || undefined,
+    limit: 100,
+  });
+
+  const { data: exams } = useExams();
+  const createUserMutation = useCreateAdminUser();
+  const updateUserMutation = useUpdateAdminUser();
+  const deleteUserMutation = useDeleteAdminUser();
+
+  const { data: userProgress, isLoading: progressLoading } =
+    useUserProgressDetail(selectedUser?.id);
 
   const columns = [
     {
       key: "name",
       label: "User",
       sortable: true,
-      render: (value: string, row: any) => (
+      render: (value: string, row: AdminUserResponse) => (
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
             <User className="h-4 w-4 text-white" />
@@ -130,60 +114,14 @@ const AdminUsers = () => {
       render: (value: string) => (
         <Badge
           className={
-            value === "Teacher"
+            value === "teacher" || value === "admin" || value === "super_admin"
               ? "bg-blue-100 text-blue-800"
               : "bg-green-100 text-green-800"
           }
         >
-          {value}
+          {value.charAt(0).toUpperCase() + value.slice(1).replace("_", " ")}
         </Badge>
       ),
-    },
-    {
-      key: "exam",
-      label: "Exam",
-      render: (value: string) => <Badge variant="outline">{value}</Badge>,
-    },
-    {
-      key: "progress",
-      label: "Progress",
-      sortable: true,
-      render: (value: number, row: any) => {
-        if (row.role === "Teacher") {
-          return (
-            <div className="text-sm text-gray-500">{row.students} students</div>
-          );
-        }
-        return (
-          <div className="w-20">
-            <div className="text-sm font-medium mb-1">{value}%</div>
-            <Progress value={value} className="h-1" />
-          </div>
-        );
-      },
-    },
-    {
-      key: "accuracy",
-      label: "Accuracy",
-      sortable: true,
-      render: (value: number, row: any) => {
-        if (row.role === "Teacher") {
-          return <span className="text-sm text-gray-500">-</span>;
-        }
-        return (
-          <span
-            className={`font-medium ${
-              value >= 80
-                ? "text-green-600"
-                : value >= 70
-                ? "text-yellow-600"
-                : "text-red-600"
-            }`}
-          >
-            {value}%
-          </span>
-        );
-      },
     },
     {
       key: "status",
@@ -192,79 +130,167 @@ const AdminUsers = () => {
       render: (value: string) => (
         <Badge
           className={
-            value === "Active"
+            value === "active"
               ? "bg-green-100 text-green-800"
+              : value === "suspended"
+              ? "bg-red-100 text-red-800"
               : "bg-gray-100 text-gray-800"
           }
         >
-          {value}
+          {value.charAt(0).toUpperCase() + value.slice(1)}
         </Badge>
       ),
     },
     {
-      key: "last_active",
-      label: "Last Active",
+      key: "login_count",
+      label: "Logins",
+      sortable: true,
+      render: (value: number) => (
+        <span className="font-medium">{value.toLocaleString()}</span>
+      ),
+    },
+    {
+      key: "last_login",
+      label: "Last Login",
+      sortable: true,
+      render: (value: string | null) =>
+        value
+          ? formatDistanceToNow(new Date(value), { addSuffix: true })
+          : "Never",
+    },
+    {
+      key: "created_at",
+      label: "Created",
       sortable: true,
       render: (value: string) => new Date(value).toLocaleDateString(),
     },
   ];
 
   const handleAdd = () => {
+    setCreateForm({
+      name: "",
+      email: "",
+      password: "",
+      role: "student",
+      status: "active",
+    });
     setIsCreateDialogOpen(true);
   };
 
-  const handleEdit = (user: any) => {
+  const handleEdit = (user: AdminUserResponse) => {
     setSelectedUser(user);
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+    });
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (user: any) => {
-    toast({
-      title: "User deleted",
-      description: `${user.name} has been deleted successfully.`,
-    });
+  const handleDelete = (user: AdminUserResponse) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${user.name}? This action cannot be undone.`
+      )
+    ) {
+      deleteUserMutation.mutate(user.id);
+    }
   };
 
-  const handleView = (user: any) => {
+  const handleView = (user: AdminUserResponse) => {
     setSelectedUser(user);
     setIsViewDialogOpen(true);
   };
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "User created",
-      description: "New user has been created successfully.",
+    if (!createForm.name || !createForm.email || !createForm.password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    createUserMutation.mutate(createForm, {
+      onSuccess: () => {
+        setIsCreateDialogOpen(false);
+        setCreateForm({
+          name: "",
+          email: "",
+          password: "",
+          role: "student",
+          status: "active",
+        });
+      },
     });
-    setIsCreateDialogOpen(false);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "User updated",
-      description: "User has been updated successfully.",
-    });
-    setIsEditDialogOpen(false);
+    if (!selectedUser || !editForm.name || !editForm.email) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    updateUserMutation.mutate(
+      { userId: selectedUser.id, userData: editForm },
+      {
+        onSuccess: () => {
+          setIsEditDialogOpen(false);
+          setEditForm({});
+        },
+      }
+    );
   };
+
+  // Show error state if users fail to load
+  if (usersError) {
+    return (
+      <AdminLayout
+        title="User Management"
+        description="Manage student and teacher accounts, view progress, and monitor platform usage."
+      >
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load users. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout
       title="User Management"
       description="Manage student and teacher accounts, view progress, and monitor platform usage."
     >
-      <AdminDataTable
-        title="All Users"
-        description="View and manage all students and teachers on the platform"
-        data={users}
-        columns={columns}
-        searchPlaceholder="Search users..."
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onView={handleView}
-        addButtonText="Add User"
-      />
+      {usersLoading ? (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <Skeleton className="h-8 w-32" />
+              <Skeleton className="h-4 w-64 mt-2" />
+            </div>
+            <Skeleton className="h-10 w-24" />
+          </div>
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton key={index} className="h-16 w-full" />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <AdminDataTable
+          title="All Users"
+          description="View and manage all students and teachers on the platform"
+          data={users || []}
+          columns={columns}
+          searchPlaceholder="Search users..."
+          onAdd={handleAdd}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onView={handleView}
+          addButtonText="Add User"
+        />
+      )}
 
       {/* Create User Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -279,7 +305,15 @@ const AdminUsers = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="e.g., John Doe" required />
+                <Input
+                  id="name"
+                  placeholder="e.g., John Doe"
+                  value={createForm.name}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, name: e.target.value })
+                  }
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -287,53 +321,82 @@ const AdminUsers = () => {
                   id="email"
                   type="email"
                   placeholder="john.doe@email.com"
+                  value={createForm.email}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, email: e.target.value })
+                  }
                   required
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter password"
+                  value={createForm.password}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, password: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <Select>
+                <Select
+                  value={createForm.role}
+                  onValueChange={(value) =>
+                    setCreateForm({ ...createForm, role: value as any })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="student">Student</SelectItem>
                     <SelectItem value="teacher">Teacher</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="exam">Exam (for students)</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select exam" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sat">SAT</SelectItem>
-                    <SelectItem value="enem">ENEM</SelectItem>
-                    <SelectItem value="a-levels">A-levels</SelectItem>
-                    <SelectItem value="leaving-cert">
-                      Leaving Certificate
-                    </SelectItem>
-                    <SelectItem value="selectividad">Selectividad</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={createForm.status}
+                onValueChange={(value) =>
+                  setCreateForm({ ...createForm, status: value as any })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex justify-end space-x-2 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateDialogOpen(false)}
+                disabled={createUserMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                disabled={createUserMutation.isPending}
               >
+                {createUserMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Create User
               </Button>
             </div>
@@ -357,7 +420,10 @@ const AdminUsers = () => {
                   <Label htmlFor="edit-name">Full Name</Label>
                   <Input
                     id="edit-name"
-                    defaultValue={selectedUser.name}
+                    value={editForm.name || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, name: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -366,7 +432,10 @@ const AdminUsers = () => {
                   <Input
                     id="edit-email"
                     type="email"
-                    defaultValue={selectedUser.email}
+                    value={editForm.email || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -374,25 +443,43 @@ const AdminUsers = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-role">Role</Label>
-                  <Select defaultValue={selectedUser.role.toLowerCase()}>
+                  <Select
+                    value={editForm.role}
+                    onValueChange={(value) =>
+                      setEditForm({
+                        ...editForm,
+                        role: value as "student" | "teacher" | "admin",
+                      })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="student">Student</SelectItem>
                       <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-status">Status</Label>
-                  <Select defaultValue={selectedUser.status.toLowerCase()}>
+                  <Select
+                    value={editForm.status}
+                    onValueChange={(value) =>
+                      setEditForm({
+                        ...editForm,
+                        status: value as "active" | "inactive" | "suspended",
+                      })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="suspended">Suspended</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -402,13 +489,18 @@ const AdminUsers = () => {
                   type="button"
                   variant="outline"
                   onClick={() => setIsEditDialogOpen(false)}
+                  disabled={updateUserMutation.isPending}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                  disabled={updateUserMutation.isPending}
                 >
+                  {updateUserMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Update User
                 </Button>
               </div>
@@ -483,7 +575,7 @@ const AdminUsers = () => {
               </Card>
 
               {/* Progress (for students only) */}
-              {selectedUser.role === "Student" && (
+              {selectedUser.role === "student" && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
@@ -492,73 +584,122 @@ const AdminUsers = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-indigo-600 mb-1">
-                          {selectedUser.progress}%
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Overall Progress
-                        </div>
-                        <Progress
-                          value={selectedUser.progress}
-                          className="mt-2"
-                        />
+                    {progressLoading ? (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                          <div key={index} className="text-center space-y-2">
+                            <Skeleton className="h-8 w-16 mx-auto" />
+                            <Skeleton className="h-4 w-20 mx-auto" />
+                          </div>
+                        ))}
                       </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 mb-1">
-                          {selectedUser.questions_solved?.toLocaleString()}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Questions Solved
-                        </div>
+                    ) : userProgress && userProgress.length > 0 ? (
+                      <div className="space-y-4">
+                        {userProgress.map((progress, index) => (
+                          <div key={index} className="border rounded-lg p-4">
+                            <h4 className="font-medium mb-3">
+                              {progress.exam_name}
+                            </h4>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-indigo-600 mb-1">
+                                  {Math.round(progress.overall_progress)}%
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Overall Progress
+                                </div>
+                                <Progress
+                                  value={progress.overall_progress}
+                                  className="mt-2"
+                                />
+                              </div>
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-purple-600 mb-1">
+                                  {progress.questions_solved.toLocaleString()}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Questions Solved
+                                </div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-green-600 mb-1">
+                                  {Math.round(progress.accuracy_rate)}%
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Accuracy Rate
+                                </div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-2xl font-bold text-orange-600 mb-1">
+                                  {Math.round(progress.study_time_hours)}h
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Study Time
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600 mb-1">
-                          {selectedUser.accuracy}%
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Accuracy Rate
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-600 mb-1">
-                          {selectedUser.study_time}h
-                        </div>
-                        <div className="text-sm text-gray-600">Study Time</div>
-                      </div>
-                    </div>
+                    ) : (
+                      <p className="text-center text-gray-500">
+                        No progress data available
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               )}
 
-              {/* Teacher Info (for teachers only) */}
-              {selectedUser.role === "Teacher" && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Target className="h-5 w-5" />
-                      <span>Teaching Overview</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600 mb-1">
-                          {selectedUser.students}
-                        </div>
-                        <div className="text-sm text-gray-600">Students</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 mb-1">
-                          {selectedUser.classes}
-                        </div>
-                        <div className="text-sm text-gray-600">Classes</div>
-                      </div>
+              {/* Additional Info */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Clock className="h-5 w-5" />
+                    <span>Account Details</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">
+                        Member Since
+                      </Label>
+                      <p className="text-lg">
+                        {new Date(selectedUser.created_at).toLocaleDateString()}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">
+                        Last Login
+                      </Label>
+                      <p className="text-lg">
+                        {selectedUser.last_login
+                          ? formatDistanceToNow(
+                              new Date(selectedUser.last_login),
+                              { addSuffix: true }
+                            )
+                          : "Never"}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">
+                        Total Logins
+                      </Label>
+                      <p className="text-lg font-medium">
+                        {selectedUser.login_count.toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">
+                        Selected Exam
+                      </Label>
+                      <p className="text-lg">
+                        {selectedUser.selected_exam_id ? "Yes" : "None"}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
         </DialogContent>

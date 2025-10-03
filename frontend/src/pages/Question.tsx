@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,11 +31,19 @@ import type { AnswerResponse } from "@/lib/api";
 
 const Question = () => {
   const { examId, modeId } = useParams();
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
   const [answerResult, setAnswerResult] = useState<AnswerResponse | null>(null);
+  const [sessionStartTime] = useState(new Date());
+  const [answeredQuestions, setAnsweredQuestions] = useState<Array<{
+    questionIndex: number;
+    selectedAnswer: string;
+    correct: boolean;
+    timeSpent: number;
+  }>>([]);
 
   const { data: questions, isLoading } = useQuestions(examId, modeId);
   const submitAnswerMutation = useSubmitAnswer();
@@ -91,13 +99,27 @@ const Question = () => {
   const handleSubmitAnswer = async () => {
     if (!selectedAnswer || !currentQ) return;
 
+    const questionStartTime = Date.now();
+
     try {
       const result = await submitAnswerMutation.mutateAsync({
         questionId: currentQ.id,
         answer: selectedAnswer,
       });
 
+      const timeSpent = Date.now() - questionStartTime;
+      
+      // Track this answer
+      const answerRecord = {
+        questionIndex: currentQuestion,
+        selectedAnswer,
+        correct: result.correct,
+        timeSpent,
+      };
+      
+      setAnsweredQuestions(prev => [...prev, answerRecord]);
       setAnswerResult(result);
+      
       if (result.correct) {
         setScore(score + 1);
       }
@@ -113,13 +135,36 @@ const Question = () => {
 
   const handleNextQuestion = () => {
     if (currentQuestion < totalQuestions - 1) {
+      // Move to next question
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowExplanation(false);
+      setAnswerResult(null);
+    } else {
+      // Test is complete - redirect to results page
+      const sessionEndTime = new Date();
+      const totalTimeSpent = Math.floor((sessionEndTime.getTime() - sessionStartTime.getTime()) / 1000);
+      const minutes = Math.floor(totalTimeSpent / 60);
+      const seconds = totalTimeSpent % 60;
+      const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Calculate final score
+      const finalScore = score + (answerResult?.correct ? 1 : 0);
+      
+      // Redirect to results page with query parameters
+      const resultsParams = new URLSearchParams({
+        score: finalScore.toString(),
+        total: totalQuestions.toString(),
+        correct: finalScore.toString(),
+        time: timeString,
+      });
+      
+      navigate(`/results/${examId}/${modeId}?${resultsParams.toString()}`);
     }
   };
 
   const isCorrect = answerResult?.correct || false;
+  const isLastQuestion = currentQuestion >= totalQuestions - 1;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50">
@@ -263,13 +308,14 @@ const Question = () => {
               ) : (
                 <Button
                   onClick={handleNextQuestion}
-                  disabled={currentQuestion >= totalQuestions - 1}
                   size="lg"
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg px-8"
+                  className={`shadow-lg px-8 ${
+                    isLastQuestion
+                      ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                      : "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
+                  }`}
                 >
-                  {currentQuestion >= totalQuestions - 1
-                    ? "🎉 Complete"
-                    : "Next Question →"}
+                  {isLastQuestion ? "🎉 View Results" : "Next Question →"}
                 </Button>
               )}
             </div>

@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Practice from "./pages/Practice";
 import Question from "./pages/Question";
+import Results from "./pages/Results";
 import Solutions from "./pages/Solutions";
 import DemoLogin from "./pages/DemoLogin";
 import DemoPractice from "./pages/DemoPractice";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/practice" element={<Practice />} />
           <Route path="/question/:examId/:modeId" element={<Question />} />
+          <Route path="/results/:examId/:modeId" element={<Results />} />
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/demo-login" element={<DemoLogin />} />
           <Route path="/demo-practice" element={<DemoPractice />} />

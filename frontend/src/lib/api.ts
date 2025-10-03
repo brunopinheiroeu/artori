@@ -7,6 +7,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
   selected_exam_id?: string;
   created_at: string;
   updated_at: string;
@@ -108,10 +109,185 @@ export interface DashboardResponse {
   user_progress?: UserProgress;
 }
 
+// Admin-specific types
+export interface DashboardStats {
+  total_users: number;
+  active_users: number;
+  new_users_today: number;
+  total_exams: number;
+  total_questions: number;
+  total_subjects: number;
+  completion_rate: number;
+  average_accuracy: number;
+}
+
+export interface ActivityLog {
+  id: string;
+  admin_id: string;
+  action: string;
+  resource_type: string;
+  resource_id?: string;
+  details: Record<string, unknown>;
+  timestamp: string;
+  ip_address?: string;
+}
+
+export interface SystemHealth {
+  status: string;
+  uptime: string;
+  response_time: number;
+  error_rate: number;
+  active_connections: number;
+}
+
+export interface AdminUserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  selected_exam_id?: string;
+  created_at: string;
+  updated_at: string;
+  last_login?: string;
+  login_count: number;
+}
+
+export interface AdminUserCreate {
+  name: string;
+  email: string;
+  password: string;
+  role?: string;
+  status?: string;
+}
+
+export interface AdminUserUpdate {
+  name?: string;
+  email?: string;
+  role?: string;
+  status?: string;
+}
+
+export interface UserProgressDetail {
+  user_id: string;
+  exam_id: string;
+  exam_name: string;
+  overall_progress: number;
+  questions_solved: number;
+  accuracy_rate: number;
+  study_time_hours: number;
+  current_streak_days: number;
+  last_studied_date?: string;
+  subject_progress: SubjectProgress[];
+}
+
+export interface AdminExamCreate {
+  name: string;
+  country: string;
+  description: string;
+  status?: string;
+  gradient?: string;
+  borderColor?: string;
+  bgColor?: string;
+  flag?: string;
+}
+
+export interface AdminExamUpdate {
+  name?: string;
+  country?: string;
+  description?: string;
+  status?: string;
+  gradient?: string;
+  borderColor?: string;
+  bgColor?: string;
+  flag?: string;
+}
+
+export interface AdminQuestionResponse {
+  id: string;
+  subject_id: string;
+  question: string;
+  question_type: string;
+  difficulty: string;
+  options: Option[];
+  correct_answer: string;
+  explanation: Explanation;
+  tags: string[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}
+
+export interface AdminQuestionCreate {
+  question: string;
+  question_type?: string;
+  difficulty?: string;
+  options: Option[];
+  correct_answer: string;
+  explanation: Explanation;
+  tags?: string[];
+  status?: string;
+}
+
+export interface AdminQuestionUpdate {
+  question?: string;
+  question_type?: string;
+  difficulty?: string;
+  options?: Option[];
+  correct_answer?: string;
+  explanation?: Explanation;
+  tags?: string[];
+  status?: string;
+}
+
+export interface UserAnalytics {
+  total_users: number;
+  active_users: number;
+  new_registrations: number;
+  user_retention_rate: number;
+  geographic_distribution: Record<string, number>;
+  engagement_metrics: Record<string, number>;
+}
+
+export interface SystemSettings {
+  category: string;
+  settings: Record<string, unknown>;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface AdminProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+  phone?: string;
+  location?: string;
+  avatar?: string;
+  created_at: string;
+  updated_at: string;
+  last_login?: string;
+}
+
+export interface AdminProfileUpdate {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone?: string;
+  location?: string;
+}
+
+export interface PasswordChangeRequest {
+  current_password: string;
+  new_password: string;
+}
+
 // API Client class
 class ApiClient {
   private baseUrl: string;
-  private token: string | null = null;
+  public token: string | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -227,6 +403,233 @@ class ApiClient {
   // Health check
   async healthCheck(): Promise<{ status: string; database: string }> {
     return this.request<{ status: string; database: string }>("/healthz");
+  }
+
+  // Admin Dashboard methods
+  async getAdminDashboardStats(): Promise<DashboardStats> {
+    return this.request<DashboardStats>("/admin/dashboard/stats");
+  }
+
+  async getAdminActivityLogs(limit = 50, skip = 0): Promise<ActivityLog[]> {
+    return this.request<ActivityLog[]>(
+      `/admin/dashboard/activity?limit=${limit}&skip=${skip}`
+    );
+  }
+
+  async getSystemHealth(): Promise<SystemHealth> {
+    return this.request<SystemHealth>("/admin/dashboard/performance");
+  }
+
+  // Admin User Management methods
+  async getAdminUsers(params?: {
+    limit?: number;
+    skip?: number;
+    search?: string;
+    role?: string;
+    status?: string;
+  }): Promise<AdminUserResponse[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.skip) searchParams.append("skip", params.skip.toString());
+    if (params?.search) searchParams.append("search", params.search);
+    if (params?.role) searchParams.append("role", params.role);
+    if (params?.status) searchParams.append("status", params.status);
+
+    const queryString = searchParams.toString();
+    return this.request<AdminUserResponse[]>(
+      `/admin/users${queryString ? `?${queryString}` : ""}`
+    );
+  }
+
+  async createAdminUser(userData: AdminUserCreate): Promise<AdminUserResponse> {
+    return this.request<AdminUserResponse>("/admin/users", {
+      method: "POST",
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async getAdminUser(userId: string): Promise<AdminUserResponse> {
+    return this.request<AdminUserResponse>(`/admin/users/${userId}`);
+  }
+
+  async updateAdminUser(
+    userId: string,
+    userData: AdminUserUpdate
+  ): Promise<AdminUserResponse> {
+    return this.request<AdminUserResponse>(`/admin/users/${userId}`, {
+      method: "PUT",
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async deleteAdminUser(userId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/users/${userId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async getUserProgressDetail(userId: string): Promise<UserProgressDetail[]> {
+    return this.request<UserProgressDetail[]>(
+      `/admin/users/${userId}/progress`
+    );
+  }
+
+  // Admin Exam Management methods
+  async getAdminExams(params?: {
+    limit?: number;
+    skip?: number;
+    status?: string;
+  }): Promise<Exam[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.skip) searchParams.append("skip", params.skip.toString());
+    if (params?.status) searchParams.append("status", params.status);
+
+    const queryString = searchParams.toString();
+    return this.request<Exam[]>(
+      `/admin/exams${queryString ? `?${queryString}` : ""}`
+    );
+  }
+
+  async createAdminExam(examData: AdminExamCreate): Promise<Exam> {
+    return this.request<Exam>("/admin/exams", {
+      method: "POST",
+      body: JSON.stringify(examData),
+    });
+  }
+
+  async updateAdminExam(
+    examId: string,
+    examData: AdminExamUpdate
+  ): Promise<Exam> {
+    return this.request<Exam>(`/admin/exams/${examId}`, {
+      method: "PUT",
+      body: JSON.stringify(examData),
+    });
+  }
+
+  async deleteAdminExam(examId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/exams/${examId}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Admin Question Management methods
+  async getAdminQuestions(
+    subjectId: string,
+    params?: {
+      limit?: number;
+      skip?: number;
+      difficulty?: string;
+      status?: string;
+    }
+  ): Promise<AdminQuestionResponse[]> {
+    const searchParams = new URLSearchParams();
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.skip) searchParams.append("skip", params.skip.toString());
+    if (params?.difficulty)
+      searchParams.append("difficulty", params.difficulty);
+    if (params?.status) searchParams.append("status", params.status);
+
+    const queryString = searchParams.toString();
+    return this.request<AdminQuestionResponse[]>(
+      `/admin/subjects/${subjectId}/questions${
+        queryString ? `?${queryString}` : ""
+      }`
+    );
+  }
+
+  async createAdminQuestion(
+    subjectId: string,
+    questionData: AdminQuestionCreate
+  ): Promise<AdminQuestionResponse> {
+    return this.request<AdminQuestionResponse>(
+      `/admin/subjects/${subjectId}/questions`,
+      {
+        method: "POST",
+        body: JSON.stringify(questionData),
+      }
+    );
+  }
+
+  async updateAdminQuestion(
+    questionId: string,
+    questionData: AdminQuestionUpdate
+  ): Promise<AdminQuestionResponse> {
+    return this.request<AdminQuestionResponse>(
+      `/admin/questions/${questionId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(questionData),
+      }
+    );
+  }
+
+  async deleteAdminQuestion(questionId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/questions/${questionId}`, {
+      method: "DELETE",
+    });
+  }
+
+  // Admin Analytics methods
+  async getUserAnalytics(): Promise<UserAnalytics> {
+    return this.request<UserAnalytics>("/admin/analytics/users");
+  }
+
+  // Admin System Settings methods
+  async getSystemSettings(): Promise<SystemSettings[]> {
+    return this.request<SystemSettings[]>("/admin/system/settings");
+  }
+
+  async updateSystemSettings(
+    category: string,
+    settings: Record<string, unknown>
+  ): Promise<{ message: string }> {
+    return this.request<{ message: string }>(
+      `/admin/system/settings/${category}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(settings),
+      }
+    );
+  }
+
+  // Admin Profile Management methods
+  async getAdminProfile(): Promise<AdminProfile> {
+    return this.request<AdminProfile>("/admin/profile");
+  }
+
+  async updateAdminProfile(
+    profileData: AdminProfileUpdate
+  ): Promise<AdminProfile> {
+    return this.request<AdminProfile>("/admin/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+  }
+
+  async changeAdminPassword(
+    passwordData: PasswordChangeRequest
+  ): Promise<{ message: string }> {
+    return this.request<{ message: string }>("/admin/profile/password", {
+      method: "PUT",
+      body: JSON.stringify(passwordData),
+    });
+  }
+
+  // Helper method to check if user has admin role
+  async checkAdminRole(): Promise<boolean> {
+    try {
+      const user = await this.getCurrentUser();
+      return (
+        user &&
+        ["admin", "super_admin"].includes(
+          (user as User & { role?: string }).role || "student"
+        )
+      );
+    } catch {
+      return false;
+    }
   }
 }
 

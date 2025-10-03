@@ -26,6 +26,8 @@ export const useLogin = () => {
     onSuccess: () => {
       // Invalidate and refetch user data
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      // Invalidate admin users data to refresh last login times
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     },
   });
 };

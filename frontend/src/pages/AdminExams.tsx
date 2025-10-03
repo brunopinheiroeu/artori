@@ -21,138 +21,117 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, BookOpen, HelpCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
+import {
+  ArrowLeft,
+  Plus,
+  BookOpen,
+  HelpCircle,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import {
+  useAdminExams,
+  useCreateAdminExam,
+  useUpdateAdminExam,
+  useDeleteAdminExam,
+  useAdminQuestions,
+  useCreateAdminQuestion,
+  useUpdateAdminQuestion,
+  useDeleteAdminQuestion,
+} from "@/hooks/useAdminApi";
+import type {
+  Exam,
+  Subject,
+  AdminExamCreate,
+  AdminExamUpdate,
+  AdminQuestionResponse,
+  AdminQuestionCreate,
+  AdminQuestionUpdate,
+  Option,
+  Explanation,
+} from "@/lib/api";
+import { formatDistanceToNow } from "date-fns";
 
 const AdminExams = () => {
   const [currentView, setCurrentView] = useState<
     "exams" | "subjects" | "questions"
   >("exams");
-  const [selectedExam, setSelectedExam] = useState<any>(null);
-  const [selectedSubject, setSelectedSubject] = useState<any>(null);
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<
+    Exam | AdminQuestionResponse | null
+  >(null);
 
-  // Mock exam data
-  const exams = [
-    {
-      id: "1",
-      name: "SAT",
-      country: "USA",
-      description: "Scholastic Assessment Test",
-      subjects: 4,
-      questions: 1247,
-      status: "Active",
-      created_at: "2024-01-15",
-      flag: "🇺🇸",
+  // Form states
+  const [examForm, setExamForm] = useState<AdminExamCreate>({
+    name: "",
+    country: "",
+    description: "",
+    status: "draft",
+  });
+  const [questionForm, setQuestionForm] = useState<AdminQuestionCreate>({
+    question: "",
+    question_type: "multiple_choice",
+    difficulty: "medium",
+    options: [
+      { id: "A", text: "" },
+      { id: "B", text: "" },
+      { id: "C", text: "" },
+      { id: "D", text: "" },
+    ],
+    correct_answer: "",
+    explanation: {
+      reasoning: [""],
+      concept: "",
+      sources: [""],
+      bias_check: "",
+      reflection: "",
     },
-    {
-      id: "2",
-      name: "ENEM",
-      country: "Brazil",
-      description: "Exame Nacional do Ensino Médio",
-      subjects: 5,
-      questions: 892,
-      status: "Active",
-      created_at: "2024-01-20",
-      flag: "🇧🇷",
-    },
-    {
-      id: "3",
-      name: "A-levels",
-      country: "UK",
-      description: "Advanced Level Qualifications",
-      subjects: 6,
-      questions: 1456,
-      status: "Draft",
-      created_at: "2024-02-01",
-      flag: "🇬🇧",
-    },
-  ];
+    tags: [],
+    status: "draft",
+  });
 
-  // Mock subjects data
-  const subjects = [
-    {
-      id: "1",
-      name: "Evidence-Based Reading",
-      description: "Reading comprehension and vocabulary",
-      questions: 312,
-      duration: "65 minutes",
-      status: "Active",
-    },
-    {
-      id: "2",
-      name: "Writing and Language",
-      description: "Grammar, usage, and rhetoric",
-      questions: 278,
-      duration: "35 minutes",
-      status: "Active",
-    },
-    {
-      id: "3",
-      name: "Math (No Calculator)",
-      description: "Algebra and advanced math without calculator",
-      questions: 156,
-      duration: "25 minutes",
-      status: "Active",
-    },
-    {
-      id: "4",
-      name: "Math (Calculator)",
-      description: "Problem solving and data analysis",
-      questions: 501,
-      duration: "55 minutes",
-      status: "Active",
-    },
-  ];
+  // API hooks
+  const {
+    data: exams,
+    isLoading: examsLoading,
+    error: examsError,
+  } = useAdminExams();
 
-  // Mock questions data
-  const questions = [
-    {
-      id: "1",
-      question: "Which choice best describes the main purpose of the passage?",
-      type: "Multiple Choice",
-      difficulty: "Medium",
-      options: 4,
-      correct_answer: "B",
-      status: "Active",
-      created_at: "2024-01-15",
-    },
-    {
-      id: "2",
-      question: "The author uses the phrase 'turning point' primarily to...",
-      type: "Multiple Choice",
-      difficulty: "Hard",
-      options: 4,
-      correct_answer: "C",
-      status: "Active",
-      created_at: "2024-01-16",
-    },
-    {
-      id: "3",
-      question:
-        "Based on the passage, the relationship between X and Y can best be described as...",
-      type: "Multiple Choice",
-      difficulty: "Easy",
-      options: 4,
-      correct_answer: "A",
-      status: "Draft",
-      created_at: "2024-01-17",
-    },
-  ];
+  const {
+    data: questions,
+    isLoading: questionsLoading,
+    error: questionsError,
+  } = useAdminQuestions(selectedSubject?.id, {
+    limit: 100,
+  });
+
+  const createExamMutation = useCreateAdminExam();
+  const updateExamMutation = useUpdateAdminExam();
+  const deleteExamMutation = useDeleteAdminExam();
+  const createQuestionMutation = useCreateAdminQuestion();
+  const updateQuestionMutation = useUpdateAdminQuestion();
+  const deleteQuestionMutation = useDeleteAdminQuestion();
 
   // Exam columns
   const examColumns = [
     {
       key: "flag",
       label: "Flag",
-      render: (value: string) => <span className="text-2xl">{value}</span>,
+      render: (value: string) => (
+        <span className="text-2xl">{value || "🏳️"}</span>
+      ),
     },
     {
       key: "name",
       label: "Exam Name",
       sortable: true,
-      render: (value: string, row: any) => (
+      render: (value: string, row: Exam) => (
         <div>
           <div className="font-medium">{value}</div>
           <div className="text-sm text-gray-500">{row.country}</div>
@@ -172,16 +151,18 @@ const AdminExams = () => {
       key: "subjects",
       label: "Subjects",
       sortable: true,
-      render: (value: number) => (
-        <Badge variant="secondary">{value} subjects</Badge>
+      render: (value: Subject[], row: Exam) => (
+        <Badge variant="secondary">{row.subjects?.length || 0} subjects</Badge>
       ),
     },
     {
-      key: "questions",
+      key: "total_questions",
       label: "Questions",
       sortable: true,
       render: (value: number) => (
-        <Badge variant="outline">{value.toLocaleString()} questions</Badge>
+        <Badge variant="outline">
+          {(value || 0).toLocaleString()} questions
+        </Badge>
       ),
     },
     {
@@ -191,12 +172,14 @@ const AdminExams = () => {
       render: (value: string) => (
         <Badge
           className={
-            value === "Active"
+            value === "active"
               ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
+              : value === "draft"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-gray-100 text-gray-800"
           }
         >
-          {value}
+          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Unknown"}
         </Badge>
       ),
     },
@@ -220,32 +203,18 @@ const AdminExams = () => {
       ),
     },
     {
-      key: "questions",
+      key: "total_questions",
       label: "Questions",
       sortable: true,
       render: (value: number) => (
-        <Badge variant="outline">{value} questions</Badge>
+        <Badge variant="outline">{value || 0} questions</Badge>
       ),
     },
     {
       key: "duration",
       label: "Duration",
-      render: (value: string) => <Badge variant="secondary">{value}</Badge>,
-    },
-    {
-      key: "status",
-      label: "Status",
-      sortable: true,
       render: (value: string) => (
-        <Badge
-          className={
-            value === "Active"
-              ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
-          }
-        >
-          {value}
-        </Badge>
+        <Badge variant="secondary">{value || "N/A"}</Badge>
       ),
     },
   ];
@@ -262,9 +231,14 @@ const AdminExams = () => {
       ),
     },
     {
-      key: "type",
+      key: "question_type",
       label: "Type",
-      render: (value: string) => <Badge variant="outline">{value}</Badge>,
+      render: (value: string) => (
+        <Badge variant="outline">
+          {value?.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()) ||
+            "Multiple Choice"}
+        </Badge>
+      ),
     },
     {
       key: "difficulty",
@@ -273,21 +247,22 @@ const AdminExams = () => {
       render: (value: string) => (
         <Badge
           className={
-            value === "Easy"
+            value === "easy"
               ? "bg-green-100 text-green-800"
-              : value === "Medium"
+              : value === "medium"
               ? "bg-yellow-100 text-yellow-800"
               : "bg-red-100 text-red-800"
           }
         >
-          {value}
+          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Medium"}
         </Badge>
       ),
     },
     {
       key: "options",
       label: "Options",
-      render: (value: number) => `${value} options`,
+      render: (value: Option[], row: AdminQuestionResponse) =>
+        `${row.options?.length || 0} options`,
     },
     {
       key: "correct_answer",
@@ -303,55 +278,162 @@ const AdminExams = () => {
       render: (value: string) => (
         <Badge
           className={
-            value === "Active"
+            value === "active"
               ? "bg-green-100 text-green-800"
-              : "bg-yellow-100 text-yellow-800"
+              : value === "draft"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-gray-100 text-gray-800"
           }
         >
-          {value}
+          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Draft"}
         </Badge>
       ),
     },
+    {
+      key: "created_at",
+      label: "Created",
+      sortable: true,
+      render: (value: string) =>
+        formatDistanceToNow(new Date(value), { addSuffix: true }),
+    },
   ];
 
-  const handleExamView = (exam: any) => {
+  const handleExamView = (exam: Exam) => {
     setSelectedExam(exam);
     setCurrentView("subjects");
   };
 
-  const handleSubjectView = (subject: any) => {
+  const handleSubjectView = (subject: Subject) => {
     setSelectedSubject(subject);
     setCurrentView("questions");
   };
 
   const handleAdd = () => {
+    if (currentView === "exams") {
+      setExamForm({
+        name: "",
+        country: "",
+        description: "",
+        status: "draft",
+      });
+    } else if (currentView === "questions") {
+      setQuestionForm({
+        question: "",
+        question_type: "multiple_choice",
+        difficulty: "medium",
+        options: [
+          { id: "A", text: "" },
+          { id: "B", text: "" },
+          { id: "C", text: "" },
+          { id: "D", text: "" },
+        ],
+        correct_answer: "",
+        explanation: {
+          reasoning: [""],
+          concept: "",
+          sources: [""],
+          bias_check: "",
+          reflection: "",
+        },
+        tags: [],
+        status: "draft",
+      });
+    }
     setIsCreateDialogOpen(true);
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: Exam | AdminQuestionResponse) => {
+    setEditingItem(item);
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (item: any) => {
-    toast({
-      title: `${currentView.slice(0, -1)} deleted`,
-      description: `${
-        item.name || item.question
-      } has been deleted successfully.`,
-    });
+  const handleDelete = (item: Exam | AdminQuestionResponse) => {
+    const itemName =
+      "name" in item ? item.name : item.question.substring(0, 50) + "...";
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
+      )
+    ) {
+      if (currentView === "exams" && "name" in item) {
+        deleteExamMutation.mutate(item.id);
+      } else if (currentView === "questions" && "question" in item) {
+        deleteQuestionMutation.mutate(item.id);
+      }
+    }
   };
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: `${currentView.slice(0, -1)} created`,
-      description: `New ${currentView.slice(
-        0,
-        -1
-      )} has been created successfully.`,
-    });
-    setIsCreateDialogOpen(false);
+    if (currentView === "exams") {
+      if (!examForm.name || !examForm.country || !examForm.description) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+      createExamMutation.mutate(examForm, {
+        onSuccess: () => {
+          setIsCreateDialogOpen(false);
+          setExamForm({
+            name: "",
+            country: "",
+            description: "",
+            status: "draft",
+          });
+        },
+      });
+    } else if (currentView === "questions" && selectedSubject) {
+      if (!questionForm.question || !questionForm.correct_answer) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+      createQuestionMutation.mutate(
+        { subjectId: selectedSubject.id, questionData: questionForm },
+        {
+          onSuccess: () => {
+            setIsCreateDialogOpen(false);
+            setQuestionForm({
+              question: "",
+              question_type: "multiple_choice",
+              difficulty: "medium",
+              options: [
+                { id: "A", text: "" },
+                { id: "B", text: "" },
+                { id: "C", text: "" },
+                { id: "D", text: "" },
+              ],
+              correct_answer: "",
+              explanation: {
+                reasoning: [""],
+                concept: "",
+                sources: [""],
+                bias_check: "",
+                reflection: "",
+              },
+              tags: [],
+              status: "draft",
+            });
+          },
+        }
+      );
+    }
   };
+
+  // Show error state if exams fail to load
+  if (examsError) {
+    return (
+      <AdminLayout
+        title="Exam Management"
+        description="Create, edit, and manage exams across different countries and educational systems."
+      >
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load exams. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
+      </AdminLayout>
+    );
+  }
 
   const renderBreadcrumb = () => (
     <div className="flex items-center space-x-2 mb-6">
@@ -412,25 +494,44 @@ const AdminExams = () => {
       {currentView !== "exams" && renderBreadcrumb()}
 
       {currentView === "exams" && (
-        <AdminDataTable
-          title="All Exams"
-          description="Manage exams, subjects, and questions for your platform"
-          data={exams}
-          columns={examColumns}
-          searchPlaceholder="Search exams..."
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onView={handleExamView}
-          addButtonText="Create Exam"
-        />
+        <>
+          {examsLoading ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-4 w-64 mt-2" />
+                </div>
+                <Skeleton className="h-10 w-24" />
+              </div>
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Skeleton key={index} className="h-16 w-full" />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <AdminDataTable
+              title="All Exams"
+              description="Manage exams, subjects, and questions for your platform"
+              data={exams || []}
+              columns={examColumns}
+              searchPlaceholder="Search exams..."
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onView={handleExamView}
+              addButtonText="Create Exam"
+            />
+          )}
+        </>
       )}
 
-      {currentView === "subjects" && (
+      {currentView === "subjects" && selectedExam && (
         <AdminDataTable
-          title={`${selectedExam?.name} Subjects`}
-          description={`Manage subjects for ${selectedExam?.name} exam`}
-          data={subjects}
+          title={`${selectedExam.name} Subjects`}
+          description={`Manage subjects for ${selectedExam.name} exam`}
+          data={selectedExam.subjects || []}
           columns={subjectColumns}
           searchPlaceholder="Search subjects..."
           onAdd={handleAdd}
@@ -441,18 +542,44 @@ const AdminExams = () => {
         />
       )}
 
-      {currentView === "questions" && (
-        <AdminDataTable
-          title={`${selectedSubject?.name} Questions`}
-          description={`Manage questions for ${selectedSubject?.name} subject`}
-          data={questions}
-          columns={questionColumns}
-          searchPlaceholder="Search questions..."
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          addButtonText="Add Question"
-        />
+      {currentView === "questions" && selectedSubject && (
+        <>
+          {questionsLoading ? (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-4 w-64 mt-2" />
+                </div>
+                <Skeleton className="h-10 w-24" />
+              </div>
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Skeleton key={index} className="h-16 w-full" />
+                ))}
+              </div>
+            </div>
+          ) : questionsError ? (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Failed to load questions. Please try refreshing the page.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <AdminDataTable
+              title={`${selectedSubject.name} Questions`}
+              description={`Manage questions for ${selectedSubject.name} subject`}
+              data={questions || []}
+              columns={questionColumns}
+              searchPlaceholder="Search questions..."
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              addButtonText="Add Question"
+            />
+          )}
+        </>
       )}
 
       {/* Create Dialog */}
@@ -477,11 +604,27 @@ const AdminExams = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Exam Name</Label>
-                    <Input id="name" placeholder="e.g., SAT" required />
+                    <Input
+                      id="name"
+                      placeholder="e.g., SAT"
+                      value={examForm.name}
+                      onChange={(e) =>
+                        setExamForm({ ...examForm, name: e.target.value })
+                      }
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="country">Country</Label>
-                    <Input id="country" placeholder="e.g., USA" required />
+                    <Input
+                      id="country"
+                      placeholder="e.g., USA"
+                      value={examForm.country}
+                      onChange={(e) =>
+                        setExamForm({ ...examForm, country: e.target.value })
+                      }
+                      required
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -489,62 +632,43 @@ const AdminExams = () => {
                   <Textarea
                     id="description"
                     placeholder="Brief description of the exam"
+                    value={examForm.description}
+                    onChange={(e) =>
+                      setExamForm({ ...examForm, description: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="flag">Flag Emoji</Label>
-                    <Input id="flag" placeholder="🇺🇸" />
+                    <Input
+                      id="flag"
+                      placeholder="🇺🇸"
+                      value={examForm.flag || ""}
+                      onChange={(e) =>
+                        setExamForm({ ...examForm, flag: e.target.value })
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="status">Status</Label>
-                    <Select>
+                    <Select
+                      value={examForm.status}
+                      onValueChange={(value) =>
+                        setExamForm({
+                          ...examForm,
+                          status: value as "active" | "draft" | "archived",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="active">Active</SelectItem>
                         <SelectItem value="draft">Draft</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {currentView === "subjects" && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="subject-name">Subject Name</Label>
-                  <Input
-                    id="subject-name"
-                    placeholder="e.g., Mathematics"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subject-description">Description</Label>
-                  <Textarea
-                    id="subject-description"
-                    placeholder="Brief description of the subject"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="duration">Duration</Label>
-                    <Input id="duration" placeholder="e.g., 60 minutes" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="subject-status">Status</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -559,22 +683,40 @@ const AdminExams = () => {
                   <Textarea
                     id="question-text"
                     placeholder="Enter the question text"
+                    value={questionForm.question}
+                    onChange={(e) =>
+                      setQuestionForm({
+                        ...questionForm,
+                        question: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="question-type">Type</Label>
-                    <Select>
+                    <Select
+                      value={questionForm.question_type}
+                      onValueChange={(value) =>
+                        setQuestionForm({
+                          ...questionForm,
+                          question_type: value as
+                            | "multiple_choice"
+                            | "true_false"
+                            | "short_answer",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="multiple-choice">
+                        <SelectItem value="multiple_choice">
                           Multiple Choice
                         </SelectItem>
-                        <SelectItem value="true-false">True/False</SelectItem>
-                        <SelectItem value="short-answer">
+                        <SelectItem value="true_false">True/False</SelectItem>
+                        <SelectItem value="short_answer">
                           Short Answer
                         </SelectItem>
                       </SelectContent>
@@ -582,7 +724,15 @@ const AdminExams = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="difficulty">Difficulty</Label>
-                    <Select>
+                    <Select
+                      value={questionForm.difficulty}
+                      onValueChange={(value) =>
+                        setQuestionForm({
+                          ...questionForm,
+                          difficulty: value as "easy" | "medium" | "hard",
+                        })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select difficulty" />
                       </SelectTrigger>
@@ -594,9 +744,96 @@ const AdminExams = () => {
                     </Select>
                   </div>
                 </div>
+
+                {/* Options */}
+                <div className="space-y-2">
+                  <Label>Answer Options</Label>
+                  {questionForm.options.map((option, index) => (
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2"
+                    >
+                      <Label className="w-8">{option.id}:</Label>
+                      <Input
+                        placeholder={`Option ${option.id}`}
+                        value={option.text}
+                        onChange={(e) => {
+                          const newOptions = [...questionForm.options];
+                          newOptions[index] = {
+                            ...option,
+                            text: e.target.value,
+                          };
+                          setQuestionForm({
+                            ...questionForm,
+                            options: newOptions,
+                          });
+                        }}
+                        required
+                      />
+                    </div>
+                  ))}
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="correct-answer">Correct Answer</Label>
-                  <Input id="correct-answer" placeholder="e.g., A" required />
+                  <Select
+                    value={questionForm.correct_answer}
+                    onValueChange={(value) =>
+                      setQuestionForm({
+                        ...questionForm,
+                        correct_answer: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select correct answer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {questionForm.options.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.id} - {option.text || "Empty option"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="explanation-concept">
+                    Explanation Concept
+                  </Label>
+                  <Input
+                    id="explanation-concept"
+                    placeholder="Main concept being tested"
+                    value={questionForm.explanation.concept}
+                    onChange={(e) =>
+                      setQuestionForm({
+                        ...questionForm,
+                        explanation: {
+                          ...questionForm.explanation,
+                          concept: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="explanation-reasoning">Reasoning</Label>
+                  <Textarea
+                    id="explanation-reasoning"
+                    placeholder="Explain why this is the correct answer"
+                    value={questionForm.explanation.reasoning[0] || ""}
+                    onChange={(e) =>
+                      setQuestionForm({
+                        ...questionForm,
+                        explanation: {
+                          ...questionForm.explanation,
+                          reasoning: [e.target.value],
+                        },
+                      })
+                    }
+                  />
                 </div>
               </>
             )}
@@ -606,13 +843,25 @@ const AdminExams = () => {
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateDialogOpen(false)}
+                disabled={
+                  createExamMutation.isPending ||
+                  createQuestionMutation.isPending
+                }
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                disabled={
+                  createExamMutation.isPending ||
+                  createQuestionMutation.isPending
+                }
               >
+                {(createExamMutation.isPending ||
+                  createQuestionMutation.isPending) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Create{" "}
                 {currentView === "exams"
                   ? "Exam"

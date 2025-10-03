@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin, useSignup } from "@/hooks/useApi";
+import { apiClient, type User } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 
 // Password validation functions
@@ -81,12 +82,71 @@ const Login = () => {
     try {
       if (isLogin) {
         // Login logic
-        await loginMutation.mutateAsync({ email, password });
-        toast({
-          title: "Login successful",
-          description: "Welcome back!",
+        const authResponse = await loginMutation.mutateAsync({
+          email,
+          password,
         });
-        navigate("/practice");
+
+        // Ensure the API client has the new token
+        apiClient.token = authResponse.access_token;
+
+        // Add a small delay to ensure token is properly set
+        await new Promise((resolve) => setTimeout(resolve, 200));
+
+        // Check user role and redirect accordingly
+        try {
+          // Add a longer delay to ensure token is properly set
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          const user = await apiClient.getCurrentUser();
+          console.log("User data after login:", user); // Debug log
+          const userRole = user?.role || "student";
+          console.log("User role:", userRole); // Debug log
+
+          if (["admin", "super_admin"].includes(userRole)) {
+            toast({
+              title: "Admin login successful",
+              description: "Welcome to the admin panel!",
+            });
+            navigate("/admin");
+          } else {
+            toast({
+              title: "Login successful",
+              description: "Welcome back!",
+            });
+            navigate("/practice");
+          }
+        } catch (roleError) {
+          console.error("Role check failed:", roleError);
+          // Try one more time with a longer delay
+          try {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const user = await apiClient.getCurrentUser();
+            const userRole = user?.role || "student";
+
+            if (["admin", "super_admin"].includes(userRole)) {
+              toast({
+                title: "Admin login successful",
+                description: "Welcome to the admin panel!",
+              });
+              navigate("/admin");
+            } else {
+              toast({
+                title: "Login successful",
+                description: "Welcome back!",
+              });
+              navigate("/practice");
+            }
+          } catch (finalError) {
+            console.error("Final role check failed:", finalError);
+            // Final fallback to practice page
+            toast({
+              title: "Login successful",
+              description: "Welcome back!",
+            });
+            navigate("/practice");
+          }
+        }
       } else {
         // Signup logic
         if (!name.trim()) {
