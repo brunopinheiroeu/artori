@@ -159,6 +159,7 @@ const Question = () => {
         time: timeString,
       });
       
+      console.log('Redirecting to results with params:', resultsParams.toString());
       navigate(`/results/${examId}/${modeId}?${resultsParams.toString()}`);
     }
   };
