@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Brain,
   ArrowLeft,
   Building2,
   Users,
@@ -114,12 +113,7 @@ const Solutions = () => {
         <nav className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <ArrowLeft className="h-5 w-5 text-gray-600" />
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              artori.app
-            </span>
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
           </Link>
 
           <div className="flex items-center space-x-4">
@@ -473,11 +467,9 @@ const Solutions = () => {
       <footer className="container mx-auto px-4 py-12 border-t border-white/20">
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-              <Brain className="h-5 w-5 text-white" />
-            </div>
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              artori.app for Schools
+              for Schools
             </span>
           </div>
           <p className="text-gray-500">

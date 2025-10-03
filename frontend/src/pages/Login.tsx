@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Brain,
   ArrowLeft,
   Mail,
   Lock,
@@ -193,12 +192,7 @@ const Login = () => {
       <div className="absolute top-6 left-6">
         <Link to="/" className="flex items-center space-x-2">
           <ArrowLeft className="h-5 w-5" />
-          <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-            <Brain className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            artori.app
-          </span>
+          <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
         </Link>
       </div>
 
@@ -221,7 +215,11 @@ const Login = () => {
           <Card className="relative z-10 backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
             <CardHeader className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <Brain className="h-8 w-8 text-white" />
+                <img
+                  src="/artori-logo.png"
+                  alt="Artori"
+                  className="h-10 w-auto rounded-full"
+                />
               </div>
               <CardTitle className="text-2xl font-bold">
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">

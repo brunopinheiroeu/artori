@@ -38,12 +38,14 @@ const Question = () => {
   const [score, setScore] = useState(0);
   const [answerResult, setAnswerResult] = useState<AnswerResponse | null>(null);
   const [sessionStartTime] = useState(new Date());
-  const [answeredQuestions, setAnsweredQuestions] = useState<Array<{
-    questionIndex: number;
-    selectedAnswer: string;
-    correct: boolean;
-    timeSpent: number;
-  }>>([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    Array<{
+      questionIndex: number;
+      selectedAnswer: string;
+      correct: boolean;
+      timeSpent: number;
+    }>
+  >([]);
 
   const { data: questions, isLoading } = useQuestions(examId, modeId);
   const submitAnswerMutation = useSubmitAnswer();
@@ -108,7 +110,7 @@ const Question = () => {
       });
 
       const timeSpent = Date.now() - questionStartTime;
-      
+
       // Track this answer
       const answerRecord = {
         questionIndex: currentQuestion,
@@ -116,10 +118,10 @@ const Question = () => {
         correct: result.correct,
         timeSpent,
       };
-      
-      setAnsweredQuestions(prev => [...prev, answerRecord]);
+
+      setAnsweredQuestions((prev) => [...prev, answerRecord]);
       setAnswerResult(result);
-      
+
       if (result.correct) {
         setScore(score + 1);
       }
@@ -143,14 +145,16 @@ const Question = () => {
     } else {
       // Test is complete - redirect to results page
       const sessionEndTime = new Date();
-      const totalTimeSpent = Math.floor((sessionEndTime.getTime() - sessionStartTime.getTime()) / 1000);
+      const totalTimeSpent = Math.floor(
+        (sessionEndTime.getTime() - sessionStartTime.getTime()) / 1000
+      );
       const minutes = Math.floor(totalTimeSpent / 60);
       const seconds = totalTimeSpent % 60;
-      const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      
+      const timeString = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
       // Calculate final score
       const finalScore = score + (answerResult?.correct ? 1 : 0);
-      
+
       // Redirect to results page with query parameters
       const resultsParams = new URLSearchParams({
         score: finalScore.toString(),
@@ -158,8 +162,11 @@ const Question = () => {
         correct: finalScore.toString(),
         time: timeString,
       });
-      
-      console.log('Redirecting to results with params:', resultsParams.toString());
+
+      console.log(
+        "Redirecting to results with params:",
+        resultsParams.toString()
+      );
       navigate(`/results/${examId}/${modeId}?${resultsParams.toString()}`);
     }
   };
@@ -174,12 +181,7 @@ const Question = () => {
         <nav className="flex items-center justify-between">
           <Link to="/practice" className="flex items-center space-x-2">
             <ArrowLeft className="h-5 w-5" />
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              artori.app
-            </span>
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center space-x-4">
             <Link

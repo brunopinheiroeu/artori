@@ -45,24 +45,36 @@ const Results = () => {
   const { examId, subjectId } = useParams();
   const [searchParams] = useSearchParams();
   const { data: exam } = useExam(examId);
-  
+
   // Get results from URL params (in a real app, this would come from the backend)
   const score = parseInt(searchParams.get("score") || "0");
   const totalQuestions = parseInt(searchParams.get("total") || "0");
   const timeSpent = searchParams.get("time") || "0:00";
   const correctAnswers = parseInt(searchParams.get("correct") || "0");
   const incorrectAnswers = totalQuestions - correctAnswers;
-  
-  const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-  
+
+  const percentage =
+    totalQuestions > 0
+      ? Math.round((correctAnswers / totalQuestions) * 100)
+      : 0;
+
   // Mock detailed results data (in a real app, this would come from the backend)
   const [detailedResults] = useState({
     sessionId: "session_123",
     startTime: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
     endTime: new Date(),
-    subject: exam?.subjects?.find(s => s.id === subjectId)?.name || "Subject",
+    subject: exam?.subjects?.find((s) => s.id === subjectId)?.name || "Subject",
     performance: {
-      grade: percentage >= 90 ? "A" : percentage >= 80 ? "B" : percentage >= 70 ? "C" : percentage >= 60 ? "D" : "F",
+      grade:
+        percentage >= 90
+          ? "A"
+          : percentage >= 80
+          ? "B"
+          : percentage >= 70
+          ? "C"
+          : percentage >= 60
+          ? "D"
+          : "F",
       percentile: Math.min(95, percentage + Math.floor(Math.random() * 10)),
       improvement: Math.floor(Math.random() * 15) + 5,
     },
@@ -78,7 +90,8 @@ const Results = () => {
         question: "What is the derivative of f(x) = x² + 3x - 2?",
         yourAnswer: "2x + 3",
         correctAnswer: "2x + 3",
-        explanation: "The derivative of x² is 2x, the derivative of 3x is 3, and the derivative of a constant is 0.",
+        explanation:
+          "The derivative of x² is 2x, the derivative of 3x is 3, and the derivative of a constant is 0.",
         topic: "Calculus",
         difficulty: "Medium",
         wasCorrect: true,
@@ -88,7 +101,8 @@ const Results = () => {
         question: "Solve for x: 2x + 5 = 13",
         yourAnswer: "x = 3",
         correctAnswer: "x = 4",
-        explanation: "To solve 2x + 5 = 13, subtract 5 from both sides to get 2x = 8, then divide by 2 to get x = 4.",
+        explanation:
+          "To solve 2x + 5 = 13, subtract 5 from both sides to get 2x = 8, then divide by 2 to get x = 4.",
         topic: "Algebra",
         difficulty: "Easy",
         wasCorrect: false,
@@ -98,7 +112,8 @@ const Results = () => {
         question: "What is the area of a circle with radius 5?",
         yourAnswer: "25π",
         correctAnswer: "25π",
-        explanation: "The area of a circle is πr². With radius 5, the area is π × 5² = 25π.",
+        explanation:
+          "The area of a circle is πr². With radius 5, the area is π × 5² = 25π.",
         topic: "Geometry",
         difficulty: "Easy",
         wasCorrect: true,
@@ -108,7 +123,8 @@ const Results = () => {
         question: "Find the mean of the dataset: 2, 4, 6, 8, 10",
         yourAnswer: "5",
         correctAnswer: "6",
-        explanation: "To find the mean, add all values (2+4+6+8+10 = 30) and divide by the number of values (5). Mean = 30/5 = 6.",
+        explanation:
+          "To find the mean, add all values (2+4+6+8+10 = 30) and divide by the number of values (5). Mean = 30/5 = 6.",
         topic: "Statistics",
         difficulty: "Easy",
         wasCorrect: false,
@@ -117,7 +133,8 @@ const Results = () => {
     recommendations: [
       {
         area: "Algebra",
-        suggestion: "Focus on solving linear equations and practice more word problems",
+        suggestion:
+          "Focus on solving linear equations and practice more word problems",
         priority: "High",
         estimatedTime: "2-3 hours",
       },
@@ -129,7 +146,8 @@ const Results = () => {
       },
       {
         area: "Problem Solving",
-        suggestion: "Practice reading questions more carefully to avoid calculation errors",
+        suggestion:
+          "Practice reading questions more carefully to avoid calculation errors",
         priority: "Medium",
         estimatedTime: "1 hour",
       },
@@ -148,16 +166,21 @@ const Results = () => {
     if (percentage >= 90) return "Excellent work! You've mastered this topic.";
     if (percentage >= 80) return "Great job! You're doing very well.";
     if (percentage >= 70) return "Good work! Keep practicing to improve.";
-    if (percentage >= 60) return "You're on the right track. Focus on weak areas.";
+    if (percentage >= 60)
+      return "You're on the right track. Focus on weak areas.";
     return "Keep studying! Review the fundamentals and try again.";
   };
 
   const getGradeIcon = (grade: string) => {
     switch (grade) {
-      case "A": return <Trophy className="h-8 w-8 text-yellow-500" />;
-      case "B": return <Award className="h-8 w-8 text-blue-500" />;
-      case "C": return <Target className="h-8 w-8 text-green-500" />;
-      default: return <BookOpen className="h-8 w-8 text-gray-500" />;
+      case "A":
+        return <Trophy className="h-8 w-8 text-yellow-500" />;
+      case "B":
+        return <Award className="h-8 w-8 text-blue-500" />;
+      case "C":
+        return <Target className="h-8 w-8 text-green-500" />;
+      default:
+        return <BookOpen className="h-8 w-8 text-gray-500" />;
     }
   };
 
@@ -168,12 +191,7 @@ const Results = () => {
         <nav className="flex items-center justify-between">
           <Link to="/practice" className="flex items-center space-x-2">
             <ArrowLeft className="h-5 w-5" />
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              artori.app
-            </span>
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center space-x-4">
             <Button variant="outline" size="sm">
@@ -199,7 +217,9 @@ const Results = () => {
               </Badge>
             </div>
             <h1 className="text-5xl font-bold mb-4">
-              <span className={`bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent`}>
+              <span
+                className={`bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent`}
+              >
                 Your Results
               </span>
             </h1>
@@ -227,7 +247,7 @@ const Results = () => {
             trend={{
               value: `${percentage}% accuracy`,
               icon: TrendingUp,
-              color: "text-green-600"
+              color: "text-green-600",
             }}
           />
           <StatCard
@@ -274,8 +294,10 @@ const Results = () => {
                       <span className="text-sm text-gray-600">
                         {topic.correct}/{topic.total}
                       </span>
-                      <Badge 
-                        className={`${getPerformanceColor(topic.percentage)} bg-transparent border`}
+                      <Badge
+                        className={`${getPerformanceColor(
+                          topic.percentage
+                        )} bg-transparent border`}
                         variant="outline"
                       >
                         {topic.percentage}%
@@ -301,11 +323,16 @@ const Results = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {detailedResults.recommendations.map((rec, index) => (
-                <div key={index} className="p-4 bg-white/40 rounded-lg border border-white/20">
+                <div
+                  key={index}
+                  className="p-4 bg-white/40 rounded-lg border border-white/20"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium">{rec.area}</h4>
-                    <Badge 
-                      variant={rec.priority === "High" ? "destructive" : "secondary"}
+                    <Badge
+                      variant={
+                        rec.priority === "High" ? "destructive" : "secondary"
+                      }
                       className="text-xs"
                     >
                       {rec.priority} Priority
@@ -345,17 +372,21 @@ const Results = () => {
                         <XCircle className="h-5 w-5 text-red-500" />
                       )}
                       <div>
-                        <span className="font-medium">Question {mistake.questionNumber}</span>
+                        <span className="font-medium">
+                          Question {mistake.questionNumber}
+                        </span>
                         <div className="flex items-center space-x-2 mt-1">
                           <Badge variant="outline" className="text-xs">
                             {mistake.topic}
                           </Badge>
-                          <Badge 
-                            variant="outline" 
+                          <Badge
+                            variant="outline"
                             className={`text-xs ${
-                              mistake.difficulty === "Easy" ? "border-green-500 text-green-600" :
-                              mistake.difficulty === "Medium" ? "border-yellow-500 text-yellow-600" :
-                              "border-red-500 text-red-600"
+                              mistake.difficulty === "Easy"
+                                ? "border-green-500 text-green-600"
+                                : mistake.difficulty === "Medium"
+                                ? "border-yellow-500 text-yellow-600"
+                                : "border-red-500 text-red-600"
                             }`}
                           >
                             {mistake.difficulty}
@@ -370,11 +401,15 @@ const Results = () => {
                         <h4 className="font-medium mb-2">Question:</h4>
                         <p className="text-gray-700">{mistake.question}</p>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className={`p-4 rounded-lg border-2 ${
-                          mistake.wasCorrect ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"
-                        }`}>
+                        <div
+                          className={`p-4 rounded-lg border-2 ${
+                            mistake.wasCorrect
+                              ? "border-green-200 bg-green-50"
+                              : "border-red-200 bg-red-50"
+                          }`}
+                        >
                           <h4 className="font-medium mb-2 flex items-center">
                             {mistake.wasCorrect ? (
                               <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
@@ -383,20 +418,28 @@ const Results = () => {
                             )}
                             Your Answer:
                           </h4>
-                          <p className={mistake.wasCorrect ? "text-green-700" : "text-red-700"}>
+                          <p
+                            className={
+                              mistake.wasCorrect
+                                ? "text-green-700"
+                                : "text-red-700"
+                            }
+                          >
                             {mistake.yourAnswer}
                           </p>
                         </div>
-                        
+
                         <div className="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
                           <h4 className="font-medium mb-2 flex items-center">
                             <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                             Correct Answer:
                           </h4>
-                          <p className="text-green-700">{mistake.correctAnswer}</p>
+                          <p className="text-green-700">
+                            {mistake.correctAnswer}
+                          </p>
                         </div>
                       </div>
-                      
+
                       <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
                         <h4 className="font-medium mb-2 flex items-center">
                           <Brain className="h-4 w-4 text-blue-500 mr-2" />
@@ -415,8 +458,8 @@ const Results = () => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to={`/question/${examId}/${subjectId}`}>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg px-8"
             >
               <RefreshCw className="h-5 w-5 mr-2" />
@@ -424,18 +467,18 @@ const Results = () => {
             </Button>
           </Link>
           <Link to="/practice">
-            <Button 
-              size="lg" 
-              variant="outline" 
+            <Button
+              size="lg"
+              variant="outline"
               className="border-2 border-indigo-200 hover:bg-indigo-50 px-8"
             >
               <BookOpen className="h-5 w-5 mr-2" />
               Back to Dashboard
             </Button>
           </Link>
-          <Button 
-            size="lg" 
-            variant="outline" 
+          <Button
+            size="lg"
+            variant="outline"
             className="border-2 border-green-200 hover:bg-green-50 px-8"
           >
             <Star className="h-5 w-5 mr-2" />

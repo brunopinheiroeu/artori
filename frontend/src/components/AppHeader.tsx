@@ -28,21 +28,25 @@ const AppHeader = ({
     <header className="container mx-auto px-4 py-6">
       <nav className="flex items-center justify-between">
         <Link to={backLink} className="flex items-center space-x-2">
-          <div
-            className={`p-2 rounded-xl bg-gradient-to-r ${logoGradient} shadow-lg`}
-          >
-            <LogoIcon className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <span
-              className={`text-2xl font-bold bg-gradient-to-r ${textGradient} bg-clip-text text-transparent`}
-            >
-              {brandName}
-            </span>
-            {isSchool && (
-              <p className="text-xs text-gray-500">Powered by artori.app</p>
-            )}
-          </div>
+          {isSchool ? (
+            <>
+              <div
+                className={`p-2 rounded-xl bg-gradient-to-r ${logoGradient} shadow-lg`}
+              >
+                <LogoIcon className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <span
+                  className={`text-2xl font-bold bg-gradient-to-r ${textGradient} bg-clip-text text-transparent`}
+                >
+                  {brandName}
+                </span>
+                <p className="text-xs text-gray-500">Powered by artori.app</p>
+              </div>
+            </>
+          ) : (
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+          )}
         </Link>
 
         {children && (

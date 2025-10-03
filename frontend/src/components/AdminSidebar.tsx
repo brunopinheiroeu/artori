@@ -136,13 +136,8 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center px-6 py-6 border-b border-slate-700">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg">
-              <Shield className="h-6 w-6 text-white" />
-            </div>
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <div className="ml-3">
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                artori.app
-              </span>
               <p className="text-xs text-slate-400">Admin Panel</p>
             </div>
           </div>

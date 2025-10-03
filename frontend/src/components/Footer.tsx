@@ -22,21 +22,25 @@ const Footer = ({
     <footer className="container mx-auto px-4 py-12 border-t border-white/20 mt-16">
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
-          <div
-            className={`p-2 rounded-xl bg-gradient-to-r ${logoGradient} shadow-lg`}
-          >
-            <LogoIcon className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <span
-              className={`text-xl font-bold bg-gradient-to-r ${textGradient} bg-clip-text text-transparent`}
-            >
-              {brandName}
-            </span>
-            {isSchool && (
-              <p className="text-xs text-gray-500">Powered by artori.app</p>
-            )}
-          </div>
+          {isSchool ? (
+            <>
+              <div
+                className={`p-2 rounded-xl bg-gradient-to-r ${logoGradient} shadow-lg`}
+              >
+                <LogoIcon className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <span
+                  className={`text-xl font-bold bg-gradient-to-r ${textGradient} bg-clip-text text-transparent`}
+                >
+                  {brandName}
+                </span>
+                <p className="text-xs text-gray-500">Powered by artori.app</p>
+              </div>
+            </>
+          ) : (
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+          )}
         </div>
         <div className="flex items-center space-x-6 text-gray-600">
           <Link
