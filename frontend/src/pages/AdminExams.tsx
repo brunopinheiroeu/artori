@@ -42,6 +42,7 @@ import {
   useUpdateAdminQuestion,
   useDeleteAdminQuestion,
 } from "@/hooks/useAdminApi";
+import { usePagination } from "@/hooks/usePagination";
 import type {
   Exam,
   Subject,
@@ -66,6 +67,9 @@ const AdminExams = () => {
   const [editingItem, setEditingItem] = useState<
     Exam | AdminQuestionResponse | null
   >(null);
+
+  // Questions pagination using reusable hook
+  const questionsPagination = usePagination(10);
 
   // Form states
   const [examForm, setExamForm] = useState<AdminExamCreate>({
@@ -104,12 +108,17 @@ const AdminExams = () => {
   } = useAdminExams();
 
   const {
-    data: questions,
+    data: questionsResponse,
     isLoading: questionsLoading,
     error: questionsError,
   } = useAdminQuestions(selectedSubject?.id, {
-    limit: 100,
+    limit: questionsPagination.pageSize,
+    skip: questionsPagination.skip,
   });
+
+  // Extract questions and pagination info from response
+  const questions = questionsResponse?.questions || [];
+  const totalQuestions = questionsResponse?.total_count || 0;
 
   const createExamMutation = useCreateAdminExam();
   const updateExamMutation = useUpdateAdminExam();
@@ -306,6 +315,8 @@ const AdminExams = () => {
   const handleSubjectView = (subject: Subject) => {
     setSelectedSubject(subject);
     setCurrentView("questions");
+    // Reset pagination when switching subjects
+    questionsPagination.resetPagination();
   };
 
   const handleAdd = () => {
@@ -342,20 +353,25 @@ const AdminExams = () => {
     setIsCreateDialogOpen(true);
   };
 
-  const handleEdit = (item: Exam | AdminQuestionResponse) => {
-    setEditingItem(item);
+  const handleEdit = (item: Exam | AdminQuestionResponse | Subject) => {
+    setEditingItem(item as Exam | AdminQuestionResponse);
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (item: Exam | AdminQuestionResponse) => {
-    const itemName =
-      "name" in item ? item.name : item.question.substring(0, 50) + "...";
+  const handleDelete = (item: Exam | AdminQuestionResponse | Subject) => {
+    let itemName = "";
+    if ("question" in item) {
+      itemName = item.question.substring(0, 50) + "...";
+    } else if ("name" in item) {
+      itemName = item.name;
+    }
+
     if (
       window.confirm(
         `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
       )
     ) {
-      if (currentView === "exams" && "name" in item) {
+      if (currentView === "exams" && "name" in item && "country" in item) {
         deleteExamMutation.mutate(item.id);
       } else if (currentView === "questions" && "question" in item) {
         deleteQuestionMutation.mutate(item.id);
@@ -520,7 +536,7 @@ const AdminExams = () => {
               onAdd={handleAdd}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onView={handleExamView}
+              onRowClick={handleExamView}
               addButtonText="Create Exam"
             />
           )}
@@ -537,7 +553,7 @@ const AdminExams = () => {
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onView={handleSubjectView}
+          onRowClick={handleSubjectView}
           addButtonText="Add Subject"
         />
       )}
@@ -570,13 +586,18 @@ const AdminExams = () => {
             <AdminDataTable
               title={`${selectedSubject.name} Questions`}
               description={`Manage questions for ${selectedSubject.name} subject`}
-              data={questions || []}
+              data={questions}
               columns={questionColumns}
               searchPlaceholder="Search questions..."
               onAdd={handleAdd}
               onEdit={handleEdit}
               onDelete={handleDelete}
               addButtonText="Add Question"
+              currentPage={questionsPagination.currentPage}
+              onPageChange={questionsPagination.handlePageChange}
+              onPageSizeChange={questionsPagination.handlePageSizeChange}
+              enableServerSidePagination={true}
+              totalCount={totalQuestions}
             />
           )}
         </>

@@ -318,6 +318,13 @@ class AdminUserResponse(BaseModel):
     last_login: Optional[datetime] = None
     login_count: int = 0
 
+class AdminUsersListResponse(BaseModel):
+    users: List[AdminUserResponse]
+    total_count: int
+    page: int
+    page_size: int
+    total_pages: int
+
 class UserProgressDetail(BaseModel):
     user_id: str
     exam_id: str
@@ -404,6 +411,13 @@ class AdminQuestionResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     created_by: Optional[str] = None
+
+class AdminQuestionsListResponse(BaseModel):
+    questions: List[AdminQuestionResponse]
+    total_count: int
+    page: int
+    page_size: int
+    total_pages: int
 
 # Analytics Models
 class UserAnalytics(BaseModel):
@@ -1339,7 +1353,7 @@ async def get_system_health(current_admin = Depends(get_current_admin_user)):
         )
 
 # Admin User Management Endpoints
-@app.get("/api/v1/admin/users", response_model=List[AdminUserResponse])
+@app.get("/api/v1/admin/users", response_model=AdminUsersListResponse)
 async def get_admin_users(
     current_admin = Depends(get_current_admin_user),
     limit: int = Query(50, ge=1, le=100),
@@ -1368,20 +1382,28 @@ async def get_admin_users(
         if status:
             query_filter["status"] = status.value
         
+        # Get total count for pagination
+        total_count = db.users.count_documents(query_filter)
+        
+        # Get paginated users
         users = list(db.users.find(query_filter)
                     .sort("created_at", -1)
                     .skip(skip)
                     .limit(limit))
+        
+        # Calculate pagination info
+        page = (skip // limit) + 1
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
         
         # Log admin activity
         log_admin_activity(
             admin_id=str(current_admin["_id"]),
             action="view",
             resource_type="users",
-            details={"filters": query_filter, "count": len(users)}
+            details={"filters": query_filter, "count": len(users), "total_count": total_count}
         )
         
-        return [
+        user_responses = [
             AdminUserResponse(
                 id=str(user["_id"]),
                 name=user["name"],
@@ -1396,6 +1418,14 @@ async def get_admin_users(
             )
             for user in users
         ]
+        
+        return AdminUsersListResponse(
+            users=user_responses,
+            total_count=total_count,
+            page=page,
+            page_size=limit,
+            total_pages=total_pages
+        )
     except Exception as e:
         logger.error(f"Failed to get users: {e}")
         raise HTTPException(
@@ -2036,7 +2066,8 @@ async def delete_admin_exam(
         )
 
 # Admin Question Management Endpoints
-@app.get("/api/v1/admin/subjects/{subject_id}/questions", response_model=List[AdminQuestionResponse])
+
+@app.get("/api/v1/admin/subjects/{subject_id}/questions", response_model=AdminQuestionsListResponse)
 async def get_admin_questions(
     subject_id: str,
     current_admin = Depends(get_current_admin_user),
@@ -2060,20 +2091,28 @@ async def get_admin_questions(
         if status:
             query_filter["status"] = status.value
         
+        # Get total count for pagination
+        total_count = db.questions.count_documents(query_filter)
+        
+        # Get paginated questions
         questions = list(db.questions.find(query_filter)
                         .sort("created_at", -1)
                         .skip(skip)
                         .limit(limit))
+        
+        # Calculate pagination info
+        page = (skip // limit) + 1
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
         
         # Log admin activity
         log_admin_activity(
             admin_id=str(current_admin["_id"]),
             action="view",
             resource_type="questions",
-            details={"subject_id": subject_id, "count": len(questions)}
+            details={"subject_id": subject_id, "count": len(questions), "total_count": total_count}
         )
         
-        return [
+        question_responses = [
             AdminQuestionResponse(
                 id=str(question["_id"]),
                 subject_id=str(question["subject_id"]),
@@ -2101,6 +2140,103 @@ async def get_admin_questions(
             )
             for question in questions
         ]
+        
+        # Return the proper AdminQuestionsListResponse model
+        response_obj = AdminQuestionsListResponse(
+            questions=question_responses,
+            total_count=total_count,
+            page=page,
+            page_size=limit,
+            total_pages=total_pages
+        )
+        
+        
+        return response_obj
+    except Exception as e:
+        logger.error(f"Failed to get questions: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve questions"
+        )
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Build query filter
+        query_filter = {"subject_id": ObjectId(subject_id)}
+        if difficulty:
+            query_filter["difficulty"] = difficulty.value
+        if status:
+            query_filter["status"] = status.value
+        
+        # Get total count for pagination
+        total_count = db.questions.count_documents(query_filter)
+        
+        # Get paginated questions
+        questions = list(db.questions.find(query_filter)
+                        .sort("created_at", -1)
+                        .skip(skip)
+                        .limit(limit))
+        
+        # Calculate pagination info
+        page = (skip // limit) + 1
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
+        
+        # Log admin activity
+        log_admin_activity(
+            admin_id=str(current_admin["_id"]),
+            action="view",
+            resource_type="questions",
+            details={"subject_id": subject_id, "count": len(questions), "total_count": total_count}
+        )
+        
+        question_responses = [
+            AdminQuestionResponse(
+                id=str(question["_id"]),
+                subject_id=str(question["subject_id"]),
+                question=question["question"],
+                question_type=QuestionType(question.get("question_type", "multiple_choice")),
+                difficulty=QuestionDifficulty(question.get("difficulty", "medium")),
+                options=[
+                    Option(id=option["id"], text=option["text"])
+                    for option in question["options"]
+                ],
+                correct_answer=question["correct_answer"],
+                explanation=Explanation(
+                    reasoning=question["explanation"]["reasoning"],
+                    concept=question["explanation"]["concept"],
+                    sources=question["explanation"]["sources"],
+                    bias_check=question["explanation"]["bias_check"],
+                    reflection=question["explanation"]["reflection"]
+                ),
+                tags=question.get("tags", []),
+                status=QuestionStatus(question.get("status", "active")),
+                duration=question.get("duration", 60),
+                created_at=question.get("created_at", datetime.utcnow()),
+                updated_at=question.get("updated_at", datetime.utcnow()),
+                created_by=str(question["created_by"]) if question.get("created_by") else None
+            )
+            for question in questions
+        ]
+        
+        # Return the proper AdminQuestionsListResponse model
+        response_obj = AdminQuestionsListResponse(
+            questions=question_responses,
+            total_count=total_count,
+            page=page,
+            page_size=limit,
+            total_pages=total_pages
+        )
+        
+        # DEBUG: Log what we're returning
+        logger.info(f"DEBUG: Returning AdminQuestionsListResponse with {len(question_responses)} questions")
+        logger.info(f"DEBUG: Response type: {type(response_obj)}")
+        logger.info(f"DEBUG: Response dict keys: {response_obj.dict().keys()}")
+        
+        return response_obj
     except Exception as e:
         logger.error(f"Failed to get questions: {e}")
         raise HTTPException(

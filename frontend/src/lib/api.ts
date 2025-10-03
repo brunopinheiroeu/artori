@@ -153,6 +153,14 @@ export interface AdminUserResponse {
   login_count: number;
 }
 
+export interface AdminUsersListResponse {
+  users: AdminUserResponse[];
+  total_count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
 export interface AdminUserCreate {
   name: string;
   email: string;
@@ -217,6 +225,14 @@ export interface AdminQuestionResponse {
   created_at: string;
   updated_at: string;
   created_by?: string;
+}
+
+export interface AdminQuestionsListResponse {
+  questions: AdminQuestionResponse[];
+  total_count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
 }
 
 export interface AdminQuestionCreate {
@@ -461,7 +477,7 @@ class ApiClient {
     search?: string;
     role?: string;
     status?: string;
-  }): Promise<AdminUserResponse[]> {
+  }): Promise<AdminUsersListResponse> {
     const searchParams = new URLSearchParams();
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.skip) searchParams.append("skip", params.skip.toString());
@@ -470,7 +486,7 @@ class ApiClient {
     if (params?.status) searchParams.append("status", params.status);
 
     const queryString = searchParams.toString();
-    return this.request<AdminUserResponse[]>(
+    return this.request<AdminUsersListResponse>(
       `/admin/users${queryString ? `?${queryString}` : ""}`
     );
   }
@@ -557,7 +573,7 @@ class ApiClient {
       difficulty?: string;
       status?: string;
     }
-  ): Promise<AdminQuestionResponse[]> {
+  ): Promise<AdminQuestionsListResponse> {
     const searchParams = new URLSearchParams();
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.skip) searchParams.append("skip", params.skip.toString());
@@ -566,7 +582,7 @@ class ApiClient {
     if (params?.status) searchParams.append("status", params.status);
 
     const queryString = searchParams.toString();
-    return this.request<AdminQuestionResponse[]>(
+    return this.request<AdminQuestionsListResponse>(
       `/admin/subjects/${subjectId}/questions${
         queryString ? `?${queryString}` : ""
       }`

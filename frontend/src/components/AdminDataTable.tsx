@@ -61,6 +61,7 @@ interface AdminDataTableProps<T = any> {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
+  onRowClick?: (item: T) => void;
   addButtonText?: string;
   isLoading?: boolean;
   error?: string | null;
@@ -83,6 +84,7 @@ const AdminDataTable = <T extends Record<string, any> = any>({
   onEdit,
   onDelete,
   onView,
+  onRowClick,
   addButtonText = "Add New",
   isLoading = false,
   error = null,
@@ -285,7 +287,16 @@ const AdminDataTable = <T extends Record<string, any> = any>({
                 displayData.map((item, index) => (
                   <TableRow
                     key={(item.id as string) || index}
-                    className="hover:bg-slate-50/50"
+                    className={`hover:bg-slate-50/50 ${
+                      onRowClick || onView ? "cursor-pointer" : ""
+                    }`}
+                    onClick={() => {
+                      if (onRowClick) {
+                        onRowClick(item);
+                      } else if (onView) {
+                        onView(item);
+                      }
+                    }}
                   >
                     {columns.map((column) => (
                       <TableCell key={column.key}>
@@ -301,6 +312,7 @@ const AdminDataTable = <T extends Record<string, any> = any>({
                             variant="ghost"
                             size="sm"
                             className="h-8 w-8 p-0"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Settings className="h-4 w-4" />
                           </Button>
@@ -378,37 +390,82 @@ const AdminDataTable = <T extends Record<string, any> = any>({
               </Button>
 
               <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <Button
-                      key={pageNum}
-                      variant={currentPage === pageNum ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handlePageChange(pageNum)}
-                      disabled={isLoading}
-                      className="w-8 h-8 p-0"
-                    >
-                      {pageNum}
-                    </Button>
-                  );
-                })}
-                {totalPages > 5 && (
-                  <>
-                    <span className="px-2">...</span>
-                    <Button
-                      variant={
-                        currentPage === totalPages ? "default" : "outline"
+                {(() => {
+                  const pages = [];
+                  const maxVisiblePages = 5;
+
+                  if (totalPages <= maxVisiblePages) {
+                    // Show all pages if total is less than or equal to max visible
+                    for (let i = 1; i <= totalPages; i++) {
+                      pages.push(i);
+                    }
+                  } else {
+                    // Show pages around current page
+                    const halfVisible = Math.floor(maxVisiblePages / 2);
+                    let startPage = Math.max(1, currentPage - halfVisible);
+                    let endPage = Math.min(
+                      totalPages,
+                      currentPage + halfVisible
+                    );
+
+                    // Adjust if we're near the beginning or end
+                    if (currentPage <= halfVisible) {
+                      endPage = Math.min(totalPages, maxVisiblePages);
+                    } else if (currentPage > totalPages - halfVisible) {
+                      startPage = Math.max(1, totalPages - maxVisiblePages + 1);
+                    }
+
+                    // Add first page and ellipsis if needed
+                    if (startPage > 1) {
+                      pages.push(1);
+                      if (startPage > 2) {
+                        pages.push("...");
                       }
-                      size="sm"
-                      onClick={() => handlePageChange(totalPages)}
-                      disabled={isLoading}
-                      className="w-8 h-8 p-0"
-                    >
-                      {totalPages}
-                    </Button>
-                  </>
-                )}
+                    }
+
+                    // Add visible pages
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(i);
+                    }
+
+                    // Add ellipsis and last page if needed
+                    if (endPage < totalPages) {
+                      if (endPage < totalPages - 1) {
+                        pages.push("...");
+                      }
+                      pages.push(totalPages);
+                    }
+                  }
+
+                  return pages.map((page, index) => {
+                    if (page === "...") {
+                      return (
+                        <span
+                          key={`ellipsis-${index}`}
+                          className="px-2 text-gray-500"
+                        >
+                          ...
+                        </span>
+                      );
+                    }
+
+                    const pageNum = page as number;
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={
+                          currentPage === pageNum ? "default" : "outline"
+                        }
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={isLoading}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  });
+                })()}
               </div>
 
               <Button

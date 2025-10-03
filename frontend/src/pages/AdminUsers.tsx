@@ -46,6 +46,7 @@ import type {
   AdminUserResponse,
   AdminUserCreate,
   AdminUserUpdate,
+  AdminUsersListResponse,
 } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 
@@ -60,6 +61,10 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   // Form states
   const [createForm, setCreateForm] = useState<AdminUserCreate>({
     name: "",
@@ -70,17 +75,35 @@ const AdminUsers = () => {
   });
   const [editForm, setEditForm] = useState<AdminUserUpdate>({});
 
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  // Calculate skip value for API
+  const skip = (currentPage - 1) * pageSize;
+
   // API hooks
   const {
-    data: users,
+    data: usersResponse,
     isLoading: usersLoading,
     error: usersError,
   } = useAdminUsers({
     search: searchQuery || undefined,
     role: roleFilter || undefined,
     status: statusFilter || undefined,
-    limit: 100,
+    limit: pageSize,
+    skip: skip,
   });
+
+  // Extract users array and total count from the response
+  const users = usersResponse?.users || [];
+  const totalUsers = usersResponse?.total_count || 0;
 
   const { data: exams } = useExams();
   const createUserMutation = useCreateAdminUser();
@@ -281,7 +304,7 @@ const AdminUsers = () => {
         <AdminDataTable
           title="All Users"
           description="View and manage all students and teachers on the platform"
-          data={users || []}
+          data={users}
           columns={columns}
           searchPlaceholder="Search users..."
           onAdd={handleAdd}
@@ -289,6 +312,13 @@ const AdminUsers = () => {
           onDelete={handleDelete}
           onView={handleView}
           addButtonText="Add User"
+          currentPage={currentPage}
+          pageSize={pageSize}
+          totalCount={totalUsers}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          enableServerSidePagination={true}
+          isLoading={usersLoading}
         />
       )}
 
@@ -348,7 +378,10 @@ const AdminUsers = () => {
                 <Select
                   value={createForm.role}
                   onValueChange={(value) =>
-                    setCreateForm({ ...createForm, role: value as any })
+                    setCreateForm({
+                      ...createForm,
+                      role: value as "student" | "teacher" | "admin",
+                    })
                   }
                 >
                   <SelectTrigger>
@@ -367,7 +400,10 @@ const AdminUsers = () => {
               <Select
                 value={createForm.status}
                 onValueChange={(value) =>
-                  setCreateForm({ ...createForm, status: value as any })
+                  setCreateForm({
+                    ...createForm,
+                    status: value as "active" | "inactive" | "suspended",
+                  })
                 }
               >
                 <SelectTrigger>

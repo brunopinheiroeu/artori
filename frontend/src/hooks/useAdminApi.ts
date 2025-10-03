@@ -15,6 +15,7 @@ import {
   type AdminQuestionResponse,
   type AdminQuestionCreate,
   type AdminQuestionUpdate,
+  type AdminQuestionsListResponse,
   type UserAnalytics,
   type SystemSettings,
   type AdminProfile,
@@ -243,6 +244,9 @@ export const useAdminQuestions = (
     retry: 2,
   });
 };
+
+// Alias for backward compatibility and clearer naming
+export const useAdminSubjectQuestions = useAdminQuestions;
 
 export const useCreateAdminQuestion = () => {
   const queryClient = useQueryClient();
