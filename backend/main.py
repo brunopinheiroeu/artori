@@ -24,10 +24,59 @@ load_dotenv()
 
 app = FastAPI(title="artori.app API", version="1.0.0")
 
-# Add startup event to log all routes
+# Environment variable validation function
+def validate_environment_variables():
+    """Validate critical environment variables at startup"""
+    logger.info("=== Environment Variable Validation ===")
+    
+    # Check MONGODB_URI
+    mongodb_uri = os.getenv("MONGODB_URI")
+    if not mongodb_uri:
+        logger.error("❌ CRITICAL: MONGODB_URI environment variable is missing!")
+        logger.error("   This will cause database connection failures and 500 errors")
+        return False
+    else:
+        logger.info("✅ MONGODB_URI is present")
+        # Log partial URI for debugging (hide credentials)
+        if "@" in mongodb_uri:
+            # Format: mongodb://user:pass@host/db or mongodb+srv://user:pass@host/db
+            parts = mongodb_uri.split("@")
+            if len(parts) >= 2:
+                logger.info(f"   MongoDB host: @{parts[1]}")
+        
+    # Check JWT_SECRET
+    jwt_secret = os.getenv("JWT_SECRET")
+    if not jwt_secret:
+        logger.error("❌ CRITICAL: JWT_SECRET environment variable is missing!")
+        logger.error("   This will cause JWT token creation/validation failures and 500 errors")
+        return False
+    else:
+        logger.info("✅ JWT_SECRET is present")
+        logger.info(f"   JWT_SECRET length: {len(jwt_secret)} characters")
+    
+    # Check JWT_ALGORITHM
+    jwt_algorithm = os.getenv("JWT_ALGORITHM", "HS256")
+    logger.info(f"✅ JWT_ALGORITHM: {jwt_algorithm}")
+    
+    # Check JWT_EXPIRES_IN_MINUTES
+    jwt_expires = os.getenv("JWT_EXPIRES_IN_MINUTES", "30")
+    logger.info(f"✅ JWT_EXPIRES_IN_MINUTES: {jwt_expires}")
+    
+    logger.info("=== Environment Variable Validation Complete ===")
+    return True
+
+# Add startup event to validate environment and log all routes
 @app.on_event("startup")
 async def startup_event():
     logger.info("=== FastAPI Application Starting ===")
+    
+    # Validate environment variables first
+    env_valid = validate_environment_variables()
+    if not env_valid:
+        logger.error("❌ STARTUP FAILED: Critical environment variables are missing!")
+        logger.error("   The application will not function properly without these variables.")
+        logger.error("   Please check your .env file or deployment environment configuration.")
+    
     logger.info("Registered routes:")
     for route in app.routes:
         if hasattr(route, 'methods') and hasattr(route, 'path'):
@@ -39,7 +88,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
+        "https://artori.app",
+        "https://www.artori.app"
     ],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
@@ -66,7 +117,24 @@ logger.info(f"MONGODB_URI loaded: {'Yes' if MONGODB_URI else 'No'}")
 if MONGODB_URI:
     try:
         logger.info("Attempting to connect to MongoDB...")
-        client = MongoClient(MONGODB_URI)
+        # Configure MongoDB client for Vercel serverless environment
+        client = MongoClient(
+            MONGODB_URI,
+            # SSL/TLS configuration for serverless environments
+            tls=True,
+            tlsAllowInvalidCertificates=False,
+            # Connection pool settings for serverless
+            maxPoolSize=10,
+            minPoolSize=1,
+            maxIdleTimeMS=30000,
+            # Timeout settings for serverless
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=10000,
+            socketTimeoutMS=20000,
+            # Retry settings
+            retryWrites=True,
+            retryReads=True
+        )
         db = client.artori
         # Test the connection
         client.admin.command('ping')
@@ -808,40 +876,123 @@ async def signup(user_data: UserCreate):
 @app.post("/api/v1/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
     """Authenticate user and return JWT token"""
+    logger.info("=== LOGIN ATTEMPT DEBUG ===")
+    logger.info(f"Login attempt for email: {user_data.email}")
+    
+    # Debug: Check database connection status
     if db is None:
+        logger.error("❌ LOGIN FAILED: Database connection is None")
+        logger.error("   MONGODB_URI status: " + ("Present" if os.getenv("MONGODB_URI") else "MISSING"))
+        logger.error("   This indicates MONGODB_URI environment variable is missing or invalid")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Database connection not available"
+            detail="Database connection not available - check MONGODB_URI environment variable"
         )
+    else:
+        logger.info("✅ Database connection is available")
     
-    # Get user by email
-    user = get_user_by_email(user_data.email)
-    if not user:
+    # Debug: Test database connectivity
+    try:
+        logger.info("Testing database connectivity...")
+        db.users.count_documents({}, limit=1)
+        logger.info("✅ Database connectivity test passed")
+    except Exception as db_error:
+        logger.error(f"❌ LOGIN FAILED: Database connectivity test failed: {db_error}")
+        logger.error(f"   Error type: {type(db_error).__name__}")
+        logger.error("   This indicates database connection issues")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Database connectivity error: {str(db_error)}"
         )
     
-    # Verify password
-    if not verify_password(user_data.password, user["password"]):
+    # Debug: Check JWT_SECRET availability
+    jwt_secret_available = bool(JWT_SECRET)
+    logger.info(f"JWT_SECRET availability: {'✅ Available' if jwt_secret_available else '❌ MISSING'}")
+    if not jwt_secret_available:
+        logger.error("❌ LOGIN FAILED: JWT_SECRET environment variable is missing")
+        logger.error("   This will cause token creation to fail")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="JWT configuration error - check JWT_SECRET environment variable"
         )
     
-    # Update login tracking
-    db.users.update_one(
-        {"_id": user["_id"]},
-        {
-            "$set": {"last_login": datetime.utcnow()},
-            "$inc": {"login_count": 1}
-        }
-    )
+    # Get user by email with enhanced error handling
+    try:
+        logger.info(f"Looking up user by email: {user_data.email}")
+        user = get_user_by_email(user_data.email)
+        if not user:
+            logger.info(f"❌ User not found for email: {user_data.email}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password"
+            )
+        else:
+            logger.info(f"✅ User found: {user.get('name', 'Unknown')} (ID: {user['_id']})")
+    except HTTPException:
+        # Re-raise HTTP exceptions (like 401)
+        raise
+    except Exception as user_lookup_error:
+        logger.error(f"❌ LOGIN FAILED: User lookup error: {user_lookup_error}")
+        logger.error(f"   Error type: {type(user_lookup_error).__name__}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"User lookup error: {str(user_lookup_error)}"
+        )
     
-    # Create access token
-    access_token = create_access_token(data={"sub": str(user["_id"])})
+    # Verify password with enhanced error handling
+    try:
+        logger.info("Verifying password...")
+        password_valid = verify_password(user_data.password, user["password"])
+        if not password_valid:
+            logger.info("❌ Password verification failed")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password"
+            )
+        else:
+            logger.info("✅ Password verification successful")
+    except HTTPException:
+        # Re-raise HTTP exceptions (like 401)
+        raise
+    except Exception as password_error:
+        logger.error(f"❌ LOGIN FAILED: Password verification error: {password_error}")
+        logger.error(f"   Error type: {type(password_error).__name__}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Password verification error: {str(password_error)}"
+        )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    # Update login tracking with enhanced error handling
+    try:
+        logger.info("Updating login tracking...")
+        db.users.update_one(
+            {"_id": user["_id"]},
+            {
+                "$set": {"last_login": datetime.utcnow()},
+                "$inc": {"login_count": 1}
+            }
+        )
+        logger.info("✅ Login tracking updated successfully")
+    except Exception as tracking_error:
+        logger.error(f"⚠️ LOGIN WARNING: Login tracking update failed: {tracking_error}")
+        logger.error(f"   Error type: {type(tracking_error).__name__}")
+        # Don't fail the login for tracking errors, just log them
+    
+    # Create access token with enhanced error handling
+    try:
+        logger.info("Creating JWT access token...")
+        access_token = create_access_token(data={"sub": str(user["_id"])})
+        logger.info("✅ JWT access token created successfully")
+        logger.info("=== LOGIN SUCCESS ===")
+        return {"access_token": access_token, "token_type": "bearer"}
+    except Exception as token_error:
+        logger.error(f"❌ LOGIN FAILED: JWT token creation error: {token_error}")
+        logger.error(f"   Error type: {type(token_error).__name__}")
+        logger.error("   This indicates JWT_SECRET or JWT configuration issues")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Token creation error: {str(token_error)}"
+        )
 
 @app.get("/api/v1/auth/me", response_model=UserResponse)
 async def get_current_user_info(current_user = Depends(get_current_user)):
