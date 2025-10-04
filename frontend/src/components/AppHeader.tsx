@@ -1,5 +1,6 @@
-import { Brain, GraduationCap } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Brain, GraduationCap, DoorOpen, Building2 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import GradientButton from "@/components/GradientButton";
 
 interface AppHeaderProps {
   variant?: "artori" | "school";
@@ -23,6 +24,8 @@ const AppHeader = ({
     : "from-indigo-600 to-purple-600";
   const brandName = schoolName || "artori.app";
   const LogoIcon = isSchool ? GraduationCap : Brain;
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/";
 
   return (
     <header className="container mx-auto px-4 py-6">
@@ -48,6 +51,27 @@ const AppHeader = ({
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
           )}
         </Link>
+
+        <div className="hidden md:flex items-center space-x-6">
+          {/* Solutions for Schools - only on landing page */}
+          {isLandingPage && (
+            <Link
+              to="/solutions"
+              className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
+            >
+              <Building2 className="h-4 w-4" />
+              <span>Solutions for Schools</span>
+            </Link>
+          )}
+
+          {/* Single consolidated Sign In button with door icon and gradient style */}
+          <Link to="/login">
+            <GradientButton className="flex items-center space-x-2">
+              <DoorOpen className="h-4 w-4" />
+              <span>Sign In</span>
+            </GradientButton>
+          </Link>
+        </div>
 
         {children && (
           <div className="flex items-center space-x-4">{children}</div>

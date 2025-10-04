@@ -518,6 +518,12 @@ class ApiClient {
     });
   }
 
+  async resetAdminUser(userId: string): Promise<{ message: string; user_id: string; reset_fields: string[] }> {
+    return this.request<{ message: string; user_id: string; reset_fields: string[] }>(`/admin/users/${userId}/reset`, {
+      method: "POST",
+    });
+  }
+
   async getUserProgressDetail(userId: string): Promise<UserProgressDetail[]> {
     return this.request<UserProgressDetail[]>(
       `/admin/users/${userId}/progress`

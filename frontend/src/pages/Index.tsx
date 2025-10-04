@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,8 +9,6 @@ import {
   BookOpen,
   TrendingUp,
   Search,
-  Building2,
-  Settings,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -153,38 +150,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50">
       {/* Header */}
-      <AppHeader>
-        <div className="hidden md:flex items-center space-x-6">
-          <Link
-            to="/solutions"
-            className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
-          >
-            <Building2 className="h-4 w-4" />
-            <span>Solutions for Schools</span>
-          </Link>
-
-          {/* Add the Admin button here */}
-          <Link
-            to="/admin"
-            className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
-          >
-            <Settings className="h-4 w-4" />
-            <span>Admin</span>
-          </Link>
-
-          <Link to="/login">
-            <Button
-              variant="ghost"
-              className="text-gray-600 hover:text-indigo-600"
-            >
-              Sign In
-            </Button>
-          </Link>
-          <Link to="/login">
-            <GradientButton>Get Started</GradientButton>
-          </Link>
-        </div>
-      </AppHeader>
+      <AppHeader />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">

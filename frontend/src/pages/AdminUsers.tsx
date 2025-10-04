@@ -33,12 +33,14 @@ import {
   Clock,
   AlertTriangle,
   Loader2,
+  RotateCcw,
 } from "lucide-react";
 import {
   useAdminUsers,
   useCreateAdminUser,
   useUpdateAdminUser,
   useDeleteAdminUser,
+  useResetAdminUser,
   useUserProgressDetail,
 } from "@/hooks/useAdminApi";
 import { useExams } from "@/hooks/useApi";
@@ -109,6 +111,7 @@ const AdminUsers = () => {
   const createUserMutation = useCreateAdminUser();
   const updateUserMutation = useUpdateAdminUser();
   const deleteUserMutation = useDeleteAdminUser();
+  const resetUserMutation = useResetAdminUser();
 
   const { data: userProgress, isLoading: progressLoading } =
     useUserProgressDetail(selectedUser?.id);
@@ -263,6 +266,16 @@ const AdminUsers = () => {
     );
   };
 
+  const handleResetUser = (user: AdminUserResponse) => {
+    if (
+      window.confirm(
+        `Are you sure you want to reset ${user.name}'s progress?\n\nThis will:\n• Clear their selected exam\n• Delete all progress data\n• Reset their statistics\n• Force them to select an exam again\n\nThis action cannot be undone.`
+      )
+    ) {
+      resetUserMutation.mutate(user.id);
+    }
+  };
+
   // Show error state if users fail to load
   if (usersError) {
     return (
@@ -324,7 +337,7 @@ const AdminUsers = () => {
 
       {/* Create User Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create New User</DialogTitle>
             <DialogDescription>
@@ -332,7 +345,7 @@ const AdminUsers = () => {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
@@ -359,7 +372,7 @@ const AdminUsers = () => {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -442,7 +455,7 @@ const AdminUsers = () => {
 
       {/* Edit User Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
@@ -451,7 +464,7 @@ const AdminUsers = () => {
           </DialogHeader>
           {selectedUser && (
             <form onSubmit={handleEditSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-name">Full Name</Label>
                   <Input
@@ -476,7 +489,7 @@ const AdminUsers = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-role">Role</Label>
                   <Select
@@ -520,25 +533,40 @@ const AdminUsers = () => {
                   </Select>
                 </div>
               </div>
-              <div className="flex justify-end space-x-2 pt-4">
+              <div className="flex justify-between items-center pt-4">
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={() => setIsEditDialogOpen(false)}
-                  disabled={updateUserMutation.isPending}
+                  variant="destructive"
+                  onClick={() => handleResetUser(selectedUser)}
+                  disabled={updateUserMutation.isPending || resetUserMutation.isPending}
+                  className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600"
-                  disabled={updateUserMutation.isPending}
-                >
-                  {updateUserMutation.isPending && (
+                  {resetUserMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Update User
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Reset User
                 </Button>
+                <div className="flex space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditDialogOpen(false)}
+                    disabled={updateUserMutation.isPending}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                    disabled={updateUserMutation.isPending}
+                  >
+                    {updateUserMutation.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Update User
+                  </Button>
+                </div>
               </div>
             </form>
           )}
@@ -547,15 +575,15 @@ const AdminUsers = () => {
 
       {/* View User Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>User Details</DialogTitle>
             <DialogDescription>
               Detailed information and progress for this user.
             </DialogDescription>
           </DialogHeader>
           {selectedUser && (
-            <div className="space-y-6">
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2">
               {/* User Info */}
               <Card>
                 <CardHeader>
@@ -565,7 +593,7 @@ const AdminUsers = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-gray-500">
                         Name
@@ -621,7 +649,7 @@ const AdminUsers = () => {
                   </CardHeader>
                   <CardContent>
                     {progressLoading ? (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {Array.from({ length: 4 }).map((_, index) => (
                           <div key={index} className="text-center space-y-2">
                             <Skeleton className="h-8 w-16 mx-auto" />
@@ -636,7 +664,7 @@ const AdminUsers = () => {
                             <h4 className="font-medium mb-3">
                               {progress.exam_name}
                             </h4>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                               <div className="text-center">
                                 <div className="text-2xl font-bold text-indigo-600 mb-1">
                                   {Math.round(progress.overall_progress)}%
@@ -695,7 +723,7 @@ const AdminUsers = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-gray-500">
                         Member Since

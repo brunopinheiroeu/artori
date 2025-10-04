@@ -10,16 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  ArrowLeft,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Building2,
-  Check,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, Check, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin, useSignup } from "@/hooks/useApi";
 import { apiClient, type User } from "@/lib/api";
@@ -193,17 +184,6 @@ const Login = () => {
         <Link to="/" className="flex items-center space-x-2">
           <ArrowLeft className="h-5 w-5" />
           <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
-        </Link>
-      </div>
-
-      {/* Schools Link */}
-      <div className="absolute top-6 right-6">
-        <Link
-          to="/solutions"
-          className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
-        >
-          <Building2 className="h-4 w-4" />
-          <span className="hidden md:inline">Schools</span>
         </Link>
       </div>
 

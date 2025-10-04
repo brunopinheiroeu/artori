@@ -140,6 +140,23 @@ export const useDeleteAdminUser = () => {
   });
 };
 
+export const useResetAdminUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (userId: string) => apiClient.resetAdminUser(userId),
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "users", userId, "progress"] });
+      toast.success("User reset successfully. They will need to select an exam again.");
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to reset user: ${error.message}`);
+    },
+  });
+};
+
 export const useUserProgressDetail = (userId: string | undefined) => {
   return useQuery({
     queryKey: ["admin", "users", userId, "progress"],
