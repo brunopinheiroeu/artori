@@ -39,6 +39,7 @@ const Pricing = () => {
       cta: "Get started free",
       popular: false,
       gradient: "from-gray-400 to-gray-500",
+      isSchool: false,
     },
     {
       name: "Student",
@@ -55,6 +56,7 @@ const Pricing = () => {
       cta: "Start free trial",
       popular: true,
       gradient: "from-indigo-500 to-purple-600",
+      isSchool: false,
     },
     {
       name: "Pro",
@@ -71,6 +73,7 @@ const Pricing = () => {
       cta: "Start free trial",
       popular: false,
       gradient: "from-violet-500 to-pink-600",
+      isSchool: false,
     },
     {
       name: "For Schools",
@@ -180,7 +183,7 @@ const Pricing = () => {
 
       {/* Pricing Cards */}
       <section className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {pricingPlans.map((plan, index) => (
             <Card
               key={plan.name}
