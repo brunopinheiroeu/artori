@@ -33,7 +33,6 @@ import {
   HelpCircle,
   ChevronDown,
   Shield,
-  Brain,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -105,9 +104,9 @@ const Practice = () => {
 
   if (authLoading || examsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -119,87 +118,102 @@ const Practice = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Modern Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Brain className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">artori</span>
-            </Link>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50">
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6">
+        <nav className="flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+          </Link>
 
-            {/* User Dropdown Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-                >
-                  <User className="h-4 w-4" />
-                  <span className="hidden md:inline">{user.name}</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-white border border-gray-200"
-                align="end"
+          {/* User Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600"
               >
-                <DropdownMenuLabel className="font-semibold">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.name}
-                    </p>
-                    <p className="text-xs leading-none text-gray-500">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <User className="h-4 w-4" />
+                <span className="hidden md:inline">{user.name}</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-56 backdrop-blur-sm bg-white/90 border-white/20"
+              align="end"
+            >
+              <DropdownMenuLabel className="font-semibold">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.name}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-                {isAdmin && (
-                  <>
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => navigate("/admin")}
-                    >
-                      <Shield className="mr-2 h-4 w-4" />
-                      <span>Admin Panel</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
+              {isAdmin && (
+                <>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => navigate("/admin")}
+                  >
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
 
-                <DropdownMenuItem className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
 
-                <DropdownMenuItem className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
 
-                <DropdownMenuItem className="cursor-pointer">
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  <span>Analytics</span>
-                </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                <span>Study Analytics</span>
+              </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
+              <DropdownMenuItem className="cursor-pointer">
+                <Calendar className="mr-2 h-4 w-4" />
+                <span>Study Schedule</span>
+              </DropdownMenuItem>
 
-                <DropdownMenuItem
-                  className="cursor-pointer text-red-600 focus:text-red-600"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </nav>
-        </div>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem className="cursor-pointer">
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Subscription</span>
+                <Badge className="ml-auto bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs">
+                  Free
+                </Badge>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className="cursor-pointer">
+                <HelpCircle className="mr-2 h-4 w-4" />
+                <span>Help & Support</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                className="cursor-pointer text-red-600 focus:text-red-600"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </nav>
       </header>
 
       <div className="container mx-auto px-4 py-8">
@@ -207,29 +221,41 @@ const Practice = () => {
           <>
             {/* Exam Selection */}
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-gray-100 text-gray-700 border-0">
-                Welcome, {user.name}!
-              </Badge>
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Choose your exam
-              </h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Select the exam you're preparing for to start your personalized study journey
-              </p>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"></div>
+                <div className="relative z-10 p-8">
+                  <Badge className="mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
+                    👋 Welcome, {user.name}!
+                  </Badge>
+                  <h1 className="text-5xl font-bold mb-4">
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                      Choose Your Exam
+                    </span>
+                  </h1>
+                  <p className="text-xl text-gray-600">
+                    Select the exam you're preparing for to start your study
+                    journey
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {exams?.map((exam) => (
                 <Card
                   key={exam.id}
-                  className="cursor-pointer hover:shadow-md transition-all duration-200 border-gray-200"
+                  className={`hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 ${
+                    exam.borderColor || "border-gray-200"
+                  } ${
+                    exam.bgColor || "bg-white"
+                  } backdrop-blur-sm bg-white/60 hover:scale-105`}
                   onClick={() => handleExamSelection(exam.id)}
                 >
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle className="text-2xl text-gray-900">{exam.name}</CardTitle>
-                        <CardDescription className="text-lg text-gray-600">
+                        <CardTitle className="text-2xl">{exam.name}</CardTitle>
+                        <CardDescription className="text-lg">
                           {exam.country}
                         </CardDescription>
                       </div>
@@ -249,7 +275,7 @@ const Practice = () => {
                               <Badge
                                 key={subject.id}
                                 variant="secondary"
-                                className="text-xs bg-gray-100 text-gray-600"
+                                className="text-xs"
                               >
                                 {subject.name}
                               </Badge>
@@ -266,8 +292,12 @@ const Practice = () => {
                         {exam.total_questions || 0} practice questions available
                       </div>
 
-                      <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white">
-                        Start preparation
+                      <Button
+                        className={`w-full bg-gradient-to-r ${
+                          exam.gradient || "from-blue-500 to-purple-500"
+                        } hover:shadow-lg transition-all`}
+                      >
+                        Start Preparation
                       </Button>
                     </div>
                   </CardContent>
@@ -277,33 +307,51 @@ const Practice = () => {
           </>
         ) : (
           <>
-            {/* Dashboard */}
+            {/* Dynamic Dashboard */}
             {dashboardData && (
               <>
                 <div className="text-center mb-12">
-                  <div className="flex items-center justify-center space-x-3 mb-4">
-                    <span className="text-4xl">
-                      {dashboardData.selected_exam.flag || "📚"}
-                    </span>
-                    <Badge className="bg-gray-100 text-gray-700 border-0">
-                      {dashboardData.selected_exam.name} 2025
-                    </Badge>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"></div>
+                    <div className="relative z-10 p-8">
+                      <div className="flex items-center justify-center space-x-3 mb-4">
+                        <span className="text-4xl">
+                          {dashboardData.selected_exam.flag || "📚"}
+                        </span>
+                        <Badge
+                          className={`bg-gradient-to-r ${
+                            dashboardData.selected_exam.gradient ||
+                            "from-blue-500 to-purple-500"
+                          } text-white border-0`}
+                        >
+                          {dashboardData.selected_exam.name} 2025
+                        </Badge>
+                      </div>
+                      <h1 className="text-5xl font-bold mb-4">
+                        <span
+                          className={`bg-gradient-to-r ${
+                            dashboardData.selected_exam.gradient ||
+                            "from-blue-600 to-purple-600"
+                          } bg-clip-text text-transparent`}
+                        >
+                          Study Dashboard
+                        </span>
+                      </h1>
+                      <p className="text-xl text-gray-600">
+                        Continue your {dashboardData.selected_exam.name}{" "}
+                        preparation. You're making great progress!
+                      </p>
+                    </div>
                   </div>
-                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                    Study Dashboard
-                  </h1>
-                  <p className="text-xl text-gray-600">
-                    Continue your {dashboardData.selected_exam.name} preparation. You're making great progress!
-                  </p>
                 </div>
 
                 {/* Overall Progress */}
                 <div className="mb-8">
-                  <Card className="border-gray-200">
+                  <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div>
-                          <CardTitle className="text-xl text-gray-900">
+                          <CardTitle className="text-xl">
                             Overall Progress
                           </CardTitle>
                           <CardDescription>
@@ -312,7 +360,7 @@ const Practice = () => {
                         </div>
                         <div className="flex items-center space-x-4">
                           <div className="text-center">
-                            <div className="text-2xl font-bold text-gray-900">
+                            <div className="text-2xl font-bold text-blue-600">
                               {dashboardData.user_progress
                                 ? Math.round(
                                     dashboardData.user_progress.overall_progress
@@ -325,7 +373,7 @@ const Practice = () => {
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-2xl font-bold text-gray-900">
+                            <div className="text-2xl font-bold text-red-600">
                               89
                             </div>
                             <div className="text-xs text-gray-600">
@@ -344,7 +392,7 @@ const Practice = () => {
                       />
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                         <div>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-lg font-bold text-indigo-600">
                             {dashboardData.user_progress?.questions_solved || 0}
                           </div>
                           <div className="text-sm text-gray-600">
@@ -352,7 +400,7 @@ const Practice = () => {
                           </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-lg font-bold text-purple-600">
                             {dashboardData.user_progress
                               ? Math.round(
                                   dashboardData.user_progress.accuracy_rate
@@ -365,7 +413,7 @@ const Practice = () => {
                           </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-lg font-bold text-orange-600">
                             {dashboardData.user_progress?.study_time_hours || 0}
                             h
                           </div>
@@ -374,7 +422,7 @@ const Practice = () => {
                           </div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-gray-900">
+                          <div className="text-lg font-bold text-green-600">
                             {dashboardData.user_progress?.current_streak_days ||
                               0}
                           </div>
@@ -398,7 +446,9 @@ const Practice = () => {
                     return (
                       <Card
                         key={subject.id}
-                        className="cursor-pointer hover:shadow-md transition-all duration-200 border-gray-200"
+                        className={`hover:shadow-2xl transition-all duration-300 cursor-pointer ${
+                          subject.bgColor || "bg-white"
+                        } backdrop-blur-sm bg-white/60 border-white/20 hover:scale-105`}
                       >
                         <CardHeader>
                           <div className="flex items-center justify-between">
@@ -409,7 +459,7 @@ const Practice = () => {
                               {subject.duration || "N/A"}
                             </Badge>
                           </div>
-                          <CardTitle className="text-lg text-gray-900">
+                          <CardTitle className="text-lg">
                             {subject.name}
                           </CardTitle>
                           <CardDescription className="text-sm">
@@ -450,8 +500,13 @@ const Practice = () => {
                             <Link
                               to={`/question/${dashboardData.selected_exam.id}/${subject.id}`}
                             >
-                              <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white">
-                                Continue studying
+                              <Button
+                                className={`w-full bg-gradient-to-r ${
+                                  subject.gradient ||
+                                  "from-blue-500 to-purple-500"
+                                } hover:shadow-lg transition-all`}
+                              >
+                                Continue Studying
                               </Button>
                             </Link>
                           </div>
@@ -460,11 +515,106 @@ const Practice = () => {
                     );
                   })}
                 </div>
+
+                {/* Quick Actions */}
+                <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="backdrop-blur-sm bg-white/60 border-white/20 hover:shadow-xl transition-all cursor-pointer">
+                    <CardHeader className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                        <Target className="h-6 w-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">
+                        Full Practice Test
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-sm text-gray-600 mb-4">
+                        Take a complete {dashboardData.selected_exam.name}{" "}
+                        practice test under timed conditions
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        Start Practice Test
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="backdrop-blur-sm bg-white/60 border-white/20 hover:shadow-xl transition-all cursor-pointer">
+                    <CardHeader className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <BookOpen className="h-6 w-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Smart Review</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-sm text-gray-600 mb-4">
+                        Review questions you got wrong with AI explanations
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        Start Review
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="backdrop-blur-sm bg-white/60 border-white/20 hover:shadow-xl transition-all cursor-pointer">
+                    <CardHeader className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
+                        <Calendar className="h-6 w-6 text-white" />
+                      </div>
+                      <CardTitle className="text-lg">Study Plan</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-sm text-gray-600 mb-4">
+                        View your personalized schedule until test day
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        View Schedule
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               </>
             )}
           </>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="container mx-auto px-4 py-12 border-t border-white/20 mt-16">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex items-center space-x-2 mb-4 md:mb-0">
+            <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+          </div>
+          <div className="flex items-center space-x-6 text-gray-600">
+            <Link
+              to="/solutions"
+              className="hover:text-indigo-600 transition-colors"
+            >
+              Schools
+            </Link>
+            <Link
+              to="/about"
+              className="hover:text-indigo-600 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              to="/privacy"
+              className="hover:text-indigo-600 transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              to="/contact"
+              className="hover:text-indigo-600 transition-colors"
+            >
+              Contact
+            </Link>
+          </div>
+        </div>
+        <div className="text-center mt-8 text-gray-500">
+          © 2025 artori.app. Responsible AI for better learning. 🌟
+        </div>
+      </footer>
     </div>
   );
 };
