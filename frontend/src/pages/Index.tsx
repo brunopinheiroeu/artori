@@ -289,6 +289,28 @@ const Index = () => {
         </GlassmorphismCard>
       </section>
 
+      {/* Trust Badges */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+          <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
+            <span className="text-green-500 mr-2">🔒</span>
+            SOC 2 Compliant
+          </Badge>
+          <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
+            <span className="text-blue-500 mr-2">🛡️</span>
+            GDPR Ready
+          </Badge>
+          <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
+            <Star className="h-4 w-4 text-yellow-500 mr-2" />
+            4.9/5 Student Rating
+          </Badge>
+          <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
+            <span className="text-orange-500 mr-2">🏆</span>
+            EdTech Award Winner 2024
+          </Badge>
+        </div>
+      </section>
+
       {/* Exam Types */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
@@ -488,6 +510,34 @@ const Index = () => {
               <ArrowRight className="ml-2 h-4 w-4" />
             </GradientButton>
           </Link>
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-8 border border-white/20 shadow-lg max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">
+                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Stay Updated
+                </span>
+              </h3>
+              <p className="text-gray-600">
+                Get the latest updates on new features, exam content, and educational insights.
+              </p>
+            </div>
+            <div className="flex space-x-3">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 bg-white/50 backdrop-blur-sm border-white/20"
+              />
+              <GradientButton className="px-6 py-2">
+                Subscribe
+              </GradientButton>
+            </div>
+          </div>
         </div>
       </section>
 
