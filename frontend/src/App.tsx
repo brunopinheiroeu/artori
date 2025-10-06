@@ -9,6 +9,7 @@ import Practice from "./pages/Practice";
 import Question from "./pages/Question";
 import Results from "./pages/Results";
 import Solutions from "./pages/Solutions";
+import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import DemoLogin from "./pages/DemoLogin";
 import DemoPractice from "./pages/DemoPractice";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/question/:examId/:modeId" element={<Question />} />
           <Route path="/results/:examId/:modeId" element={<Results />} />
           <Route path="/solutions" element={<Solutions />} />
+          <Route path="/about" element={<About />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/demo-login" element={<DemoLogin />} />
           <Route path="/demo-practice" element={<DemoPractice />} />
