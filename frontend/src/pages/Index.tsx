@@ -9,6 +9,9 @@ import {
   BookOpen,
   TrendingUp,
   Search,
+  Check,
+  Star,
+  ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -17,9 +20,11 @@ import GlassmorphismCard from "@/components/GlassmorphismCard";
 import ExamCard from "@/components/ExamCard";
 import FeatureCard from "@/components/FeatureCard";
 import AppHeader from "@/components/AppHeader";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const [examFilter, setExamFilter] = useState("");
+  const [isAnnual, setIsAnnual] = useState(true);
 
   const examTypes = [
     {
@@ -141,11 +146,97 @@ const Index = () => {
     },
   ];
 
+  const pricingPlans = [
+    {
+      name: "Free",
+      description: "Perfect for trying out artori",
+      price: { monthly: 0, annual: 0 },
+      features: [
+        "5 practice questions per day",
+        "Basic AI explanations",
+        "Progress tracking",
+        "1 exam type",
+        "Community support",
+      ],
+      cta: "Get started free",
+      popular: false,
+      gradient: "from-gray-400 to-gray-500",
+    },
+    {
+      name: "Student",
+      description: "Everything you need to ace your exam",
+      price: { monthly: 19, annual: 15 },
+      features: [
+        "Unlimited practice questions",
+        "Advanced AI explanations with bias detection",
+        "Personalized study recommendations",
+        "All exam types",
+        "Detailed progress analytics",
+        "Priority support",
+      ],
+      cta: "Start free trial",
+      popular: true,
+      gradient: "from-indigo-500 to-purple-600",
+    },
+    {
+      name: "Pro",
+      description: "For serious students and tutors",
+      price: { monthly: 39, annual: 31 },
+      features: [
+        "Everything in Student",
+        "AI-powered study schedule",
+        "Custom practice tests",
+        "Performance predictions",
+        "Study group features",
+        "Expert tutor matching",
+      ],
+      cta: "Start free trial",
+      popular: false,
+      gradient: "from-violet-500 to-pink-600",
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "SAT Student",
+      content: "Improved my score by 200 points! The AI explanations helped me understand concepts I'd been struggling with for months.",
+      avatar: "👩‍🎓",
+      score: "+200 points",
+    },
+    {
+      name: "Miguel Santos",
+      role: "ENEM Student", 
+      content: "The bias detection feature taught me to think more critically about information. It's like having a personal tutor.",
+      avatar: "👨‍🎓",
+      score: "Top 5%",
+    },
+    {
+      name: "Emma Thompson",
+      role: "A-Level Student",
+      content: "The step-by-step explanations are incredible. I finally understand why answers are correct, not just what they are.",
+      avatar: "👩‍💼",
+      score: "A* grades",
+    },
+  ];
+
   const filteredExams = examTypes.filter(
     (exam) =>
       exam.name.toLowerCase().includes(examFilter.toLowerCase()) ||
       exam.country.toLowerCase().includes(examFilter.toLowerCase())
   );
+
+  const getPrice = (plan: typeof pricingPlans[0]) => {
+    return isAnnual ? plan.price.annual : plan.price.monthly;
+  };
+
+  const getSavings = (plan: typeof pricingPlans[0]) => {
+    if (plan.price.monthly === 0) return null;
+    const monthlyCost = plan.price.monthly * 12;
+    const annualCost = plan.price.annual * 12;
+    const savings = Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
+    return savings;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50">
@@ -277,6 +368,163 @@ const Index = () => {
               gradient={feature.gradient}
               bgColor={feature.bgColor}
             />
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+              Simple, Transparent Pricing
+            </span>
+          </h2>
+          <p className="text-gray-600 text-lg mb-8">
+            Start free and upgrade as you grow. All plans include our core AI features.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center space-x-4 mb-8">
+            <span className={`text-sm ${!isAnnual ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                isAnnual ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-lg ${
+                  isAnnual ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+            <span className={`text-sm ${isAnnual ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>
+              Annual
+            </span>
+            {isAnnual && (
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
+                Save up to 25%
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {pricingPlans.map((plan, index) => (
+            <Card
+              key={plan.name}
+              className={`relative backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 ${
+                plan.popular
+                  ? 'border-2 border-indigo-500 scale-105'
+                  : 'border border-white/30'
+              }`}
+            >
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-3 py-1">
+                    Most Popular
+                  </Badge>
+                </div>
+              )}
+
+              <CardHeader className="text-center pb-6">
+                <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
+                  {plan.name}
+                </CardTitle>
+                <CardDescription className="text-gray-600 mb-4">
+                  {plan.description}
+                </CardDescription>
+                
+                <div className="mb-6">
+                  <div className="text-5xl font-bold text-gray-800 mb-2">
+                    ${getPrice(plan)}
+                    <span className="text-lg font-normal text-gray-500">
+                      /month
+                    </span>
+                  </div>
+                  {isAnnual && getSavings(plan) && (
+                    <div className="text-sm text-green-600 font-medium">
+                      Save {getSavings(plan)}% annually
+                    </div>
+                  )}
+                </div>
+
+                <GradientButton
+                  gradient={plan.gradient}
+                  className="w-full text-lg py-3"
+                  onClick={() => window.location.href = '/login'}
+                >
+                  {plan.cta}
+                </GradientButton>
+              </CardHeader>
+
+              <CardContent>
+                <div className="space-y-3">
+                  {plan.features.map((feature, featureIndex) => (
+                    <div key={featureIndex} className="flex items-start space-x-3">
+                      <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-600">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-gray-600 mb-4">
+            Need more features? Check out our complete pricing plans.
+          </p>
+          <Link to="/pricing">
+            <GradientButton
+              variant="outline"
+              className="border-indigo-200 hover:bg-indigo-50"
+            >
+              View all plans
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </GradientButton>
+          </Link>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+              Loved by Students Worldwide
+            </span>
+          </h2>
+          <p className="text-gray-600 text-lg">
+            See how artori is helping students achieve their goals
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {testimonials.map((testimonial, index) => (
+            <Card key={index} className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all">
+              <CardHeader>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="text-3xl">{testimonial.avatar}</div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-gray-800">{testimonial.name}</div>
+                    <div className="text-sm text-gray-600">{testimonial.role}</div>
+                  </div>
+                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
+                    {testimonial.score}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 leading-relaxed italic">
+                  "{testimonial.content}"
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </section>
