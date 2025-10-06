@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,11 +20,13 @@ import {
   Palette,
   AlertTriangle,
   Loader2,
+  LogOut,
 } from "lucide-react";
 import {
   useAdminSettings,
   useUpdateAdminSettingsCategory,
 } from "@/hooks/useAdminApi";
+import { useAuth } from "@/hooks/useApi";
 
 interface SettingsState {
   general: {
@@ -66,6 +69,10 @@ interface SettingsState {
 }
 
 const AdminSettings = () => {
+  const navigate = useNavigate();
+  const { user, isLoading: authLoading } = useAuth();
+
+  // All hooks must be called at the top level
   const [settings, setSettings] = useState<SettingsState>({
     general: {
       app_name: "Artori",
@@ -144,6 +151,17 @@ const AdminSettings = () => {
   } = useAdminSettings("theme");
 
   const updateSettingsMutation = useUpdateAdminSettingsCategory();
+
+  // Check if user is super_admin
+  const isSuperAdmin = user?.role === "super_admin";
+
+  // Redirect non-super_admin users
+  useEffect(() => {
+    if (!authLoading && user && !isSuperAdmin) {
+      toast.error("Access denied. Only Super Admins can access settings.");
+      navigate("/admin");
+    }
+  }, [user, isSuperAdmin, authLoading, navigate]);
 
   // Load settings from API when available
   useEffect(() => {
@@ -247,6 +265,73 @@ const AdminSettings = () => {
     securityError ||
     localizationError ||
     themeError;
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <AdminLayout
+        title="Settings"
+        description="Configure application settings and preferences."
+      >
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  // Show access denied for non-super_admin users
+  if (!isSuperAdmin) {
+    return (
+      <AdminLayout
+        title="Access Denied"
+        description="You don't have permission to access this page."
+      >
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-8 text-center">
+            <div className="flex justify-center mb-4">
+              <AlertTriangle className="h-16 w-16 text-red-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Super Admin Access Required
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Only Super Administrators can access the system settings. Please
+              contact your system administrator if you need access to these
+              features.
+            </p>
+            <div className="space-y-3">
+              <Button
+                onClick={() => navigate("/admin")}
+                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
+              >
+                Return to Dashboard
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  localStorage.removeItem("access_token");
+                  navigate("/login");
+                }}
+                className="w-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </AdminLayout>
+    );
+  }
 
   if (settingsError) {
     return (
