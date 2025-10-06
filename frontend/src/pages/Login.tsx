@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Mail, Lock, Eye, EyeOff, Check, X } from "lucide-react";
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, Check, X, Brain } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin, useSignup } from "@/hooks/useApi";
 import { apiClient, type User } from "@/lib/api";
@@ -178,222 +178,216 @@ const Login = () => {
   const isLoading = loginMutation.isPending || signupMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       {/* Header */}
       <div className="absolute top-6 left-6">
-        <Link to="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
           <ArrowLeft className="h-5 w-5" />
-          <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-md flex items-center justify-center">
+              <Brain className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-bold">artori</span>
+          </div>
         </Link>
       </div>
 
       {/* Login Card */}
       <div className="w-full max-w-md">
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"></div>
+        <Card className="shadow-lg border-0">
+          <CardHeader className="text-center pb-6">
+            <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              {isLogin ? "Welcome back" : "Create your account"}
+            </CardTitle>
+            <CardDescription className="text-gray-600">
+              {isLogin
+                ? "Sign in to continue your study journey"
+                : "Join thousands of students studying smarter"}
+            </CardDescription>
+          </CardHeader>
 
-          <Card className="relative z-10 backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <img
-                  src="/artori-logo.png"
-                  alt="Artori"
-                  className="h-10 w-auto rounded-full"
-                />
-              </div>
-              <CardTitle className="text-2xl font-bold">
-                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {isLogin ? "Welcome Back!" : "Join artori.app"}
-                </span>
-              </CardTitle>
-              <CardDescription>
-                {isLogin
-                  ? "Sign in to continue your study journey"
-                  : "Create your account to start practicing"}
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="bg-white/50 backdrop-blur-sm border-white/20"
-                      required
-                    />
-                  </div>
-                )}
-
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 bg-white/50 backdrop-blur-sm border-white/20"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 bg-white/50 backdrop-blur-sm border-white/20"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Password Requirements for Signup */}
-                  {!isLogin && password && (
-                    <div className="mt-3 p-3 bg-white/30 backdrop-blur-sm rounded-lg border border-white/20">
-                      <p className="text-sm font-medium text-gray-700 mb-2">
-                        Password Requirements:
-                      </p>
-                      <div className="space-y-1">
-                        <div className="flex items-center space-x-2">
-                          {passwordValidation.requirements.length ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <X className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={`text-sm ${
-                              passwordValidation.requirements.length
-                                ? "text-green-700"
-                                : "text-red-600"
-                            }`}
-                          >
-                            At least 8 characters
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {passwordValidation.requirements.uppercase ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <X className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={`text-sm ${
-                              passwordValidation.requirements.uppercase
-                                ? "text-green-700"
-                                : "text-red-600"
-                            }`}
-                          >
-                            One uppercase letter
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {passwordValidation.requirements.number ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <X className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={`text-sm ${
-                              passwordValidation.requirements.number
-                                ? "text-green-700"
-                                : "text-red-600"
-                            }`}
-                          >
-                            One number
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {passwordValidation.requirements.special ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <X className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={`text-sm ${
-                              passwordValidation.requirements.special
-                                ? "text-green-700"
-                                : "text-red-600"
-                            }`}
-                          >
-                            One special character (!@#$%^&*(),.?":{}|&lt;&gt;)
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
-                  size="lg"
-                  disabled={
-                    isLoading || (!isLogin && !passwordValidation.isValid)
-                  }
-                >
-                  {isLoading
-                    ? isLogin
-                      ? "Signing In..."
-                      : "Creating Account..."
-                    : isLogin
-                    ? "🚀 Sign In"
-                    : "✨ Create Account"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-gray-600">
-                  {isLogin
-                    ? "Don't have an account?"
-                    : "Already have an account?"}
-                </p>
-                <button
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  {isLogin ? "Sign up here" : "Sign in here"}
-                </button>
-              </div>
-
-              {isLogin && (
-                <div className="mt-4 text-center">
-                  <button className="text-sm text-gray-500 hover:text-gray-700">
-                    Forgot your password?
-                  </button>
+                  <Label htmlFor="name" className="text-gray-700">Full Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-11 border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                    required
+                  />
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-700">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 h-11 border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-700">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10 h-11 border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Password Requirements for Signup */}
+                {!isLogin && password && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Password Requirements:
+                    </p>
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        {passwordValidation.requirements.length ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )}
+                        <span
+                          className={`text-sm ${
+                            passwordValidation.requirements.length
+                              ? "text-green-700"
+                              : "text-red-600"
+                          }`}
+                        >
+                          At least 8 characters
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {passwordValidation.requirements.uppercase ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )}
+                        <span
+                          className={`text-sm ${
+                            passwordValidation.requirements.uppercase
+                              ? "text-green-700"
+                              : "text-red-600"
+                          }`}
+                        >
+                          One uppercase letter
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {passwordValidation.requirements.number ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )}
+                        <span
+                          className={`text-sm ${
+                            passwordValidation.requirements.number
+                              ? "text-green-700"
+                              : "text-red-600"
+                          }`}
+                        >
+                          One number
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {passwordValidation.requirements.special ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <X className="h-4 w-4 text-red-500" />
+                        )}
+                        <span
+                          className={`text-sm ${
+                            passwordValidation.requirements.special
+                              ? "text-green-700"
+                              : "text-red-600"
+                          }`}
+                        >
+                          One special character
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-11 bg-gray-900 hover:bg-gray-800 text-white"
+                disabled={
+                  isLoading || (!isLogin && !passwordValidation.isValid)
+                }
+              >
+                {isLoading
+                  ? isLogin
+                    ? "Signing in..."
+                    : "Creating account..."
+                  : isLogin
+                  ? "Sign in"
+                  : "Create account"}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
+              </p>
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-gray-900 hover:text-gray-700 font-medium"
+              >
+                {isLogin ? "Sign up" : "Sign in"}
+              </button>
+            </div>
+
+            {isLogin && (
+              <div className="mt-4 text-center">
+                <button className="text-sm text-gray-500 hover:text-gray-700">
+                  Forgot your password?
+                </button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <div className="mt-8 text-center">
-          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-            🎯 Join 50,000+ students already studying smarter!
+          <Badge className="bg-gray-100 text-gray-700 border-0">
+            Join 50,000+ students studying smarter
           </Badge>
         </div>
       </div>

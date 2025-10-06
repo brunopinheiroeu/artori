@@ -117,33 +117,47 @@ logger.info(f"MONGODB_URI loaded: {'Yes' if MONGODB_URI else 'No'}")
 if MONGODB_URI:
     try:
         logger.info("Attempting to connect to MongoDB...")
-        # Configure MongoDB client for Vercel serverless environment
+        # Configure MongoDB client optimized for Vercel serverless environment
         client = MongoClient(
             MONGODB_URI,
             # SSL/TLS configuration for serverless environments
             tls=True,
             tlsAllowInvalidCertificates=False,
-            # Connection pool settings for serverless
-            maxPoolSize=10,
-            minPoolSize=1,
-            maxIdleTimeMS=30000,
-            # Timeout settings for serverless
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=10000,
-            socketTimeoutMS=20000,
+            # Optimized connection pool settings for serverless
+            maxPoolSize=1,  # Reduced for serverless
+            minPoolSize=0,  # Allow connections to close when idle
+            maxIdleTimeMS=10000,  # Shorter idle time for serverless
+            # Aggressive timeout settings for serverless
+            serverSelectionTimeoutMS=3000,  # Faster timeout
+            connectTimeoutMS=5000,  # Faster connection timeout
+            socketTimeoutMS=10000,  # Shorter socket timeout
             # Retry settings
             retryWrites=True,
-            retryReads=True
+            retryReads=True,
+            # Additional serverless optimizations
+            heartbeatFrequencyMS=10000,  # Less frequent heartbeats
+            maxConnecting=1,  # Limit concurrent connections
+            # Connection string options override
+            w='majority',
+            journal=True
         )
         db = client.artori
-        # Test the connection
-        client.admin.command('ping')
+        # Test the connection with shorter timeout
+        client.admin.command('ping', maxTimeMS=3000)
         logger.info("✅ MongoDB connection successful!")
         collections = db.list_collection_names()
         logger.info(f"Available collections: {collections}")
     except Exception as e:
         logger.error(f"❌ MongoDB connection failed: {e}")
         logger.error(f"Error type: {type(e).__name__}")
+        # Log additional debugging info for serverless troubleshooting
+        if "ServerSelectionTimeoutError" in str(type(e)):
+            logger.error("   This is likely a network connectivity or IP whitelisting issue")
+            logger.error("   Check MongoDB Atlas Network Access settings")
+        elif "AuthenticationFailed" in str(type(e)):
+            logger.error("   Authentication failed - check username/password in connection string")
+        elif "DNSError" in str(type(e)):
+            logger.error("   DNS resolution failed - check cluster hostname")
         client = None
         db = None
 else:
