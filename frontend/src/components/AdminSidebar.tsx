@@ -62,8 +62,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
     }
   };
 
-  // Filter navigation based on user role
-  const baseNavigation = [
+  const navigation = [
     {
       name: "Dashboard",
       href: "/admin",
@@ -82,21 +81,13 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
       icon: Users,
       current: location.pathname.startsWith("/admin/users"),
     },
+    {
+      name: "Settings",
+      href: "/admin/settings",
+      icon: Settings,
+      current: location.pathname.startsWith("/admin/settings"),
+    },
   ];
-
-  // Only show Settings for super_admin users
-  const navigation =
-    user?.role === "super_admin"
-      ? [
-          ...baseNavigation,
-          {
-            name: "Settings",
-            href: "/admin/settings",
-            icon: Settings,
-            current: location.pathname.startsWith("/admin/settings"),
-          },
-        ]
-      : baseNavigation;
 
   // Use real authenticated user data
   const adminUser = user
@@ -212,18 +203,15 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                   </Link>
                 </DropdownMenuItem>
 
-                {/* Only show Settings for super_admin users */}
-                {user?.role === "super_admin" && (
-                  <DropdownMenuItem
-                    className="text-slate-300 hover:text-white hover:bg-slate-700"
-                    asChild
-                  >
-                    <Link to="/admin/settings">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem
+                  className="text-slate-300 hover:text-white hover:bg-slate-700"
+                  asChild
+                >
+                  <Link to="/admin/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem
                   className="text-slate-300 hover:text-white hover:bg-slate-700"
