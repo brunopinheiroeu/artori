@@ -24,6 +24,8 @@ import {
   useAdminSettings,
   useUpdateAdminSettingsCategory,
 } from "@/hooks/useAdminApi";
+import { useAuth } from "@/hooks/useApi";
+import { Navigate } from "react-router-dom";
 
 interface SettingsState {
   general: {
@@ -66,6 +68,8 @@ interface SettingsState {
 }
 
 const AdminSettings = () => {
+  const { user, isLoading: authLoading } = useAuth();
+
   const [settings, setSettings] = useState<SettingsState>({
     general: {
       app_name: "Artori",
@@ -247,6 +251,33 @@ const AdminSettings = () => {
     securityError ||
     localizationError ||
     themeError;
+
+  // Redirect non-super-admin users to dashboard
+  if (!authLoading && user?.role !== "super_admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <AdminLayout
+        title="Settings"
+        description="Configure application settings and preferences."
+      >
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   if (settingsError) {
     return (
