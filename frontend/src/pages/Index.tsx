@@ -12,6 +12,7 @@ import {
   Check,
   Star,
   ArrowRight,
+  Building2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -161,6 +162,7 @@ const Index = () => {
       cta: "Get started free",
       popular: false,
       gradient: "from-gray-400 to-gray-500",
+      isSchool: false,
     },
     {
       name: "Student",
@@ -177,6 +179,7 @@ const Index = () => {
       cta: "Start free trial",
       popular: true,
       gradient: "from-indigo-500 to-purple-600",
+      isSchool: false,
     },
     {
       name: "Pro",
@@ -193,6 +196,24 @@ const Index = () => {
       cta: "Start free trial",
       popular: false,
       gradient: "from-violet-500 to-pink-600",
+      isSchool: false,
+    },
+    {
+      name: "For Schools",
+      description: "Custom solutions for educational institutions",
+      price: { monthly: "Custom", annual: "Custom" },
+      features: [
+        "Everything in Pro",
+        "Unlimited students and teachers",
+        "Advanced teacher dashboards",
+        "Custom branding and white-labeling",
+        "SSO and LDAP integration",
+        "24/7 dedicated support",
+      ],
+      cta: "Explore solutions",
+      popular: false,
+      gradient: "from-emerald-500 to-teal-600",
+      isSchool: true,
     },
   ];
 
@@ -227,11 +248,12 @@ const Index = () => {
   );
 
   const getPrice = (plan: typeof pricingPlans[0]) => {
+    if (typeof plan.price.monthly === 'string') return plan.price.monthly;
     return isAnnual ? plan.price.annual : plan.price.monthly;
   };
 
   const getSavings = (plan: typeof pricingPlans[0]) => {
-    if (plan.price.monthly === 0) return null;
+    if (typeof plan.price.monthly === 'string' || plan.price.monthly === 0) return null;
     const monthlyCost = plan.price.monthly * 12;
     const annualCost = plan.price.annual * 12;
     const savings = Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
@@ -434,13 +456,15 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {pricingPlans.map((plan, index) => (
             <Card
               key={plan.name}
               className={`relative backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 ${
                 plan.popular
                   ? 'border-2 border-indigo-500 scale-105'
+                  : plan.isSchool
+                  ? 'border-2 border-emerald-500'
                   : 'border border-white/30'
               }`}
             >
@@ -448,6 +472,15 @@ const Index = () => {
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-3 py-1">
                     Most Popular
+                  </Badge>
+                </div>
+              )}
+
+              {plan.isSchool && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 px-3 py-1">
+                    <Building2 className="h-3 w-3 mr-1" />
+                    For Institutions
                   </Badge>
                 </div>
               )}
@@ -462,14 +495,25 @@ const Index = () => {
                 
                 <div className="mb-6">
                   <div className="text-5xl font-bold text-gray-800 mb-2">
-                    ${getPrice(plan)}
-                    <span className="text-lg font-normal text-gray-500">
-                      /month
-                    </span>
+                    {typeof getPrice(plan) === 'string' ? (
+                      <span className="text-2xl">Custom</span>
+                    ) : (
+                      <>
+                        ${getPrice(plan)}
+                        <span className="text-lg font-normal text-gray-500">
+                          /month
+                        </span>
+                      </>
+                    )}
                   </div>
                   {isAnnual && getSavings(plan) && (
                     <div className="text-sm text-green-600 font-medium">
                       Save {getSavings(plan)}% annually
+                    </div>
+                  )}
+                  {plan.isSchool && (
+                    <div className="text-sm text-emerald-600 font-medium">
+                      Tailored to your needs
                     </div>
                   )}
                 </div>
@@ -477,9 +521,16 @@ const Index = () => {
                 <GradientButton
                   gradient={plan.gradient}
                   className="w-full text-lg py-3"
-                  onClick={() => window.location.href = '/login'}
+                  onClick={() => {
+                    if (plan.isSchool) {
+                      window.location.href = '/solutions';
+                    } else {
+                      window.location.href = '/login';
+                    }
+                  }}
                 >
                   {plan.cta}
+                  {plan.isSchool && <ArrowRight className="ml-2 h-4 w-4" />}
                 </GradientButton>
               </CardHeader>
 
@@ -492,6 +543,14 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
+
+                {plan.isSchool && (
+                  <div className="mt-4 pt-4 border-t border-white/20">
+                    <p className="text-xs text-gray-500 text-center">
+                      Custom pricing based on number of students and specific requirements
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -499,14 +558,14 @@ const Index = () => {
 
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">
-            Need more features? Check out our complete pricing plans.
+            Need more features? Questions about pricing?
           </p>
-          <Link to="/pricing">
+          <Link to="/solutions">
             <GradientButton
               variant="outline"
               className="border-indigo-200 hover:bg-indigo-50"
             >
-              View all plans
+              💬 Contact Sales
               <ArrowRight className="ml-2 h-4 w-4" />
             </GradientButton>
           </Link>
