@@ -99,6 +99,12 @@ const Login = () => {
               description: "Welcome to the admin panel!",
             });
             navigate("/admin");
+          } else if (userRole === "tutor") {
+            toast({
+              title: "Tutor login successful",
+              description: "Welcome to your tutor dashboard!",
+            });
+            navigate("/tutor");
           } else {
             toast({
               title: "Login successful",
@@ -120,6 +126,12 @@ const Login = () => {
                 description: "Welcome to the admin panel!",
               });
               navigate("/admin");
+            } else if (userRole === "tutor") {
+              toast({
+                title: "Tutor login successful",
+                description: "Welcome to your tutor dashboard!",
+              });
+              navigate("/tutor");
             } else {
               toast({
                 title: "Login successful",

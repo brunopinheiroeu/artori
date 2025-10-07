@@ -181,12 +181,24 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class TutorData(BaseModel):
+    subjects: List[str] = []
+    qualifications: List[str] = []
+    bio: Optional[str] = None
+    availability: Dict[str, Any] = {}
+    hourly_rate: Optional[float] = None
+    experience_years: Optional[int] = None
+    languages: List[str] = []
+    rating: Optional[float] = None
+    total_sessions: int = 0
+
 class UserResponse(BaseModel):
     id: str
     name: str
     email: str
     role: Optional[str] = "student"
     selected_exam_id: Optional[str] = None
+    tutor_data: Optional[TutorData] = None
     created_at: datetime
     updated_at: datetime
 
@@ -303,6 +315,7 @@ class AnswerResponse(BaseModel):
 # Admin-specific enums and models
 class UserRole(str, Enum):
     STUDENT = "student"
+    TUTOR = "tutor"
     TEACHER = "teacher"
     ADMIN = "admin"
     SUPER_ADMIN = "super_admin"
@@ -710,6 +723,26 @@ async def get_current_admin_user(current_user = Depends(get_current_user)):
         )
     return current_user
 
+async def get_current_tutor_user(current_user = Depends(get_current_user)):
+    """Get current authenticated tutor user"""
+    user_role = current_user.get("role", "student")
+    if user_role != "tutor":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tutor access required"
+        )
+    return current_user
+
+async def get_current_tutor_or_admin_user(current_user = Depends(get_current_user)):
+    """Get current authenticated tutor or admin user"""
+    user_role = current_user.get("role", "student")
+    if user_role not in ["tutor", "admin", "super_admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tutor or admin access required"
+        )
+    return current_user
+
 async def get_current_super_admin_user(current_user = Depends(get_current_user)):
     """Get current authenticated super admin user"""
     user_role = current_user.get("role", "student")
@@ -1002,12 +1035,18 @@ async def get_current_user_info(current_user = Depends(get_current_user)):
     if user_role is None:
         user_role = "student"
     
+    # Handle tutor data if user is a tutor
+    tutor_data = None
+    if user_role == "tutor" and current_user.get("tutor_data"):
+        tutor_data = TutorData(**current_user["tutor_data"])
+    
     return UserResponse(
         id=str(current_user["_id"]),
         name=current_user["name"],
         email=current_user["email"],
         role=user_role,
         selected_exam_id=str(current_user["selected_exam_id"]) if current_user.get("selected_exam_id") else None,
+        tutor_data=tutor_data,
         created_at=current_user["created_at"],
         updated_at=current_user["updated_at"]
     )
@@ -3440,6 +3479,167 @@ async def get_test_results(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve test results"
+        )
+
+# =============================================================================
+# TUTOR API ENDPOINTS
+# =============================================================================
+
+class TutorDashboardStats(BaseModel):
+    total_students: int
+    active_sessions: int
+    completed_sessions: int
+    average_rating: float
+    total_earnings: float
+    upcoming_sessions: int
+
+class TutorProfileUpdate(BaseModel):
+    subjects: Optional[List[str]] = None
+    qualifications: Optional[List[str]] = None
+    bio: Optional[str] = None
+    availability: Optional[Dict[str, Any]] = None
+    hourly_rate: Optional[float] = None
+    experience_years: Optional[int] = None
+    languages: Optional[List[str]] = None
+
+@app.get("/api/v1/tutor/dashboard", response_model=TutorDashboardStats)
+async def get_tutor_dashboard(current_tutor = Depends(get_current_tutor_user)):
+    """Get tutor dashboard statistics"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Mock data for now - in a real implementation, these would be calculated from actual data
+        stats = TutorDashboardStats(
+            total_students=15,
+            active_sessions=3,
+            completed_sessions=127,
+            average_rating=4.8,
+            total_earnings=2450.00,
+            upcoming_sessions=5
+        )
+        
+        return stats
+    except Exception as e:
+        logger.error(f"Failed to get tutor dashboard: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve tutor dashboard"
+        )
+
+@app.get("/api/v1/tutor/profile", response_model=UserResponse)
+async def get_tutor_profile(current_tutor = Depends(get_current_tutor_user)):
+    """Get tutor profile information"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Get fresh user data from database
+        user = get_user_by_id(str(current_tutor["_id"]))
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Handle tutor data
+        tutor_data = None
+        if user.get("tutor_data"):
+            tutor_data = TutorData(**user["tutor_data"])
+        
+        return UserResponse(
+            id=str(user["_id"]),
+            name=user["name"],
+            email=user["email"],
+            role=user.get("role", "tutor"),
+            selected_exam_id=str(user["selected_exam_id"]) if user.get("selected_exam_id") else None,
+            tutor_data=tutor_data,
+            created_at=user["created_at"],
+            updated_at=user["updated_at"]
+        )
+    except Exception as e:
+        logger.error(f"Failed to get tutor profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to retrieve tutor profile"
+        )
+
+@app.put("/api/v1/tutor/profile", response_model=UserResponse)
+async def update_tutor_profile(
+    profile_data: TutorProfileUpdate,
+    current_tutor = Depends(get_current_tutor_user)
+):
+    """Update tutor profile information"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Get current tutor data
+        user = get_user_by_id(str(current_tutor["_id"]))
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Build update document for tutor_data
+        current_tutor_data = user.get("tutor_data", {})
+        update_tutor_data = current_tutor_data.copy()
+        
+        if profile_data.subjects is not None:
+            update_tutor_data["subjects"] = profile_data.subjects
+        if profile_data.qualifications is not None:
+            update_tutor_data["qualifications"] = profile_data.qualifications
+        if profile_data.bio is not None:
+            update_tutor_data["bio"] = profile_data.bio
+        if profile_data.availability is not None:
+            update_tutor_data["availability"] = profile_data.availability
+        if profile_data.hourly_rate is not None:
+            update_tutor_data["hourly_rate"] = profile_data.hourly_rate
+        if profile_data.experience_years is not None:
+            update_tutor_data["experience_years"] = profile_data.experience_years
+        if profile_data.languages is not None:
+            update_tutor_data["languages"] = profile_data.languages
+        
+        # Update user in database
+        db.users.update_one(
+            {"_id": ObjectId(current_tutor["_id"])},
+            {
+                "$set": {
+                    "tutor_data": update_tutor_data,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Return updated user
+        updated_user = get_user_by_id(str(current_tutor["_id"]))
+        tutor_data = TutorData(**updated_user["tutor_data"]) if updated_user.get("tutor_data") else None
+        
+        return UserResponse(
+            id=str(updated_user["_id"]),
+            name=updated_user["name"],
+            email=updated_user["email"],
+            role=updated_user.get("role", "tutor"),
+            selected_exam_id=str(updated_user["selected_exam_id"]) if updated_user.get("selected_exam_id") else None,
+            tutor_data=tutor_data,
+            created_at=updated_user["created_at"],
+            updated_at=updated_user["updated_at"]
+        )
+    except Exception as e:
+        logger.error(f"Failed to update tutor profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update tutor profile"
         )
 
 def get_default_settings_for_category(category: str) -> Dict[str, Any]:

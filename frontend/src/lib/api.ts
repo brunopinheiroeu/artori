@@ -3,12 +3,29 @@ const API_BASE_URL =
   (import.meta.env.DEV ? "http://127.0.0.1:8000/api/v1" : "/api/v1");
 
 // Types matching backend models
+export interface TutorAvailability {
+  [day: string]: string[]; // e.g., "monday": ["09:00-12:00", "14:00-18:00"]
+}
+
+export interface TutorData {
+  subjects: string[];
+  qualifications: string[];
+  bio?: string;
+  availability: TutorAvailability;
+  hourly_rate?: number;
+  experience_years?: number;
+  languages: string[];
+  rating?: number;
+  total_sessions: number;
+}
+
 export interface User {
   id: string;
   name: string;
   email: string;
   role?: string;
   selected_exam_id?: string;
+  tutor_data?: TutorData;
   created_at: string;
   updated_at: string;
 }
@@ -334,6 +351,26 @@ export interface AnalyticsTrends {
   change_percentage: number;
 }
 
+// Tutor-specific types
+export interface TutorDashboardStats {
+  total_students: number;
+  active_sessions: number;
+  completed_sessions: number;
+  average_rating: number;
+  total_earnings: number;
+  upcoming_sessions: number;
+}
+
+export interface TutorProfileUpdate {
+  subjects?: string[];
+  qualifications?: string[];
+  bio?: string;
+  availability?: TutorAvailability;
+  hourly_rate?: number;
+  experience_years?: number;
+  languages?: string[];
+}
+
 // API Client class
 class ApiClient {
   private baseUrl: string;
@@ -518,8 +555,14 @@ class ApiClient {
     });
   }
 
-  async resetAdminUser(userId: string): Promise<{ message: string; user_id: string; reset_fields: string[] }> {
-    return this.request<{ message: string; user_id: string; reset_fields: string[] }>(`/admin/users/${userId}/reset`, {
+  async resetAdminUser(
+    userId: string
+  ): Promise<{ message: string; user_id: string; reset_fields: string[] }> {
+    return this.request<{
+      message: string;
+      user_id: string;
+      reset_fields: string[];
+    }>(`/admin/users/${userId}/reset`, {
       method: "POST",
     });
   }
@@ -720,6 +763,22 @@ class ApiClient {
     );
   }
 
+  // Tutor API methods
+  async getTutorDashboard(): Promise<TutorDashboardStats> {
+    return this.request<TutorDashboardStats>("/tutor/dashboard");
+  }
+
+  async getTutorProfile(): Promise<User> {
+    return this.request<User>("/tutor/profile");
+  }
+
+  async updateTutorProfile(profileData: TutorProfileUpdate): Promise<User> {
+    return this.request<User>("/tutor/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+  }
+
   // Helper method to check if user has admin role
   async checkAdminRole(): Promise<boolean> {
     try {
@@ -730,6 +789,16 @@ class ApiClient {
           (user as User & { role?: string }).role || "student"
         )
       );
+    } catch {
+      return false;
+    }
+  }
+
+  // Helper method to check if user has tutor role
+  async checkTutorRole(): Promise<boolean> {
+    try {
+      const user = await this.getCurrentUser();
+      return user && user.role === "tutor";
     } catch {
       return false;
     }
