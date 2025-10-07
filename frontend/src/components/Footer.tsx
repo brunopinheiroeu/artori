@@ -80,11 +80,6 @@ const Footer = ({
               ) : (
                 <>
                   <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
-                  <span
-                    className={`text-2xl font-bold bg-gradient-to-r ${textGradient} bg-clip-text text-transparent`}
-                  >
-                    artori.app
-                  </span>
                 </>
               )}
             </div>
