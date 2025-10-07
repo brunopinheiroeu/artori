@@ -13,7 +13,9 @@ const Footer = ({
   schoolColors,
 }: FooterProps) => {
   const isSchool = variant === "school";
-  const logoGradient = isSchool ? "from-green-500 to-blue-600" : schoolColors || "from-indigo-500 to-purple-600";
+  const logoGradient = isSchool
+    ? "from-green-500 to-blue-600"
+    : schoolColors || "from-indigo-500 to-purple-600";
   const textGradient = isSchool
     ? "from-green-600 to-blue-600"
     : "from-indigo-600 to-purple-600";
@@ -49,7 +51,11 @@ const Footer = ({
 
   const socialLinks = [
     { name: "Twitter", href: "https://twitter.com/artori_app", icon: "𝕏" },
-    { name: "LinkedIn", href: "https://linkedin.com/company/artori", icon: "💼" },
+    {
+      name: "LinkedIn",
+      href: "https://linkedin.com/company/artori",
+      icon: "💼",
+    },
     { name: "GitHub", href: "https://github.com/artori-app", icon: "🐙" },
     { name: "Discord", href: "https://discord.gg/artori", icon: "💬" },
   ];
@@ -74,21 +80,26 @@ const Footer = ({
                     >
                       {brandName}
                     </span>
-                    <p className="text-xs text-gray-500">Powered by artori.app</p>
+                    <p className="text-xs text-gray-500">
+                      Powered by artori.app
+                    </p>
                   </div>
                 </>
               ) : (
                 <>
-                  <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
+                  <img
+                    src="/artori-logo.png"
+                    alt="Artori"
+                    className="h-8 w-auto"
+                  />
                 </>
               )}
             </div>
-            
+
             <p className="text-gray-600 mb-6 leading-relaxed">
-              {isSchool 
+              {isSchool
                 ? `Empowering ${brandName} students with responsible AI-powered learning that enhances education and promotes critical thinking.`
-                : "Responsible AI for better learning. We help students master high-stakes exams with transparent, explainable AI that promotes critical thinking."
-              }
+                : "We help students master high-stakes exams with transparent, explainable AI that promotes critical thinking."}
             </p>
 
             {/* Contact Info */}
@@ -99,11 +110,11 @@ const Footer = ({
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-indigo-500" />
-                <span>+1 (555) 123-4567</span>
+                <span>+34 123 4567</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-indigo-500" />
-                <span>San Francisco, CA & New York, NY</span>
+                <span>Valencia - Spain</span>
               </div>
             </div>
 
