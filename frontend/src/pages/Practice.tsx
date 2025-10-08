@@ -9,7 +9,34 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, Target, Calendar, TrendingUp } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  BookOpen,
+  Target,
+  Calendar,
+  TrendingUp,
+  Settings,
+  Clock,
+  Brain,
+  Zap,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useExams, useExam, useSetUserExam } from "@/hooks/useApi";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +52,14 @@ const Practice = () => {
   const setUserExamMutation = useSetUserExam();
   const hasSelectedExam = !!user?.selected_exam_id;
   const isNewUser = !hasSelectedExam;
+
+  // Exam setup state
+  const [examSetup, setExamSetup] = useState({
+    questionCount: "20",
+    difficulty: "mixed",
+    timeLimit: "unlimited",
+    mode: "practice",
+  });
 
   // Fetch dashboard data for users with selected exam
   const { data: dashboardData, isLoading: dashboardLoading } = useQuery({
@@ -53,6 +88,23 @@ const Practice = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleStartExam = (examId: string, subjectId: string) => {
+    // Create URL with exam setup parameters
+    const params = new URLSearchParams({
+      questions: examSetup.questionCount,
+      difficulty: examSetup.difficulty,
+      timeLimit: examSetup.timeLimit,
+      mode: examSetup.mode,
+    });
+
+    navigate(`/question/${examId}/${subjectId}?${params.toString()}`);
+
+    toast({
+      title: "Exam Started!",
+      description: `Starting ${examSetup.mode} session with ${examSetup.questionCount} questions`,
+    });
   };
 
   if (authLoading || examsLoading) {
@@ -343,17 +395,243 @@ const Practice = () => {
                           </span>
                         </div>
 
-                        <Link
-                          to={`/question/${dashboardData.selected_exam.id}/${subject.id}`}
-                        >
-                          <Button
-                            className={`w-full bg-gradient-to-r ${
-                              subject.gradient || "from-blue-500 to-purple-500"
-                            } hover:shadow-lg transition-all`}
-                          >
-                            Continue Studying
-                          </Button>
-                        </Link>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              className={`w-full bg-gradient-to-r ${
+                                subject.gradient ||
+                                "from-blue-500 to-purple-500"
+                              } hover:shadow-lg transition-all`}
+                            >
+                              <Settings className="h-4 w-4 mr-2" />
+                              Continue Studying
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center space-x-2">
+                                <Brain className="h-5 w-5 text-indigo-600" />
+                                <span>Setup Your Practice Session</span>
+                              </DialogTitle>
+                              <DialogDescription>
+                                Customize your {subject.name} practice session
+                              </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="space-y-6 py-4">
+                              {/* Number of Questions */}
+                              <div className="space-y-2">
+                                <Label
+                                  htmlFor="questionCount"
+                                  className="text-sm font-medium"
+                                >
+                                  Number of Questions
+                                </Label>
+                                <Select
+                                  value={examSetup.questionCount}
+                                  onValueChange={(value) =>
+                                    setExamSetup({
+                                      ...examSetup,
+                                      questionCount: value,
+                                    })
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="5">
+                                      5 Questions (Quick)
+                                    </SelectItem>
+                                    <SelectItem value="10">
+                                      10 Questions
+                                    </SelectItem>
+                                    <SelectItem value="20">
+                                      20 Questions (Recommended)
+                                    </SelectItem>
+                                    <SelectItem value="30">
+                                      30 Questions
+                                    </SelectItem>
+                                    <SelectItem value="50">
+                                      50 Questions (Full Test)
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Difficulty Level */}
+                              <div className="space-y-2">
+                                <Label
+                                  htmlFor="difficulty"
+                                  className="text-sm font-medium"
+                                >
+                                  Difficulty Level
+                                </Label>
+                                <Select
+                                  value={examSetup.difficulty}
+                                  onValueChange={(value) =>
+                                    setExamSetup({
+                                      ...examSetup,
+                                      difficulty: value,
+                                    })
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="easy">
+                                      <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                        <span>Easy</span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="medium">
+                                      <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                        <span>Medium</span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="hard">
+                                      <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                        <span>Hard</span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="mixed">
+                                      <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full"></div>
+                                        <span>Mixed (Recommended)</span>
+                                      </div>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Time Limit */}
+                              <div className="space-y-2">
+                                <Label
+                                  htmlFor="timeLimit"
+                                  className="text-sm font-medium"
+                                >
+                                  Time Limit
+                                </Label>
+                                <Select
+                                  value={examSetup.timeLimit}
+                                  onValueChange={(value) =>
+                                    setExamSetup({
+                                      ...examSetup,
+                                      timeLimit: value,
+                                    })
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="unlimited">
+                                      <div className="flex items-center space-x-2">
+                                        <Clock className="h-3 w-3" />
+                                        <span>No Time Limit</span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="30">
+                                      30 Minutes
+                                    </SelectItem>
+                                    <SelectItem value="45">
+                                      45 Minutes
+                                    </SelectItem>
+                                    <SelectItem value="60">1 Hour</SelectItem>
+                                    <SelectItem value="90">
+                                      1.5 Hours
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Practice Mode */}
+                              <div className="space-y-2">
+                                <Label
+                                  htmlFor="mode"
+                                  className="text-sm font-medium"
+                                >
+                                  Practice Mode
+                                </Label>
+                                <Select
+                                  value={examSetup.mode}
+                                  onValueChange={(value) =>
+                                    setExamSetup({ ...examSetup, mode: value })
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="practice">
+                                      <div className="flex items-center space-x-2">
+                                        <BookOpen className="h-3 w-3" />
+                                        <span>
+                                          Practice Mode (with explanations)
+                                        </span>
+                                      </div>
+                                    </SelectItem>
+                                    <SelectItem value="exam">
+                                      <div className="flex items-center space-x-2">
+                                        <Zap className="h-3 w-3" />
+                                        <span>
+                                          Exam Mode (timed, no explanations)
+                                        </span>
+                                      </div>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              <Separator />
+
+                              {/* Summary */}
+                              <div className="bg-indigo-50 p-4 rounded-lg">
+                                <h4 className="font-medium text-indigo-900 mb-2">
+                                  Session Summary
+                                </h4>
+                                <div className="text-sm text-indigo-700 space-y-1">
+                                  <div>
+                                    📝 {examSetup.questionCount} questions
+                                  </div>
+                                  <div>
+                                    🎯 {examSetup.difficulty} difficulty
+                                  </div>
+                                  <div>
+                                    ⏱️{" "}
+                                    {examSetup.timeLimit === "unlimited"
+                                      ? "No time limit"
+                                      : `${examSetup.timeLimit} minutes`}
+                                  </div>
+                                  <div>
+                                    🧠{" "}
+                                    {examSetup.mode === "practice"
+                                      ? "Practice mode with AI explanations"
+                                      : "Exam mode (timed)"}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <Button
+                                onClick={() =>
+                                  handleStartExam(
+                                    dashboardData.selected_exam.id,
+                                    subject.id
+                                  )
+                                }
+                                className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                                size="lg"
+                              >
+                                <Target className="h-4 w-4 mr-2" />
+                                Start Practice Session
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </CardContent>
                   </Card>

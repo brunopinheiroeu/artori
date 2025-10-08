@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +13,13 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Brain,
   ArrowLeft,
   CheckCircle,
@@ -23,6 +30,11 @@ import {
   Target,
   MessageSquare,
   Building2,
+  Pause,
+  Play,
+  Square,
+  Clock,
+  Save,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuestions, useSubmitAnswer } from "@/hooks/useApi";
@@ -32,6 +44,16 @@ import type { AnswerResponse } from "@/lib/api";
 const Question = () => {
   const { examId, modeId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Exam setup from URL parameters
+  const examSetup = {
+    questionCount: parseInt(searchParams.get("questions") || "20"),
+    difficulty: searchParams.get("difficulty") || "mixed",
+    timeLimit: searchParams.get("timeLimit") || "unlimited",
+    mode: searchParams.get("mode") || "practice",
+  };
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -47,13 +69,99 @@ const Question = () => {
     }>
   >([]);
 
+  // Timer and pause functionality
+  const [isPaused, setIsPaused] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(
+    examSetup.timeLimit === "unlimited"
+      ? null
+      : parseInt(examSetup.timeLimit) * 60
+  );
+  const [showPauseDialog, setShowPauseDialog] = useState(false);
+  const [showStopDialog, setShowStopDialog] = useState(false);
+
   const { data: questions, isLoading } = useQuestions(examId, modeId);
   const submitAnswerMutation = useSubmitAnswer();
 
-  const currentQ = questions?.[currentQuestion];
-  const totalQuestions = questions?.length || 0;
+  // Limit questions based on setup
+  const limitedQuestions = questions?.slice(0, examSetup.questionCount) || [];
+  const currentQ = limitedQuestions[currentQuestion];
+  const totalQuestions = limitedQuestions.length;
   const progress =
     totalQuestions > 0 ? ((currentQuestion + 1) / totalQuestions) * 100 : 0;
+
+  // Timer effect
+  useEffect(() => {
+    if (timeRemaining === null || isPaused || showExplanation) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev === null || prev <= 1) {
+          // Time's up!
+          handleTimeUp();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeRemaining, isPaused, showExplanation]);
+
+  const handleTimeUp = () => {
+    toast({
+      title: "Time's Up!",
+      description: "Your exam time has expired. Submitting your answers...",
+      variant: "destructive",
+    });
+
+    // Auto-submit and go to results
+    const sessionEndTime = new Date();
+    const totalTimeSpent = Math.floor(
+      (sessionEndTime.getTime() - sessionStartTime.getTime()) / 1000
+    );
+    const minutes = Math.floor(totalTimeSpent / 60);
+    const seconds = totalTimeSpent % 60;
+    const timeString = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+    const resultsParams = new URLSearchParams({
+      score: score.toString(),
+      total: totalQuestions.toString(),
+      correct: score.toString(),
+      time: timeString,
+      timeUp: "true",
+    });
+
+    navigate(`/results/${examId}/${modeId}?${resultsParams.toString()}`);
+  };
+
+  const handlePauseExam = () => {
+    setIsPaused(true);
+    setShowPauseDialog(true);
+  };
+
+  const handleResumeExam = () => {
+    setIsPaused(false);
+    setShowPauseDialog(false);
+  };
+
+  const handleStopExam = () => {
+    setShowStopDialog(true);
+  };
+
+  const handleConfirmStop = () => {
+    // Save progress and redirect to practice
+    toast({
+      title: "Exam Stopped",
+      description: "Your progress has been saved. You can resume later.",
+    });
+    navigate("/practice");
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   if (isLoading) {
     return (
@@ -184,13 +292,24 @@ const Question = () => {
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
           </Link>
           <div className="flex items-center space-x-4">
-            <Link
-              to="/solutions"
-              className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
-            >
-              <Building2 className="h-4 w-4" />
-              <span className="hidden md:inline">Schools</span>
-            </Link>
+            {/* Timer */}
+            {timeRemaining !== null && (
+              <Badge
+                variant="outline"
+                className={`bg-white/50 backdrop-blur-sm ${
+                  timeRemaining < 300 ? "border-red-500 text-red-700" : ""
+                }`}
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                {formatTime(timeRemaining)}
+              </Badge>
+            )}
+
+            {/* Exam Mode Badge */}
+            <Badge variant="outline" className="bg-white/50 backdrop-blur-sm">
+              {examSetup.mode === "practice" ? "Practice Mode" : "Exam Mode"}
+            </Badge>
+
             <Badge variant="outline" className="bg-white/50 backdrop-blur-sm">
               Question {currentQuestion + 1} of {totalQuestions}
             </Badge>
@@ -200,6 +319,38 @@ const Question = () => {
             >
               Score: {score}/{currentQuestion + (showExplanation ? 1 : 0)}
             </Badge>
+
+            {/* Control Buttons */}
+            <div className="flex items-center space-x-2">
+              {!isPaused ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePauseExam}
+                  className="bg-white/50 backdrop-blur-sm"
+                >
+                  <Pause className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResumeExam}
+                  className="bg-white/50 backdrop-blur-sm"
+                >
+                  <Play className="h-4 w-4" />
+                </Button>
+              )}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleStopExam}
+                className="bg-white/50 backdrop-blur-sm hover:bg-red-50"
+              >
+                <Square className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </nav>
       </header>
@@ -300,7 +451,11 @@ const Question = () => {
               {!showExplanation ? (
                 <Button
                   onClick={handleSubmitAnswer}
-                  disabled={!selectedAnswer || submitAnswerMutation.isPending}
+                  disabled={
+                    !selectedAnswer ||
+                    submitAnswerMutation.isPending ||
+                    isPaused
+                  }
                   size="lg"
                   className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg px-8"
                 >
@@ -311,6 +466,7 @@ const Question = () => {
               ) : (
                 <Button
                   onClick={handleNextQuestion}
+                  disabled={isPaused}
                   size="lg"
                   className={`shadow-lg px-8 ${
                     isLastQuestion
@@ -322,11 +478,33 @@ const Question = () => {
                 </Button>
               )}
             </div>
+
+            {/* Pause Overlay */}
+            {isPaused && (
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <div className="bg-white p-6 rounded-lg shadow-xl text-center">
+                  <Pause className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Exam Paused
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    Click resume to continue your exam
+                  </p>
+                  <Button
+                    onClick={handleResumeExam}
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600"
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Resume
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Explainable AI Response */}
-        {showExplanation && (
+        {/* Explainable AI Response - Only in Practice Mode */}
+        {showExplanation && examSetup.mode === "practice" && (
           <Card className="border-2 border-indigo-200 backdrop-blur-sm bg-white/60 shadow-xl">
             <CardHeader>
               <div className="flex items-center space-x-2">
@@ -421,6 +599,103 @@ const Question = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Pause Dialog */}
+        <Dialog open={showPauseDialog} onOpenChange={setShowPauseDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Pause className="h-5 w-5 text-blue-600" />
+                <span>Exam Paused</span>
+              </DialogTitle>
+              <DialogDescription>
+                Your exam is paused. Take your time and resume when ready.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">
+                  Current Progress
+                </h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <div>
+                    📝 Question {currentQuestion + 1} of {totalQuestions}
+                  </div>
+                  <div>
+                    🎯 Score: {score}/
+                    {currentQuestion + (showExplanation ? 1 : 0)}
+                  </div>
+                  {timeRemaining !== null && (
+                    <div>⏱️ Time remaining: {formatTime(timeRemaining)}</div>
+                  )}
+                </div>
+              </div>
+              <div className="flex space-x-3">
+                <Button
+                  onClick={handleResumeExam}
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Resume Exam
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleStopExam}
+                  className="flex-1"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save & Exit
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Stop Confirmation Dialog */}
+        <Dialog open={showStopDialog} onOpenChange={setShowStopDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center space-x-2">
+                <Square className="h-5 w-5 text-red-600" />
+                <span>Stop Exam?</span>
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to stop the exam? Your progress will be
+                saved.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="bg-red-50 p-4 rounded-lg">
+                <h4 className="font-medium text-red-900 mb-2">Your Progress</h4>
+                <div className="text-sm text-red-700 space-y-1">
+                  <div>
+                    📝 Completed: {currentQuestion + (showExplanation ? 1 : 0)}{" "}
+                    of {totalQuestions} questions
+                  </div>
+                  <div>🎯 Current Score: {score} correct answers</div>
+                  <div>💾 Progress will be saved for later</div>
+                </div>
+              </div>
+              <div className="flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowStopDialog(false)}
+                  className="flex-1"
+                >
+                  Continue Exam
+                </Button>
+                <Button
+                  onClick={handleConfirmStop}
+                  variant="destructive"
+                  className="flex-1"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save & Exit
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
