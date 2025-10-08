@@ -205,10 +205,11 @@ const StudentTutors = () => {
   const onlineTutors = filteredTutors.filter((tutor) => tutor.isOnline);
 
   const TutorCard = ({ tutor }: { tutor: (typeof tutors)[0] }) => (
-    <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300">
-      <CardContent className="p-6">
-        <div className="flex items-start space-x-4">
-          <div className="relative">
+    <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 w-full overflow-hidden">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col items-center space-y-4 w-full">
+          {/* Avatar at the top */}
+          <div className="relative flex-shrink-0">
             <Avatar className="h-16 w-16">
               <AvatarImage src={tutor.avatar} alt={tutor.name} />
               <AvatarFallback className="bg-blue-100 text-blue-600 text-lg">
@@ -223,15 +224,17 @@ const StudentTutors = () => {
             )}
           </div>
 
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-2">
-              <div>
+          {/* Content section with full width */}
+          <div className="w-full space-y-3">
+            {/* Header with name, title and price */}
+            <div className="flex items-start justify-between">
+              <div className="text-center flex-1 min-w-0">
                 <h3 className="font-bold text-lg text-gray-900">
                   {tutor.name}
                 </h3>
                 <p className="text-sm text-gray-600">{tutor.title}</p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -245,51 +248,51 @@ const StudentTutors = () => {
                     }`}
                   />
                 </Button>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs whitespace-nowrap">
                   ${tutor.hourlyRate}/hr
                 </Badge>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4 mb-3">
+            {/* Rating, location, experience */}
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
               <div className="flex items-center space-x-1">
                 <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                <span className="text-sm font-medium">{tutor.rating}</span>
-                <span className="text-sm text-gray-600">
-                  ({tutor.reviewCount})
-                </span>
+                <span className="font-medium">{tutor.rating}</span>
+                <span className="text-gray-600">({tutor.reviewCount})</span>
               </div>
-              <div className="flex items-center space-x-1 text-sm text-gray-600">
-                <MapPin className="h-3 w-3" />
+              <div className="flex items-center space-x-1 text-gray-600">
+                <MapPin className="h-3 w-3 flex-shrink-0" />
                 <span>{tutor.location}</span>
               </div>
-              <div className="flex items-center space-x-1 text-sm text-gray-600">
+              <div className="flex items-center space-x-1 text-gray-600">
                 <Clock className="h-3 w-3" />
                 <span>{tutor.experience}</span>
               </div>
             </div>
 
-            <div className="mb-3">
-              <div className="flex flex-wrap gap-1">
-                {tutor.subjects.slice(0, 3).map((subject, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {subject}
-                  </Badge>
-                ))}
-                {tutor.subjects.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{tutor.subjects.length - 3} more
-                  </Badge>
-                )}
-              </div>
+            {/* Subjects */}
+            <div className="flex flex-wrap justify-center gap-1">
+              {tutor.subjects.slice(0, 3).map((subject, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {subject}
+                </Badge>
+              ))}
+              {tutor.subjects.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{tutor.subjects.length - 3} more
+                </Badge>
+              )}
             </div>
 
-            <p className="text-sm text-gray-700 mb-4 line-clamp-2">
+            {/* Description */}
+            <p className="text-sm text-gray-700 text-center line-clamp-2">
               {tutor.description}
             </p>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 text-xs text-gray-600">
+            {/* Session info and availability */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-600">
                 <div className="flex items-center space-x-1">
                   <Video className="h-3 w-3" />
                   <span>{tutor.sessionTypes.join(", ")}</span>
@@ -305,15 +308,16 @@ const StudentTutors = () => {
                 }
                 className={
                   tutor.availability.includes("now")
-                    ? "bg-green-100 text-green-800"
-                    : ""
+                    ? "bg-green-100 text-green-800 whitespace-nowrap"
+                    : "whitespace-nowrap"
                 }
               >
                 {tutor.availability}
               </Badge>
             </div>
 
-            <div className="flex space-x-2 mt-4">
+            {/* Action buttons */}
+            <div className="flex space-x-2">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -380,7 +384,7 @@ const StudentTutors = () => {
         </Card>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
             <CardContent className="p-4 text-center">
               <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
@@ -434,7 +438,7 @@ const StudentTutors = () => {
           </TabsList>
 
           <TabsContent value="all" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredTutors.map((tutor) => (
                 <TutorCard key={tutor.id} tutor={tutor} />
               ))}
@@ -442,7 +446,7 @@ const StudentTutors = () => {
           </TabsContent>
 
           <TabsContent value="online" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {onlineTutors.map((tutor) => (
                 <TutorCard key={tutor.id} tutor={tutor} />
               ))}
@@ -450,7 +454,7 @@ const StudentTutors = () => {
           </TabsContent>
 
           <TabsContent value="favorites" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {favoriteTutors.length > 0 ? (
                 favoriteTutors.map((tutor) => (
                   <TutorCard key={tutor.id} tutor={tutor} />
