@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import GradientButton from "./GradientButton";
 
@@ -27,12 +33,18 @@ const ExamCard = ({
   subjects,
   totalQuestions,
   onSelect,
-  buttonText = "Start Practicing"
+  buttonText = "Start Practicing",
 }: ExamCardProps) => {
+  const isComingSoon = buttonText === "Coming Soon";
+
   return (
-    <Card 
-      className={`hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 ${borderColor} ${bgColor} backdrop-blur-sm bg-white/60 hover:scale-105`}
-      onClick={onSelect}
+    <Card
+      className={`hover:shadow-2xl transition-all duration-300 border-2 ${borderColor} ${bgColor} backdrop-blur-sm bg-white/60 ${
+        !isComingSoon
+          ? "cursor-pointer hover:scale-105"
+          : "cursor-default opacity-75"
+      }`}
+      onClick={!isComingSoon ? onSelect : undefined}
     >
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -48,7 +60,9 @@ const ExamCard = ({
         <div className="space-y-4">
           {subjects && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">Subjects:</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                Subjects:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {subjects.slice(0, 3).map((subject) => (
                   <Badge key={subject} variant="secondary" className="text-xs">
@@ -69,11 +83,14 @@ const ExamCard = ({
               {totalQuestions} practice questions available
             </div>
           )}
-          
-          <GradientButton 
-            gradient={gradient}
-            className="w-full"
-            onClick={onSelect}
+
+          <GradientButton
+            gradient={isComingSoon ? "from-gray-400 to-gray-500" : gradient}
+            className={`w-full ${
+              isComingSoon ? "cursor-not-allowed opacity-60" : ""
+            }`}
+            onClick={!isComingSoon ? onSelect : undefined}
+            disabled={isComingSoon}
           >
             {buttonText}
           </GradientButton>

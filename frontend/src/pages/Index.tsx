@@ -21,11 +21,20 @@ import GlassmorphismCard from "@/components/GlassmorphismCard";
 import ExamCard from "@/components/ExamCard";
 import FeatureCard from "@/components/FeatureCard";
 import AppHeader from "@/components/AppHeader";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Index = () => {
   const [examFilter, setExamFilter] = useState("");
   const [isAnnual, setIsAnnual] = useState(true);
+
+  // Define which exams are supported in the database
+  const supportedExams = ["SAT", "ENEM", "Leaving Certificate", "Selectividad"];
 
   const examTypes = [
     {
@@ -36,6 +45,7 @@ const Index = () => {
       borderColor: "border-blue-500",
       bgColor: "bg-blue-50",
       flag: "🇺🇸",
+      isSupported: true,
     },
     {
       name: "ENEM",
@@ -45,6 +55,7 @@ const Index = () => {
       borderColor: "border-green-500",
       bgColor: "bg-green-50",
       flag: "🇧🇷",
+      isSupported: true,
     },
     {
       name: "Leaving Certificate",
@@ -54,6 +65,7 @@ const Index = () => {
       borderColor: "border-green-600",
       bgColor: "bg-green-50",
       flag: "🇮🇪",
+      isSupported: true,
     },
     {
       name: "Selectividad",
@@ -63,6 +75,7 @@ const Index = () => {
       borderColor: "border-red-600",
       bgColor: "bg-red-50",
       flag: "🇪🇸",
+      isSupported: true,
     },
     {
       name: "A-levels",
@@ -72,6 +85,7 @@ const Index = () => {
       borderColor: "border-red-500",
       bgColor: "bg-red-50",
       flag: "🇬🇧",
+      isSupported: false,
     },
     {
       name: "Abitur",
@@ -81,6 +95,7 @@ const Index = () => {
       borderColor: "border-yellow-500",
       bgColor: "bg-yellow-50",
       flag: "🇩🇪",
+      isSupported: false,
     },
     {
       name: "IB",
@@ -90,6 +105,7 @@ const Index = () => {
       borderColor: "border-purple-500",
       bgColor: "bg-purple-50",
       flag: "🌍",
+      isSupported: false,
     },
     {
       name: "BAC",
@@ -99,6 +115,7 @@ const Index = () => {
       borderColor: "border-blue-600",
       bgColor: "bg-blue-50",
       flag: "🇫🇷",
+      isSupported: false,
     },
   ];
 
@@ -221,21 +238,24 @@ const Index = () => {
     {
       name: "Sarah Chen",
       role: "SAT Student",
-      content: "Improved my score by 200 points! The AI explanations helped me understand concepts I'd been struggling with for months.",
+      content:
+        "Improved my score by 200 points! The AI explanations helped me understand concepts I'd been struggling with for months.",
       avatar: "👩‍🎓",
       score: "+200 points",
     },
     {
       name: "Miguel Santos",
-      role: "ENEM Student", 
-      content: "The bias detection feature taught me to think more critically about information. It's like having a personal tutor.",
+      role: "ENEM Student",
+      content:
+        "The bias detection feature taught me to think more critically about information. It's like having a personal tutor.",
       avatar: "👨‍🎓",
       score: "Top 5%",
     },
     {
       name: "Emma Thompson",
       role: "A-Level Student",
-      content: "The step-by-step explanations are incredible. I finally understand why answers are correct, not just what they are.",
+      content:
+        "The step-by-step explanations are incredible. I finally understand why answers are correct, not just what they are.",
       avatar: "👩‍💼",
       score: "A* grades",
     },
@@ -247,16 +267,19 @@ const Index = () => {
       exam.country.toLowerCase().includes(examFilter.toLowerCase())
   );
 
-  const getPrice = (plan: typeof pricingPlans[0]) => {
-    if (typeof plan.price.monthly === 'string') return plan.price.monthly;
+  const getPrice = (plan: (typeof pricingPlans)[0]) => {
+    if (typeof plan.price.monthly === "string") return plan.price.monthly;
     return isAnnual ? plan.price.annual : plan.price.monthly;
   };
 
-  const getSavings = (plan: typeof pricingPlans[0]) => {
-    if (typeof plan.price.monthly === 'string' || plan.price.monthly === 0) return null;
+  const getSavings = (plan: (typeof pricingPlans)[0]) => {
+    if (typeof plan.price.monthly === "string" || plan.price.monthly === 0)
+      return null;
     const monthlyCost = plan.price.monthly * 12;
     const annualCost = plan.price.annual * 12;
-    const savings = Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
+    const savings = Math.round(
+      ((monthlyCost - annualCost) / monthlyCost) * 100
+    );
     return savings;
   };
 
@@ -370,7 +393,12 @@ const Index = () => {
               gradient={exam.gradient}
               borderColor={exam.borderColor}
               bgColor={exam.bgColor}
-              onSelect={() => (window.location.href = "/login")}
+              buttonText={exam.isSupported ? "Start Practicing" : "Coming Soon"}
+              onSelect={
+                exam.isSupported
+                  ? () => (window.location.href = "/login")
+                  : () => {}
+              }
             />
           ))}
 
@@ -425,27 +453,38 @@ const Index = () => {
             </span>
           </h2>
           <p className="text-gray-600 text-lg mb-8">
-            Start free and upgrade as you grow. All plans include our core AI features.
+            Start free and upgrade as you grow. All plans include our core AI
+            features.
           </p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center space-x-4 mb-8">
-            <span className={`text-sm ${!isAnnual ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>
+            <span
+              className={`text-sm ${
+                !isAnnual ? "text-indigo-600 font-medium" : "text-gray-500"
+              }`}
+            >
               Monthly
             </span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                isAnnual ? 'bg-gradient-to-r from-indigo-500 to-purple-600' : 'bg-gray-200'
+                isAnnual
+                  ? "bg-gradient-to-r from-indigo-500 to-purple-600"
+                  : "bg-gray-200"
               }`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-lg ${
-                  isAnnual ? 'translate-x-6' : 'translate-x-1'
+                  isAnnual ? "translate-x-6" : "translate-x-1"
                 }`}
               />
             </button>
-            <span className={`text-sm ${isAnnual ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>
+            <span
+              className={`text-sm ${
+                isAnnual ? "text-indigo-600 font-medium" : "text-gray-500"
+              }`}
+            >
               Annual
             </span>
             {isAnnual && (
@@ -462,10 +501,10 @@ const Index = () => {
               key={plan.name}
               className={`relative backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 ${
                 plan.popular
-                  ? 'border-2 border-indigo-500 scale-105'
+                  ? "border-2 border-indigo-500 scale-105"
                   : plan.isSchool
-                  ? 'border-2 border-emerald-500'
-                  : 'border border-white/30'
+                  ? "border-2 border-emerald-500"
+                  : "border border-white/30"
               }`}
             >
               {plan.popular && (
@@ -492,10 +531,10 @@ const Index = () => {
                 <CardDescription className="text-gray-600 mb-4">
                   {plan.description}
                 </CardDescription>
-                
+
                 <div className="mb-6">
                   <div className="text-5xl font-bold text-gray-800 mb-2">
-                    {typeof getPrice(plan) === 'string' ? (
+                    {typeof getPrice(plan) === "string" ? (
                       <span className="text-2xl">Custom</span>
                     ) : (
                       <>
@@ -523,9 +562,9 @@ const Index = () => {
                   className="w-full text-lg py-3"
                   onClick={() => {
                     if (plan.isSchool) {
-                      window.location.href = '/solutions';
+                      window.location.href = "/solutions";
                     } else {
-                      window.location.href = '/login';
+                      window.location.href = "/login";
                     }
                   }}
                 >
@@ -537,7 +576,10 @@ const Index = () => {
               <CardContent>
                 <div className="space-y-3">
                   {plan.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-start space-x-3">
+                    <div
+                      key={featureIndex}
+                      className="flex items-start space-x-3"
+                    >
                       <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                       <span className="text-sm text-gray-600">{feature}</span>
                     </div>
@@ -547,7 +589,8 @@ const Index = () => {
                 {plan.isSchool && (
                   <div className="mt-4 pt-4 border-t border-white/20">
                     <p className="text-xs text-gray-500 text-center">
-                      Custom pricing based on number of students and specific requirements
+                      Custom pricing based on number of students and specific
+                      requirements
                     </p>
                   </div>
                 )}
@@ -583,7 +626,8 @@ const Index = () => {
                 </span>
               </h3>
               <p className="text-gray-600">
-                Get the latest updates on new features, exam content, and educational insights.
+                Get the latest updates on new features, exam content, and
+                educational insights.
               </p>
             </div>
             <div className="flex space-x-3">
@@ -592,9 +636,7 @@ const Index = () => {
                 placeholder="Enter your email"
                 className="flex-1 bg-white/50 backdrop-blur-sm border-white/20"
               />
-              <GradientButton className="px-6 py-2">
-                Subscribe
-              </GradientButton>
+              <GradientButton className="px-6 py-2">Subscribe</GradientButton>
             </div>
           </div>
         </div>
@@ -615,13 +657,20 @@ const Index = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all">
+            <Card
+              key={index}
+              className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl hover:shadow-2xl transition-all"
+            >
               <CardHeader>
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="text-3xl">{testimonial.avatar}</div>
                   <div className="flex-1">
-                    <div className="font-semibold text-gray-800">{testimonial.name}</div>
-                    <div className="text-sm text-gray-600">{testimonial.role}</div>
+                    <div className="font-semibold text-gray-800">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {testimonial.role}
+                    </div>
                   </div>
                   <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
                     {testimonial.score}
