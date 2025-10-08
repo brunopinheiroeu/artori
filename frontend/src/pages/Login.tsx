@@ -106,11 +106,20 @@ const Login = () => {
             });
             navigate("/tutor");
           } else {
-            toast({
-              title: "Login successful",
-              description: "Welcome to your student dashboard!",
-            });
-            navigate("/student");
+            // For students, check if they have selected an exam
+            if (user?.selected_exam_id) {
+              toast({
+                title: "Login successful",
+                description: "Welcome back to your student dashboard!",
+              });
+              navigate("/student");
+            } else {
+              toast({
+                title: "Login successful",
+                description: "Please select an exam to get started!",
+              });
+              navigate("/practice"); // This will show exam selection
+            }
           }
         } catch (roleError) {
           console.error("Role check failed:", roleError);
@@ -133,20 +142,29 @@ const Login = () => {
               });
               navigate("/tutor");
             } else {
-              toast({
-                title: "Login successful",
-                description: "Welcome to your student dashboard!",
-              });
-              navigate("/student");
+              // For students, check if they have selected an exam
+              if (user?.selected_exam_id) {
+                toast({
+                  title: "Login successful",
+                  description: "Welcome back to your student dashboard!",
+                });
+                navigate("/student");
+              } else {
+                toast({
+                  title: "Login successful",
+                  description: "Please select an exam to get started!",
+                });
+                navigate("/practice"); // This will show exam selection
+              }
             }
           } catch (finalError) {
             console.error("Final role check failed:", finalError);
-            // Final fallback to student dashboard
+            // Final fallback - redirect to exam selection for safety
             toast({
               title: "Login successful",
-              description: "Welcome to your student dashboard!",
+              description: "Please select an exam to get started!",
             });
-            navigate("/student");
+            navigate("/practice");
           }
         }
       } else {
@@ -173,9 +191,10 @@ const Login = () => {
         await signupMutation.mutateAsync({ name, email, password });
         toast({
           title: "Account created",
-          description: "Welcome to artori.app!",
+          description:
+            "Welcome to artori.app! Please select an exam to get started.",
         });
-        navigate("/student");
+        navigate("/practice"); // New users need to select an exam first
       }
     } catch (error) {
       toast({
@@ -208,9 +227,9 @@ const Login = () => {
             <CardHeader className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
                 <img
-                  src="/artori-logo.png"
+                  src="/favicon.png"
                   alt="Artori"
-                  className="h-10 w-auto rounded-full"
+                  className="w-auto rounded-full"
                 />
               </div>
               <CardTitle className="text-2xl font-bold">

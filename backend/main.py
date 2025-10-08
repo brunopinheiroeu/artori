@@ -1873,6 +1873,93 @@ async def delete_admin_user(
             detail="Failed to delete user"
         )
 
+@app.post("/api/v1/admin/users/{user_id}/reset")
+async def reset_admin_user(
+    user_id: str,
+    current_admin = Depends(get_current_admin_user)
+):
+    """Reset user progress and exam selection"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Check if user exists
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Prevent resetting admin accounts
+        if user.get("role") in ["admin", "super_admin"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cannot reset admin accounts"
+            )
+        
+        # Reset user data
+        reset_fields = []
+        
+        # Clear selected exam
+        if user.get("selected_exam_id"):
+            reset_fields.append("selected_exam")
+        
+        # Delete user progress
+        progress_deleted = db.user_progress.delete_many({"user_id": ObjectId(user_id)})
+        if progress_deleted.deleted_count > 0:
+            reset_fields.append("progress_data")
+        
+        # Delete user answers
+        answers_deleted = db.user_answers.delete_many({"user_id": ObjectId(user_id)})
+        if answers_deleted.deleted_count > 0:
+            reset_fields.append("answer_history")
+        
+        # Delete test sessions
+        sessions_deleted = db.test_sessions.delete_many({"user_id": ObjectId(user_id)})
+        if sessions_deleted.deleted_count > 0:
+            reset_fields.append("test_sessions")
+        
+        # Update user document
+        db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "selected_exam_id": None,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Log admin activity
+        log_admin_activity(
+            admin_id=str(current_admin["_id"]),
+            action="reset",
+            resource_type="user",
+            resource_id=user_id,
+            details={
+                "reset_fields": reset_fields,
+                "progress_records_deleted": progress_deleted.deleted_count,
+                "answers_deleted": answers_deleted.deleted_count,
+                "sessions_deleted": sessions_deleted.deleted_count
+            }
+        )
+        
+        return {
+            "message": "User reset successfully",
+            "user_id": user_id,
+            "reset_fields": reset_fields
+        }
+    except Exception as e:
+        logger.error(f"Failed to reset user: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to reset user"
+        )
+
 @app.get("/api/v1/admin/users/{user_id}/progress", response_model=List[UserProgressDetail])
 async def get_user_progress_detail(
     user_id: str,

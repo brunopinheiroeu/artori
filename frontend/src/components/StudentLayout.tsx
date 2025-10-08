@@ -29,7 +29,13 @@ const StudentLayout = ({
       navigate("/login");
       return;
     }
-  }, [navigate]);
+
+    // Check if user has selected an exam - if not, redirect to exam selection
+    if (user && !user.selected_exam_id) {
+      navigate("/practice");
+      return;
+    }
+  }, [navigate, user]);
 
   // Check if user is student (not admin or tutor)
   const isStudent = user && (user.role === "student" || !user.role);

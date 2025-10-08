@@ -211,6 +211,8 @@ const AdminUsers = () => {
       role: user.role,
       status: user.status,
     });
+    // Close view dialog if it's open to prevent stacking
+    setIsViewDialogOpen(false);
     setIsEditDialogOpen(true);
   };
 
@@ -538,7 +540,9 @@ const AdminUsers = () => {
                   type="button"
                   variant="destructive"
                   onClick={() => handleResetUser(selectedUser)}
-                  disabled={updateUserMutation.isPending || resetUserMutation.isPending}
+                  disabled={
+                    updateUserMutation.isPending || resetUserMutation.isPending
+                  }
                   className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
                 >
                   {resetUserMutation.isPending && (
@@ -577,10 +581,23 @@ const AdminUsers = () => {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
           <DialogHeader className="flex-shrink-0">
-            <DialogTitle>User Details</DialogTitle>
-            <DialogDescription>
-              Detailed information and progress for this user.
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle>User Details</DialogTitle>
+                <DialogDescription>
+                  Detailed information and progress for this user.
+                </DialogDescription>
+              </div>
+              {selectedUser && (
+                <Button
+                  onClick={() => handleEdit(selectedUser)}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                  size="sm"
+                >
+                  Edit User
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           {selectedUser && (
             <div className="flex-1 overflow-y-auto space-y-6 pr-2">
