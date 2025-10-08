@@ -108,9 +108,9 @@ const Login = () => {
           } else {
             toast({
               title: "Login successful",
-              description: "Welcome back!",
+              description: "Welcome to your student dashboard!",
             });
-            navigate("/practice");
+            navigate("/student");
           }
         } catch (roleError) {
           console.error("Role check failed:", roleError);
@@ -135,18 +135,18 @@ const Login = () => {
             } else {
               toast({
                 title: "Login successful",
-                description: "Welcome back!",
+                description: "Welcome to your student dashboard!",
               });
-              navigate("/practice");
+              navigate("/student");
             }
           } catch (finalError) {
             console.error("Final role check failed:", finalError);
-            // Final fallback to practice page
+            // Final fallback to student dashboard
             toast({
               title: "Login successful",
-              description: "Welcome back!",
+              description: "Welcome to your student dashboard!",
             });
-            navigate("/practice");
+            navigate("/student");
           }
         }
       } else {
@@ -175,7 +175,7 @@ const Login = () => {
           title: "Account created",
           description: "Welcome to artori.app!",
         });
-        navigate("/practice");
+        navigate("/student");
       }
     } catch (error) {
       toast({
