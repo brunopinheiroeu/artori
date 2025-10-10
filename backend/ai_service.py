@@ -252,11 +252,60 @@ Original Question Context:
             
         except Exception as e:
             logger.error(f"Failed to generate AI chat response: {e}")
+            # Check if it's specifically a quota/billing issue
+            error_str = str(e).lower()
+            if any(keyword in error_str for keyword in ['quota', 'billing', 'insufficient_quota', '429']):
+                return self._get_quota_exceeded_response()
             return self._get_fallback_chat_response()
     
+    def _get_quota_exceeded_response(self) -> str:
+        """Get a specific response when OpenAI quota is exceeded"""
+        return """🚨 **OpenAI API Quota Exceeded**
+
+The AI tutor service has reached its usage limit. To restore full functionality:
+
+💳 **Immediate Solution:**
+1. Visit https://platform.openai.com/account/billing
+2. Add credits to your OpenAI account
+3. The AI tutor will work immediately after credits are added
+
+📚 **Meanwhile, here are helpful study resources:**
+- **Khan Academy**: Free video explanations for most subjects
+- **YouTube**: Search "[your topic] explained" for visual learning
+- **Crash Course**: Comprehensive topic overviews
+- **Your textbook**: Check companion websites for practice problems
+
+🎯 **Study Strategy:**
+- Break complex problems into smaller steps
+- Practice similar questions to build understanding
+- Create concept maps to visualize relationships
+- Explain concepts aloud to test your knowledge
+
+The AI tutor will be back once billing is resolved!"""
+
     def _get_fallback_chat_response(self) -> str:
         """Get a fallback chat response when AI service is unavailable"""
-        return "I'm sorry, I'm having trouble responding right now. Please try asking your question again, or refer to your course materials for additional help."
+        return """I'm currently experiencing connectivity issues with the AI service.
+
+However, I can still help! Here are some general study suggestions:
+
+📚 **Study Resources:**
+- Khan Academy has excellent video explanations for most subjects
+- YouTube channels like "Crash Course" provide comprehensive topic overviews
+- Your textbook's companion website often has additional practice problems
+
+🎯 **Study Tips:**
+- Break down complex problems into smaller steps
+- Practice similar questions to reinforce understanding
+- Create concept maps to visualize relationships between ideas
+- Teach the concept to someone else to test your understanding
+
+💡 **For this specific question:**
+- Review the key concepts being tested
+- Look up any unfamiliar terms or formulas
+- Practice similar problems from your textbook or online resources
+
+Please try again in a few moments, or refer to these resources for continued learning!"""
     
     async def generate_study_tips(
         self, 
