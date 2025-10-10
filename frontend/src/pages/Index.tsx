@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Building2,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import GradientButton from "@/components/GradientButton";
 import GlassmorphismCard from "@/components/GlassmorphismCard";
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [examFilter, setExamFilter] = useState("");
   const [isAnnual, setIsAnnual] = useState(true);
 
@@ -394,11 +395,7 @@ const Index = () => {
               borderColor={exam.borderColor}
               bgColor={exam.bgColor}
               buttonText={exam.isSupported ? "Start Practicing" : "Coming Soon"}
-              onSelect={
-                exam.isSupported
-                  ? () => (window.location.href = "/login")
-                  : () => {}
-              }
+              onSelect={exam.isSupported ? () => navigate("/login") : () => {}}
             />
           ))}
 
@@ -562,9 +559,9 @@ const Index = () => {
                   className="w-full text-lg py-3"
                   onClick={() => {
                     if (plan.isSchool) {
-                      window.location.href = "/solutions";
+                      navigate("/solutions");
                     } else {
-                      window.location.href = "/login";
+                      navigate("/login");
                     }
                   }}
                 >
