@@ -37,9 +37,14 @@ import {
   Save,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuestions, useSubmitAnswer } from "@/hooks/useApi";
+import {
+  useQuestions,
+  useSubmitAnswer,
+  useAIExplanation,
+} from "@/hooks/useApi";
 import { toast } from "@/hooks/use-toast";
 import type { AnswerResponse } from "@/lib/api";
+import { AITutorChat } from "@/components/AITutorChat";
 
 const Question = () => {
   const { examId, modeId } = useParams();
@@ -68,6 +73,7 @@ const Question = () => {
       timeSpent: number;
     }>
   >([]);
+  const [showAITutorChat, setShowAITutorChat] = useState(false);
 
   // Timer and pause functionality
   const [isPaused, setIsPaused] = useState(false);
@@ -81,6 +87,7 @@ const Question = () => {
 
   const { data: questions, isLoading } = useQuestions(examId, modeId);
   const submitAnswerMutation = useSubmitAnswer();
+  const aiExplanationMutation = useAIExplanation();
 
   // Limit questions based on setup
   const limitedQuestions = questions?.slice(0, examSetup.questionCount) || [];
@@ -507,20 +514,32 @@ const Question = () => {
         {showExplanation && examSetup.mode === "practice" && (
           <Card className="border-2 border-indigo-200 backdrop-blur-sm bg-white/60 shadow-xl">
             <CardHeader>
-              <div className="flex items-center space-x-2">
-                <div className="p-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600">
-                  <Brain className="h-5 w-5 text-white" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="p-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600">
+                    <Brain className="h-5 w-5 text-white" />
+                  </div>
+                  <CardTitle className="text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    AI Explanation
+                  </CardTitle>
+                  {isCorrect ? (
+                    <Badge className="bg-gradient-to-r from-green-500 to-emerald-500">
+                      ✅ Correct!
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive">❌ Incorrect</Badge>
+                  )}
                 </div>
-                <CardTitle className="text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  AI Explanation
-                </CardTitle>
-                {isCorrect ? (
-                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500">
-                    ✅ Correct!
-                  </Badge>
-                ) : (
-                  <Badge variant="destructive">❌ Incorrect</Badge>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowAITutorChat(true);
+                  }}
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0"
+                >
+                  🤖 AI Tutor
+                </Button>
               </div>
               <CardDescription>
                 Here's how I arrived at the answer, step by step
@@ -696,6 +715,19 @@ const Question = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* AI Tutor Chat */}
+        <AITutorChat
+          isOpen={showAITutorChat}
+          onClose={() => setShowAITutorChat(false)}
+          question={{
+            id: currentQ.id,
+            question: currentQ.question,
+            options: currentQ.options,
+            correct_answer: answerResult?.correct_answer || "",
+          }}
+          selectedAnswer={selectedAnswer}
+        />
       </div>
     </div>
   );

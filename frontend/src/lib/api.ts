@@ -371,6 +371,23 @@ export interface TutorProfileUpdate {
   languages?: string[];
 }
 
+// Chat message interface
+export interface ChatMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+// Chat request interface
+export interface ChatRequest {
+  messages: ChatMessage[];
+}
+
+// Chat response interface
+export interface ChatResponse {
+  response: string;
+  conversation_id?: string;
+}
+
 // API Client class
 class ApiClient {
   private baseUrl: string;
@@ -484,6 +501,28 @@ class ApiClient {
     return this.request<AnswerResponse>(`/questions/${questionId}/answer`, {
       method: "POST",
       body: JSON.stringify({ answer }),
+    });
+  }
+
+  async getAIExplanation(
+    questionId: string,
+    selectedAnswer?: string
+  ): Promise<AnswerResponse> {
+    const params = selectedAnswer
+      ? `?selected_answer=${encodeURIComponent(selectedAnswer)}`
+      : "";
+    return this.request<AnswerResponse>(
+      `/questions/${questionId}/ai-explanation${params}`
+    );
+  }
+
+  async sendChatMessage(
+    questionId: string,
+    messages: ChatMessage[]
+  ): Promise<ChatResponse> {
+    return this.request<ChatResponse>(`/questions/${questionId}/ai-chat`, {
+      method: "POST",
+      body: JSON.stringify({ messages }),
     });
   }
 

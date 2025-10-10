@@ -5,6 +5,8 @@ import {
   type Question,
   type User,
   type AnswerResponse,
+  type ChatMessage,
+  type ChatResponse,
 } from "@/lib/api";
 
 // Auth hooks
@@ -118,6 +120,30 @@ export const useSubmitAnswer = () => {
       // Invalidate user progress data if we had it
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
+  });
+};
+
+export const useAIExplanation = () => {
+  return useMutation({
+    mutationFn: ({
+      questionId,
+      selectedAnswer,
+    }: {
+      questionId: string;
+      selectedAnswer?: string;
+    }) => apiClient.getAIExplanation(questionId, selectedAnswer),
+  });
+};
+
+export const useChatMessage = () => {
+  return useMutation({
+    mutationFn: ({
+      questionId,
+      messages,
+    }: {
+      questionId: string;
+      messages: ChatMessage[];
+    }) => apiClient.sendChatMessage(questionId, messages),
   });
 };
 

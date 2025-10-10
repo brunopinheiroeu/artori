@@ -14,6 +14,7 @@ from jose import JWTError, jwt
 from pymongo import MongoClient
 from bson import ObjectId
 from dotenv import load_dotenv
+from ai_service import ai_service
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -311,6 +312,17 @@ class AnswerResponse(BaseModel):
     correct: bool
     correct_answer: str
     explanation: Explanation
+
+class ChatMessage(BaseModel):
+    role: str  # "user", "assistant", "system"
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: List[ChatMessage]
+
+class ChatResponse(BaseModel):
+    response: str
+    conversation_id: Optional[str] = None
 
 # Admin-specific enums and models
 class UserRole(str, Enum):
@@ -1444,6 +1456,157 @@ async def submit_answer(
         correct_answer=question["correct_answer"],
         explanation=explanation
     )
+
+@app.get("/api/v1/questions/{question_id}/ai-explanation", response_model=AnswerResponse)
+async def get_ai_explanation(
+    question_id: str,
+    selected_answer: Optional[str] = Query(None, description="User's selected answer"),
+    current_user = Depends(get_current_user)
+):
+    """Get an AI-generated explanation for a question with context of user's answer"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    # Get the question
+    try:
+        question = db.questions.find_one({"_id": ObjectId(question_id)})
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid question ID"
+        )
+    
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+    
+    # Get subject information for context
+    subject_name = "General"
+    try:
+        # Find the exam that contains this subject
+        exam = db.exams.find_one({"subjects._id": question["subject_id"]})
+        if exam:
+            subject = next((s for s in exam.get("subjects", []) if s["_id"] == question["subject_id"]), None)
+            if subject:
+                subject_name = subject["name"]
+    except Exception as e:
+        logger.warning(f"Could not determine subject name: {e}")
+    
+    # Generate AI explanation
+    try:
+        ai_explanation = await ai_service.generate_explanation(
+            question=question["question"],
+            options=question["options"],
+            correct_answer=question["correct_answer"],
+            selected_answer=selected_answer,
+            subject=subject_name,
+            difficulty=question.get("difficulty", "medium")
+        )
+        
+        # Convert to Explanation model
+        explanation = Explanation(
+            reasoning=ai_explanation["reasoning"],
+            concept=ai_explanation["concept"],
+            sources=ai_explanation["sources"],
+            bias_check=ai_explanation["bias_check"],
+            reflection=ai_explanation["reflection"]
+        )
+        
+        return AnswerResponse(
+            correct=True,  # Not applicable for explanation-only request
+            correct_answer=question["correct_answer"],
+            explanation=explanation
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to generate AI explanation: {e}")
+        # Fall back to existing explanation if AI fails
+        explanation = Explanation(
+            reasoning=question["explanation"]["reasoning"],
+            concept=question["explanation"]["concept"],
+            sources=question["explanation"]["sources"],
+            bias_check=question["explanation"]["bias_check"],
+            reflection=question["explanation"]["reflection"]
+        )
+        
+        return AnswerResponse(
+            correct=True,
+            correct_answer=question["correct_answer"],
+            explanation=explanation
+        )
+
+@app.post("/api/v1/questions/{question_id}/ai-chat", response_model=ChatResponse)
+async def ai_chat(
+    question_id: str,
+    chat_request: ChatRequest,
+    current_user = Depends(get_current_user)
+):
+    """Handle conversational AI chat for a specific question"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    # Get the question
+    try:
+        question = db.questions.find_one({"_id": ObjectId(question_id)})
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid question ID"
+        )
+    
+    if not question:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+    
+    # Get subject information for context
+    subject_name = "General"
+    try:
+        # Find the exam that contains this subject
+        exam = db.exams.find_one({"subjects._id": question["subject_id"]})
+        if exam:
+            subject = next((s for s in exam.get("subjects", []) if s["_id"] == question["subject_id"]), None)
+            if subject:
+                subject_name = subject["name"]
+    except Exception as e:
+        logger.warning(f"Could not determine subject name: {e}")
+    
+    # Build question context for the AI
+    question_context = {
+        "question": question["question"],
+        "options": question["options"],
+        "correct_answer": question["correct_answer"],
+        "subject": subject_name,
+        "difficulty": question.get("difficulty", "medium")
+    }
+    
+    # Generate AI chat response
+    try:
+        ai_response = await ai_service.generate_chat_response(
+            messages=[{"role": msg.role, "content": msg.content} for msg in chat_request.messages],
+            question_context=question_context
+        )
+        
+        return ChatResponse(
+            response=ai_response,
+            conversation_id=None  # Could be implemented for session tracking
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to generate AI chat response: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate AI response"
+        )
 
 # =============================================================================
 # ADMIN API ENDPOINTS
