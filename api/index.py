@@ -731,158 +731,40 @@ async def get_questions(exam_id: str, subject_id: str):
                 detail="Subject not found in exam"
             )
         
-        # Generate subject-specific mock questions
-        # TODO: Implement actual questions database
-        subject_name = subject.get("name", "Unknown Subject")
-        
-        # Create different questions based on subject
-        if "math" in subject_name.lower() or "mathematics" in subject_name.lower():
-            mock_questions = [
-                Question(
-                    id=f"q_{subject_id}_1",
+        # Get actual questions from database
+        try:
+            questions_cursor = db.questions.find({"subject_id": ObjectId(subject_id)})
+            db_questions = list(questions_cursor)
+            
+            if not db_questions:
+                logger.warning(f"No questions found for subject {subject_id}")
+                return []
+            
+            # Convert database questions to API format
+            api_questions = []
+            for db_question in db_questions:
+                # Convert options from database format to API format
+                options = []
+                for option in db_question.get("options", []):
+                    options.append(Option(
+                        id=option.get("id", ""),
+                        text=option.get("text", "")
+                    ))
+                
+                api_questions.append(Question(
+                    id=str(db_question["_id"]),
                     subject_id=subject_id,
-                    question="What is the value of x in the equation 2x + 5 = 13?",
-                    options=[
-                        Option(id="a", text="3"),
-                        Option(id="b", text="4"),
-                        Option(id="c", text="5"),
-                        Option(id="d", text="6")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_2",
-                    subject_id=subject_id,
-                    question="What is the area of a circle with radius 5?",
-                    options=[
-                        Option(id="a", text="25π"),
-                        Option(id="b", text="10π"),
-                        Option(id="c", text="5π"),
-                        Option(id="d", text="15π")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_3",
-                    subject_id=subject_id,
-                    question="What is the derivative of x²?",
-                    options=[
-                        Option(id="a", text="x"),
-                        Option(id="b", text="2x"),
-                        Option(id="c", text="x²"),
-                        Option(id="d", text="2x²")
-                    ]
-                )
-            ]
-        elif "english" in subject_name.lower() or "reading" in subject_name.lower():
-            mock_questions = [
-                Question(
-                    id=f"q_{subject_id}_1",
-                    subject_id=subject_id,
-                    question="Which of the following is a metaphor?",
-                    options=[
-                        Option(id="a", text="The wind whispered through the trees"),
-                        Option(id="b", text="Life is a journey"),
-                        Option(id="c", text="The car is red"),
-                        Option(id="d", text="She ran quickly")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_2",
-                    subject_id=subject_id,
-                    question="What is the main theme of Shakespeare's Romeo and Juliet?",
-                    options=[
-                        Option(id="a", text="Revenge"),
-                        Option(id="b", text="Love and fate"),
-                        Option(id="c", text="War"),
-                        Option(id="d", text="Politics")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_3",
-                    subject_id=subject_id,
-                    question="Which sentence is grammatically correct?",
-                    options=[
-                        Option(id="a", text="Me and him went to the store"),
-                        Option(id="b", text="Him and I went to the store"),
-                        Option(id="c", text="He and I went to the store"),
-                        Option(id="d", text="I and he went to the store")
-                    ]
-                )
-            ]
-        elif "science" in subject_name.lower() or "physics" in subject_name.lower() or "chemistry" in subject_name.lower():
-            mock_questions = [
-                Question(
-                    id=f"q_{subject_id}_1",
-                    subject_id=subject_id,
-                    question="What is the chemical symbol for gold?",
-                    options=[
-                        Option(id="a", text="Go"),
-                        Option(id="b", text="Au"),
-                        Option(id="c", text="Ag"),
-                        Option(id="d", text="Gd")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_2",
-                    subject_id=subject_id,
-                    question="What is Newton's first law of motion?",
-                    options=[
-                        Option(id="a", text="F = ma"),
-                        Option(id="b", text="An object at rest stays at rest"),
-                        Option(id="c", text="For every action, there's an equal and opposite reaction"),
-                        Option(id="d", text="Energy cannot be created or destroyed")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_3",
-                    subject_id=subject_id,
-                    question="What is the speed of light in a vacuum?",
-                    options=[
-                        Option(id="a", text="300,000 km/s"),
-                        Option(id="b", text="299,792,458 m/s"),
-                        Option(id="c", text="186,000 miles/s"),
-                        Option(id="d", text="All of the above")
-                    ]
-                )
-            ]
-        else:
-            # Default general knowledge questions
-            mock_questions = [
-                Question(
-                    id=f"q_{subject_id}_1",
-                    subject_id=subject_id,
-                    question=f"What is a key concept in {subject_name}?",
-                    options=[
-                        Option(id="a", text="Understanding fundamentals"),
-                        Option(id="b", text="Memorizing facts"),
-                        Option(id="c", text="Guessing answers"),
-                        Option(id="d", text="Skipping questions")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_2",
-                    subject_id=subject_id,
-                    question=f"Which approach works best for studying {subject_name}?",
-                    options=[
-                        Option(id="a", text="Practice regularly"),
-                        Option(id="b", text="Cram before exams"),
-                        Option(id="c", text="Avoid difficult topics"),
-                        Option(id="d", text="Study only easy material")
-                    ]
-                ),
-                Question(
-                    id=f"q_{subject_id}_3",
-                    subject_id=subject_id,
-                    question=f"What skill is most important for {subject_name}?",
-                    options=[
-                        Option(id="a", text="Critical thinking"),
-                        Option(id="b", text="Fast reading"),
-                        Option(id="c", text="Perfect memory"),
-                        Option(id="d", text="Luck")
-                    ]
-                )
-            ]
-        
-        return mock_questions
+                    question=db_question.get("question", ""),
+                    options=options
+                ))
+            
+            logger.info(f"Retrieved {len(api_questions)} questions for subject {subject_id}")
+            return api_questions
+            
+        except Exception as db_error:
+            logger.error(f"Database error retrieving questions: {db_error}")
+            # Return empty list instead of mock data
+            return []
         
     except HTTPException:
         raise
