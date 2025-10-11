@@ -11,6 +11,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from pymongo import MongoClient
 from bson import ObjectId
+from mangum import Mangum
 
 # Configure logging for Vercel serverless environment
 logging.basicConfig(
@@ -586,6 +587,6 @@ async def set_user_exam(
 
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
 
-# Export the FastAPI app for Vercel's Python runtime
-# This is the handler that Vercel needs
-handler = app
+# Export the FastAPI app for Vercel's Python runtime using Mangum ASGI adapter
+# This is the proper handler format that Vercel expects
+handler = Mangum(app)
