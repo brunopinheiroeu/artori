@@ -14,6 +14,11 @@ from jose import JWTError, jwt
 from pymongo import MongoClient
 from bson import ObjectId
 from dotenv import load_dotenv
+
+# Configure logging first
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Import AI service with error handling
 try:
     from ai_service import ai_service
@@ -31,10 +36,6 @@ except Exception as ai_import_error:
             return "AI service is currently unavailable."
     ai_service = MockAIService()
     logger.info("✅ Mock AI service created as fallback")
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
