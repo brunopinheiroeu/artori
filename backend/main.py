@@ -46,14 +46,15 @@ def validate_environment_variables():
     """Validate critical environment variables at startup"""
     logger.info("=== Environment Variable Validation ===")
     
-    # Check MONGODB_URI
-    mongodb_uri = os.getenv("MONGODB_URI")
+    # Check MONGODB_URI or MONGODB_URL
+    mongodb_uri = os.getenv("MONGODB_URI") or os.getenv("MONGODB_URL")
     if not mongodb_uri:
-        logger.error("❌ CRITICAL: MONGODB_URI environment variable is missing!")
+        logger.error("❌ CRITICAL: MONGODB_URI or MONGODB_URL environment variable is missing!")
         logger.error("   This will cause database connection failures and 500 errors")
         return False
     else:
-        logger.info("✅ MONGODB_URI is present")
+        mongodb_var_name = "MONGODB_URI" if os.getenv("MONGODB_URI") else "MONGODB_URL"
+        logger.info(f"✅ {mongodb_var_name} is present")
         # Log partial URI for debugging (hide credentials)
         if "@" in mongodb_uri:
             # Format: mongodb://user:pass@host/db or mongodb+srv://user:pass@host/db
@@ -114,8 +115,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Environment variables
-MONGODB_URI = os.getenv("MONGODB_URI")
+# Environment variables - check both MONGODB_URI and MONGODB_URL for compatibility
+MONGODB_URI = os.getenv("MONGODB_URI") or os.getenv("MONGODB_URL")
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 JWT_EXPIRES_IN_MINUTES = int(os.getenv("JWT_EXPIRES_IN_MINUTES", "30"))
@@ -198,8 +199,8 @@ if MONGODB_URI:
         client = None
         db = None
 else:
-    logger.error("❌ MONGODB_URI not found in environment variables")
-    logger.error("🔍 DIAGNOSIS: Missing MONGODB_URI environment variable")
+    logger.error("❌ Neither MONGODB_URI nor MONGODB_URL found in environment variables")
+    logger.error("🔍 DIAGNOSIS: Missing MONGODB_URI or MONGODB_URL environment variable")
 
 # Password validation function
 def validate_password_strength(password: str) -> str:
@@ -978,8 +979,11 @@ async def login(user_data: UserLogin):
     # Debug: Check database connection status
     if db is None:
         logger.error("❌ LOGIN FAILED: Database connection is None")
-        logger.error("   MONGODB_URI status: " + ("Present" if os.getenv("MONGODB_URI") else "MISSING"))
-        logger.error("   This indicates MONGODB_URI environment variable is missing or invalid")
+        mongodb_uri_present = bool(os.getenv("MONGODB_URI"))
+        mongodb_url_present = bool(os.getenv("MONGODB_URL"))
+        logger.error(f"   MONGODB_URI status: {'Present' if mongodb_uri_present else 'MISSING'}")
+        logger.error(f"   MONGODB_URL status: {'Present' if mongodb_url_present else 'MISSING'}")
+        logger.error("   This indicates both MONGODB_URI and MONGODB_URL environment variables are missing or invalid")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database connection not available - check MONGODB_URI environment variable"
