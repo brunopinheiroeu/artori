@@ -4,15 +4,15 @@
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/backend/main.py"
     },
     {
       "source": "/healthz",
-      "destination": "/api/index.py"
+      "destination": "/backend/main.py"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/backend/main.py"
     },
     {
       "source": "/(.*)",
