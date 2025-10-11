@@ -14,7 +14,23 @@ from jose import JWTError, jwt
 from pymongo import MongoClient
 from bson import ObjectId
 from dotenv import load_dotenv
-from ai_service import ai_service
+# Import AI service with error handling
+try:
+    from ai_service import ai_service
+    logger.info("✅ AI service imported successfully")
+except Exception as ai_import_error:
+    logger.error(f"❌ Failed to import AI service: {ai_import_error}")
+    logger.error(f"AI import error type: {type(ai_import_error).__name__}")
+    # Create a mock AI service to prevent crashes
+    class MockAIService:
+        def is_available(self):
+            return False
+        async def generate_explanation(self, *args, **kwargs):
+            return {"reasoning": ["AI service unavailable"], "concept": "N/A", "sources": [], "bias_check": "N/A", "reflection": "N/A"}
+        async def generate_chat_response(self, *args, **kwargs):
+            return "AI service is currently unavailable."
+    ai_service = MockAIService()
+    logger.info("✅ Mock AI service created as fallback")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -117,38 +133,73 @@ db = None
 logger.info(f"MONGODB_URI loaded: {'Yes' if MONGODB_URI else 'No'}")
 if MONGODB_URI:
     try:
+        logger.info("=== MONGODB CONNECTION ATTEMPT ===")
         logger.info("Attempting to connect to MongoDB...")
+        
+        # Log connection string details (without credentials)
+        if "@" in MONGODB_URI:
+            parts = MONGODB_URI.split("@")
+            if len(parts) >= 2:
+                logger.info(f"MongoDB host: @{parts[1]}")
+        
         # Configure MongoDB client for Vercel serverless environment
+        # More aggressive timeouts for serverless
         client = MongoClient(
             MONGODB_URI,
             # SSL/TLS configuration for serverless environments
             tls=True,
             tlsAllowInvalidCertificates=False,
-            # Connection pool settings for serverless
-            maxPoolSize=10,
-            minPoolSize=1,
-            maxIdleTimeMS=30000,
-            # Timeout settings for serverless
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=10000,
-            socketTimeoutMS=20000,
+            # Optimized connection pool settings for serverless
+            maxPoolSize=1,  # Reduced for serverless
+            minPoolSize=0,  # Allow zero connections when idle
+            maxIdleTimeMS=10000,  # Reduced idle time
+            # More aggressive timeout settings for serverless
+            serverSelectionTimeoutMS=3000,  # Reduced from 5000
+            connectTimeoutMS=5000,  # Reduced from 10000
+            socketTimeoutMS=10000,  # Reduced from 20000
             # Retry settings
             retryWrites=True,
             retryReads=True
         )
+        
+        logger.info("MongoDB client created, testing connection...")
         db = client.artori
-        # Test the connection
+        
+        # Test the connection with timeout
+        import time
+        start_time = time.time()
         client.admin.command('ping')
-        logger.info("✅ MongoDB connection successful!")
-        collections = db.list_collection_names()
-        logger.info(f"Available collections: {collections}")
+        connection_time = time.time() - start_time
+        
+        logger.info(f"✅ MongoDB connection successful! (took {connection_time:.2f}s)")
+        
+        # List collections with error handling
+        try:
+            collections = db.list_collection_names()
+            logger.info(f"Available collections: {collections}")
+        except Exception as coll_error:
+            logger.warning(f"Could not list collections: {coll_error}")
+            
     except Exception as e:
         logger.error(f"❌ MongoDB connection failed: {e}")
         logger.error(f"Error type: {type(e).__name__}")
+        logger.error(f"Error details: {str(e)}")
+        
+        # Log specific MongoDB error types
+        if "ServerSelectionTimeoutError" in str(type(e)):
+            logger.error("🔍 DIAGNOSIS: Server selection timeout - likely network/DNS issue")
+        elif "AuthenticationFailed" in str(type(e)):
+            logger.error("🔍 DIAGNOSIS: Authentication failed - check credentials")
+        elif "ConnectionFailure" in str(type(e)):
+            logger.error("🔍 DIAGNOSIS: Connection failure - check network/firewall")
+        elif "timeout" in str(e).lower():
+            logger.error("🔍 DIAGNOSIS: Timeout issue - serverless cold start problem")
+        
         client = None
         db = None
 else:
     logger.error("❌ MONGODB_URI not found in environment variables")
+    logger.error("🔍 DIAGNOSIS: Missing MONGODB_URI environment variable")
 
 # Password validation function
 def validate_password_strength(password: str) -> str:
