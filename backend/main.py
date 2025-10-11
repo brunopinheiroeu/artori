@@ -20,6 +20,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import AI service with error handling
+import sys
+import os
+# Add the current directory to Python path for imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 try:
     from ai_service import ai_service
     logger.info("✅ AI service imported successfully")
