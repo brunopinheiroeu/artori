@@ -588,5 +588,8 @@ async def set_user_exam(
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
 
 # Export the FastAPI app for Vercel's Python runtime using Mangum ASGI adapter
-# This is the proper handler format that Vercel expects
-handler = Mangum(app)
+# Wrap in a function to avoid Vercel's issubclass() validation issues
+def handler(event, context):
+    """Vercel-compatible handler function"""
+    asgi_handler = Mangum(app)
+    return asgi_handler(event, context)
