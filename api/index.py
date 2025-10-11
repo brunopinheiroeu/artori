@@ -192,6 +192,28 @@ class ExamListResponse(BaseModel):
 class UserExamSelection(BaseModel):
     exam_id: str
 
+class SubjectProgress(BaseModel):
+    subject_id: str
+    progress: float
+    questions_solved: int
+    correct_answers: int
+    accuracy_rate: float
+
+class UserProgress(BaseModel):
+    user_id: str
+    exam_id: str
+    overall_progress: float
+    questions_solved: int
+    accuracy_rate: float
+    study_time_hours: float
+    current_streak_days: int
+    last_studied_date: Optional[str] = None
+    subject_progress: List[SubjectProgress]
+
+class DashboardResponse(BaseModel):
+    selected_exam: ExamResponse
+    user_progress: Optional[UserProgress] = None
+
 # Helper functions
 def get_password_hash(password: str) -> str:
     """Hash a password"""
@@ -584,5 +606,75 @@ async def set_user_exam(
     )
     
     return {"message": "Exam selected successfully"}
+
+@app.get("/api/v1/users/me/dashboard", response_model=DashboardResponse)
+async def get_user_dashboard(current_user = Depends(get_current_user)):
+    """Get user's dashboard data including selected exam and progress"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    # Get user's selected exam
+    selected_exam_id = current_user.get("selected_exam_id")
+    if not selected_exam_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No exam selected. Please select an exam first."
+        )
+    
+    try:
+        # Get exam details
+        exam = db.exams.find_one({"_id": selected_exam_id})
+        if not exam:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Selected exam not found"
+            )
+        
+        # Convert exam to response format
+        subjects = [
+            Subject(
+                id=str(subject["_id"]),
+                name=subject["name"],
+                description=subject["description"],
+                total_questions=subject.get("total_questions"),
+                duration=subject.get("duration"),
+                icon=subject.get("icon"),
+                gradient=subject.get("gradient"),
+                bgColor=subject.get("bgColor")
+            )
+            for subject in exam.get("subjects", [])
+        ]
+        
+        selected_exam = ExamResponse(
+            id=str(exam["_id"]),
+            name=exam["name"],
+            country=exam["country"],
+            description=exam["description"],
+            subjects=subjects,
+            total_questions=exam.get("total_questions"),
+            gradient=exam.get("gradient"),
+            borderColor=exam.get("borderColor"),
+            bgColor=exam.get("bgColor"),
+            flag=exam.get("flag")
+        )
+        
+        # For now, return basic dashboard data
+        # TODO: Add user progress tracking in future updates
+        return DashboardResponse(
+            selected_exam=selected_exam,
+            user_progress=None
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Dashboard data retrieval failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve dashboard data: {str(e)}"
+        )
 
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
