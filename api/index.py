@@ -214,6 +214,29 @@ class DashboardResponse(BaseModel):
     selected_exam: ExamResponse
     user_progress: Optional[UserProgress] = None
 
+# Question-related models
+class Option(BaseModel):
+    id: str
+    text: str
+
+class Explanation(BaseModel):
+    reasoning: List[str]
+    concept: str
+    sources: List[str]
+    bias_check: str
+    reflection: str
+
+class Question(BaseModel):
+    id: str
+    subject_id: str
+    question: str
+    options: List[Option]
+
+class AnswerResponse(BaseModel):
+    correct: bool
+    correct_answer: str
+    explanation: Explanation
+
 # Helper functions
 def get_password_hash(password: str) -> str:
     """Hash a password"""
@@ -676,5 +699,146 @@ async def get_user_dashboard(current_user = Depends(get_current_user)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve dashboard data: {str(e)}"
         )
+
+@app.get("/api/v1/exams/{exam_id}/subjects/{subject_id}/questions", response_model=List[Question])
+async def get_questions(exam_id: str, subject_id: str):
+    """Get questions for a specific exam and subject"""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+    
+    try:
+        # Validate exam exists
+        exam = db.exams.find_one({"_id": ObjectId(exam_id)})
+        if not exam:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Exam not found"
+            )
+        
+        # Find the subject in the exam
+        subject = None
+        for s in exam.get("subjects", []):
+            if str(s["_id"]) == subject_id:
+                subject = s
+                break
+        
+        if not subject:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subject not found in exam"
+            )
+        
+        # For now, return mock questions since we don't have a questions collection yet
+        # TODO: Implement actual questions database
+        mock_questions = [
+            Question(
+                id=f"q_{subject_id}_1",
+                subject_id=subject_id,
+                question="What is the capital of France?",
+                options=[
+                    Option(id="a", text="London"),
+                    Option(id="b", text="Berlin"),
+                    Option(id="c", text="Paris"),
+                    Option(id="d", text="Madrid")
+                ]
+            ),
+            Question(
+                id=f"q_{subject_id}_2",
+                subject_id=subject_id,
+                question="Which planet is known as the Red Planet?",
+                options=[
+                    Option(id="a", text="Venus"),
+                    Option(id="b", text="Mars"),
+                    Option(id="c", text="Jupiter"),
+                    Option(id="d", text="Saturn")
+                ]
+            ),
+            Question(
+                id=f"q_{subject_id}_3",
+                subject_id=subject_id,
+                question="What is 2 + 2?",
+                options=[
+                    Option(id="a", text="3"),
+                    Option(id="b", text="4"),
+                    Option(id="c", text="5"),
+                    Option(id="d", text="6")
+                ]
+            )
+        ]
+        
+        return mock_questions
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Questions retrieval failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve questions: {str(e)}"
+        )
+
+@app.post("/api/v1/questions/{question_id}/answer", response_model=AnswerResponse)
+async def submit_answer(question_id: str, answer_data: dict):
+    """Submit an answer for a question"""
+    answer = answer_data.get("answer")
+    if not answer:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Answer is required"
+        )
+    
+    # Mock answer checking - in real implementation, this would check against the database
+    correct_answers = {
+        "q_68dfc765f13266ab21636736_1": "c",  # Paris
+        "q_68dfc765f13266ab21636736_2": "b",  # Mars
+        "q_68dfc765f13266ab21636736_3": "b",  # 4
+    }
+    
+    correct_answer = correct_answers.get(question_id, "a")
+    is_correct = answer.lower() == correct_answer
+    
+    # Mock explanation
+    explanation = Explanation(
+        reasoning=[
+            "Let me analyze this step by step.",
+            "Looking at the options provided.",
+            f"The correct answer is {correct_answer.upper()}."
+        ],
+        concept="This tests basic knowledge and reasoning skills.",
+        sources=["Educational curriculum", "Standard reference materials"],
+        bias_check="Answer verified against multiple reliable sources.",
+        reflection="Consider reviewing the fundamental concepts if this was challenging."
+    )
+    
+    return AnswerResponse(
+        correct=is_correct,
+        correct_answer=correct_answer,
+        explanation=explanation
+    )
+
+@app.get("/api/v1/questions/{question_id}/ai-explanation", response_model=AnswerResponse)
+async def get_ai_explanation(question_id: str, selected_answer: str = None):
+    """Get AI explanation for a question"""
+    # Mock explanation - in real implementation, this would use OpenAI API
+    explanation = Explanation(
+        reasoning=[
+            "This question tests fundamental knowledge.",
+            "Let me break down each option systematically.",
+            "The correct approach is to eliminate incorrect options first."
+        ],
+        concept="Understanding core concepts is essential for solving this type of question.",
+        sources=["Academic textbooks", "Verified educational resources"],
+        bias_check="Explanation reviewed for accuracy and neutrality.",
+        reflection="Think about why the other options might seem plausible but are incorrect."
+    )
+    
+    return AnswerResponse(
+        correct=True,  # This would be determined based on the selected answer
+        correct_answer="c",  # This would come from the database
+        explanation=explanation
+    )
 
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
