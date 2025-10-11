@@ -841,4 +841,22 @@ async def get_ai_explanation(question_id: str, selected_answer: str = None):
         explanation=explanation
     )
 
+@app.post("/api/v1/questions/{question_id}/ai-chat")
+async def ai_chat(question_id: str, chat_data: dict):
+    """AI chat for a specific question"""
+    messages = chat_data.get("messages", [])
+    if not messages:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Messages are required"
+        )
+    
+    # Mock AI chat response - in real implementation, this would use OpenAI API
+    mock_response = {
+        "response": "I understand your question! Let me help you think through this step by step. What specific part would you like me to explain further?",
+        "conversation_id": f"conv_{question_id}_{len(messages)}"
+    }
+    
+    return mock_response
+
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
