@@ -95,3 +95,8 @@ jspm_packages/
 ehthumbs.db
 Thumbs.db
 .vercel
+
+# Local development files
+start_dev.py
+README_DEV_SETUP.md
+backend/venv/
