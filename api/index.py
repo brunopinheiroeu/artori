@@ -586,18 +586,3 @@ async def set_user_exam(
     return {"message": "Exam selected successfully"}
 
 logger.info("=== VERCEL SERVERLESS FUNCTION READY ===")
-
-# Export the FastAPI app for Vercel's Python runtime using Mangum ASGI adapter
-# Use direct assignment to avoid Vercel's handler introspection issues
-try:
-    logger.info("Creating Mangum ASGI handler...")
-    handler = Mangum(app, lifespan="off")
-    logger.info("✅ Mangum handler created successfully")
-except Exception as e:
-    logger.error(f"❌ Failed to create Mangum handler: {e}")
-    # Fallback handler that returns an error
-    def handler(event, context):
-        return {
-            'statusCode': 500,
-            'body': f'Handler initialization failed: {str(e)}'
-        }
