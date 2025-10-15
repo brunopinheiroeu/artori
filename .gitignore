@@ -100,3 +100,7 @@ Thumbs.db
 start_dev.py
 README_DEV_SETUP.md
 backend/venv/
+.env
+
+# Documentation folder
+docs/
