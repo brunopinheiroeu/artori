@@ -1,5 +1,7 @@
 {
   "description": "O coach de exames com IA que conecta estudantes, tutores e escolas por meio de um aprendizado verificado, personalizado e responsável.",
+  "schoolDescription": "{{brandName}} - Impulsionado pela tecnologia IA do Artori para ajudar os estudantes a se destacarem em seus exames.",
+  "poweredBy": "Impulsionado por artori.app",
   "copyright": "Todos os direitos reservados.",
   "product": "Produto",
   "company": "Empresa",

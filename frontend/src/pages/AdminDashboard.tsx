@@ -23,8 +23,10 @@ import {
   useSystemHealth,
 } from "@/hooks/useAdminApi";
 import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
+  const { t } = useTranslation();
   const {
     data: stats,
     isLoading: statsLoading,
@@ -69,13 +71,13 @@ const AdminDashboard = () => {
   if (statsError) {
     return (
       <AdminLayout
-        title="Dashboard"
-        description="Overview of platform performance and key metrics."
+        title={t("admin.dashboard.title")}
+        description={t("admin.dashboard.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load dashboard data. Please try refreshing the page.
+            {t("admin.dashboard.failedToLoadDashboard")}
           </AlertDescription>
         </Alert>
       </AdminLayout>
@@ -84,8 +86,8 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout
-      title="Dashboard"
-      description="Overview of platform performance and key metrics."
+      title={t("admin.dashboard.title")}
+      description={t("admin.dashboard.description")}
     >
       <div className="space-y-6">
         {/* Key Metrics */}
@@ -102,14 +104,15 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Users
+                      {t("admin.dashboard.totalUsers")}
                     </p>
                     <p className="text-3xl font-bold text-indigo-600">
                       {stats?.total_users.toLocaleString() || 0}
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      {stats?.new_users_today || 0} new today
+                      {stats?.new_users_today || 0}{" "}
+                      {t("admin.dashboard.newToday")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-indigo-100">
@@ -132,7 +135,7 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Active Users
+                      {t("admin.dashboard.activeUsers")}
                     </p>
                     <p className="text-3xl font-bold text-purple-600">
                       {stats?.active_users.toLocaleString() || 0}
@@ -144,7 +147,7 @@ const AdminDashboard = () => {
                             (stats.active_users / stats.total_users) * 100
                           )
                         : 0}
-                      % active
+                      % {t("admin.dashboard.active")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-purple-100">
@@ -167,14 +170,15 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Questions
+                      {t("admin.dashboard.totalQuestions")}
                     </p>
                     <p className="text-3xl font-bold text-green-600">
                       {stats?.total_questions.toLocaleString() || 0}
                     </p>
                     <p className="text-sm text-blue-600 flex items-center mt-1">
                       <BookOpen className="h-3 w-3 mr-1" />
-                      {stats?.total_subjects || 0} subjects
+                      {stats?.total_subjects || 0}{" "}
+                      {t("admin.dashboard.subjects")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-green-100">
@@ -197,14 +201,16 @@ const AdminDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      System Health
+                      {t("admin.dashboard.systemHealth")}
                     </p>
                     <p className="text-3xl font-bold text-emerald-600">
                       {systemHealth?.status === "healthy" ? "99%" : "N/A"}
                     </p>
                     <p className="text-sm text-emerald-600 flex items-center mt-1">
                       <CheckCircle className="h-3 w-3 mr-1" />
-                      {systemHealth?.status || "Unknown"}
+                      {systemHealth?.status === "healthy"
+                        ? t("admin.dashboard.healthy")
+                        : t("admin.status.unknown")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-emerald-100">
@@ -222,7 +228,7 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BarChart3 className="h-5 w-5" />
-                <span>System Performance</span>
+                <span>{t("admin.dashboard.systemPerformance")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -236,7 +242,7 @@ const AdminDashboard = () => {
                 <>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Response Time</span>
+                      <span>{t("admin.dashboard.responseTime")}</span>
                       <span>{systemHealth?.response_time || 0}ms</span>
                     </div>
                     <Progress
@@ -249,14 +255,14 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Uptime</span>
+                      <span>{t("admin.dashboard.uptime")}</span>
                       <span>{systemHealth?.uptime || "N/A"}</span>
                     </div>
                     <Progress value={99} className="h-2" />
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Error Rate</span>
+                      <span>{t("admin.dashboard.errorRate")}</span>
                       <span>{systemHealth?.error_rate || 0}%</span>
                     </div>
                     <Progress
@@ -273,7 +279,7 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Clock className="h-5 w-5" />
-                <span>Recent Activity</span>
+                <span>{t("admin.dashboard.recentActivity")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -290,7 +296,7 @@ const AdminDashboard = () => {
                   ))
                 ) : activityError ? (
                   <p className="text-sm text-gray-500">
-                    Failed to load activity logs
+                    {t("admin.dashboard.failedToLoadActivity")}
                   </p>
                 ) : activityLogs && activityLogs.length > 0 ? (
                   activityLogs.map((activity, index) => {
@@ -307,7 +313,8 @@ const AdminDashboard = () => {
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium">
-                            {activity.action} {activity.resource_type}
+                            {t(`admin.actions.${activity.action}`)}{" "}
+                            {t(`admin.resources.${activity.resource_type}`)}
                             {activity.resource_id &&
                               ` (${activity.resource_id.slice(-6)})`}
                           </p>
@@ -321,7 +328,9 @@ const AdminDashboard = () => {
                     );
                   })
                 ) : (
-                  <p className="text-sm text-gray-500">No recent activity</p>
+                  <p className="text-sm text-gray-500">
+                    {t("admin.dashboard.noRecentActivity")}
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -333,7 +342,7 @@ const AdminDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <BookOpen className="h-5 w-5" />
-              <span>Platform Overview</span>
+              <span>{t("admin.dashboard.platformOverview")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -359,7 +368,9 @@ const AdminDashboard = () => {
                     <div className="text-2xl font-bold text-indigo-600">
                       {stats?.total_exams || 0}
                     </div>
-                    <div className="text-sm text-gray-600">Total Exams</div>
+                    <div className="text-sm text-gray-600">
+                      {t("admin.dashboard.totalExams")}
+                    </div>
                   </div>
                 </div>
                 <div className="p-4 bg-white/40 rounded-lg border border-white/20">
@@ -367,7 +378,9 @@ const AdminDashboard = () => {
                     <div className="text-2xl font-bold text-green-600">
                       {stats?.completion_rate || 0}%
                     </div>
-                    <div className="text-sm text-gray-600">Completion Rate</div>
+                    <div className="text-sm text-gray-600">
+                      {t("admin.dashboard.completionRate")}
+                    </div>
                   </div>
                 </div>
                 <div className="p-4 bg-white/40 rounded-lg border border-white/20">
@@ -376,7 +389,7 @@ const AdminDashboard = () => {
                       {stats?.average_accuracy || 0}%
                     </div>
                     <div className="text-sm text-gray-600">
-                      Average Accuracy
+                      {t("admin.dashboard.averageAccuracy")}
                     </div>
                   </div>
                 </div>

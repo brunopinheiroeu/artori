@@ -128,6 +128,9 @@ JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 JWT_EXPIRES_IN_MINUTES = int(os.getenv("JWT_EXPIRES_IN_MINUTES", "30"))
 
+# Default language for internationalization
+DEFAULT_LANGUAGE = "en"
+
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -1054,7 +1057,7 @@ async def login(user_data: UserLogin):
             logger.info("❌ Password verification failed")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=get_translation("errors.incorrectCredentials", language)
+                detail="Incorrect email or password"
             )
         else:
             logger.info("✅ Password verification successful")
@@ -1240,7 +1243,7 @@ async def set_user_exam(
         }
     )
     
-    return {"message": get_translation("messages.examSelectedSuccessfully", language)}
+    return {"message": "Exam selected successfully"}
 
 # Dashboard endpoint
 @app.get("/api/v1/users/me/dashboard", response_model=DashboardResponse)

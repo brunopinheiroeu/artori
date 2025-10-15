@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import Footer from "./Footer";
+import LanguageSelector from "./LanguageSelector";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,11 @@ const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
       {/* Main content with proper mobile spacing */}
       <div className="lg:ml-64">
         <div className="px-4 py-8 lg:px-8 pt-20 lg:pt-8">
+          {/* Language selector in top right */}
+          <div className="flex justify-end mb-4">
+            <LanguageSelector />
+          </div>
+
           {(title || description) && (
             <div className="mb-8">
               {title && (

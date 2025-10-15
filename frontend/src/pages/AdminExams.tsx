@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/AdminLayout";
 import AdminDataTable from "@/components/AdminDataTable";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,7 @@ import type {
 import { formatDistanceToNow } from "date-fns";
 
 const AdminExams = () => {
+  const { t } = useTranslation("admin");
   const [currentView, setCurrentView] = useState<
     "exams" | "subjects" | "questions"
   >("exams");
@@ -131,14 +133,14 @@ const AdminExams = () => {
   const examColumns = [
     {
       key: "flag",
-      label: "Flag",
+      label: t("exams.flag"),
       render: (value: string) => (
         <span className="text-2xl">{value || "🏳️"}</span>
       ),
     },
     {
       key: "name",
-      label: "Exam Name",
+      label: t("exams.examName"),
       sortable: true,
       render: (value: string, row: Exam) => (
         <div>
@@ -149,7 +151,7 @@ const AdminExams = () => {
     },
     {
       key: "description",
-      label: "Description",
+      label: t("exams.description"),
       render: (value: string) => (
         <div className="max-w-xs truncate" title={value}>
           {value}
@@ -158,25 +160,27 @@ const AdminExams = () => {
     },
     {
       key: "subjects",
-      label: "Subjects",
+      label: t("exams.subjects"),
       sortable: true,
       render: (value: Subject[], row: Exam) => (
-        <Badge variant="secondary">{row.subjects?.length || 0} subjects</Badge>
+        <Badge variant="secondary">
+          {row.subjects?.length || 0} {t("exams.subjectsCount")}
+        </Badge>
       ),
     },
     {
       key: "total_questions",
-      label: "Questions",
+      label: t("exams.questions"),
       sortable: true,
       render: (value: number) => (
         <Badge variant="outline">
-          {(value || 0).toLocaleString()} questions
+          {(value || 0).toLocaleString()} {t("exams.questionsCount")}
         </Badge>
       ),
     },
     {
       key: "status",
-      label: "Status",
+      label: t("exams.status"),
       sortable: true,
       render: (value: string) => (
         <Badge

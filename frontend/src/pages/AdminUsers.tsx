@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/AdminLayout";
 import AdminDataTable from "@/components/AdminDataTable";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +54,7 @@ import type {
 import { formatDistanceToNow } from "date-fns";
 
 const AdminUsers = () => {
+  const { t } = useTranslation();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -119,7 +121,7 @@ const AdminUsers = () => {
   const columns = [
     {
       key: "name",
-      label: "User",
+      label: t("admin.users.user"),
       sortable: true,
       render: (value: string, row: AdminUserResponse) => (
         <div className="flex items-center space-x-3">
@@ -135,7 +137,7 @@ const AdminUsers = () => {
     },
     {
       key: "role",
-      label: "Role",
+      label: t("admin.users.role"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -151,7 +153,7 @@ const AdminUsers = () => {
     },
     {
       key: "status",
-      label: "Status",
+      label: t("admin.users.status"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -169,7 +171,7 @@ const AdminUsers = () => {
     },
     {
       key: "login_count",
-      label: "Logins",
+      label: t("admin.users.logins"),
       sortable: true,
       render: (value: number) => (
         <span className="font-medium">{value.toLocaleString()}</span>
@@ -177,16 +179,16 @@ const AdminUsers = () => {
     },
     {
       key: "last_login",
-      label: "Last Login",
+      label: t("admin.users.lastLogin"),
       sortable: true,
       render: (value: string | null) =>
         value
           ? formatDistanceToNow(new Date(value), { addSuffix: true })
-          : "Never",
+          : t("admin.users.never"),
     },
     {
       key: "created_at",
-      label: "Created",
+      label: t("admin.users.created"),
       sortable: true,
       render: (value: string) => new Date(value).toLocaleDateString(),
     },
@@ -217,11 +219,7 @@ const AdminUsers = () => {
   };
 
   const handleDelete = (user: AdminUserResponse) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${user.name}? This action cannot be undone.`
-      )
-    ) {
+    if (window.confirm(t("admin.users.confirmDelete", { name: user.name }))) {
       deleteUserMutation.mutate(user.id);
     }
   };
@@ -234,7 +232,7 @@ const AdminUsers = () => {
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!createForm.name || !createForm.email || !createForm.password) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("common.validation.required"));
       return;
     }
     createUserMutation.mutate(createForm, {
@@ -254,7 +252,7 @@ const AdminUsers = () => {
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUser || !editForm.name || !editForm.email) {
-      toast.error("Please fill in all required fields");
+      toast.error(t("common.validation.required"));
       return;
     }
     updateUserMutation.mutate(
@@ -269,11 +267,7 @@ const AdminUsers = () => {
   };
 
   const handleResetUser = (user: AdminUserResponse) => {
-    if (
-      window.confirm(
-        `Are you sure you want to reset ${user.name}'s progress?\n\nThis will:\n• Clear their selected exam\n• Delete all progress data\n• Reset their statistics\n• Force them to select an exam again\n\nThis action cannot be undone.`
-      )
-    ) {
+    if (window.confirm(t("admin.users.confirmReset", { name: user.name }))) {
       resetUserMutation.mutate(user.id);
     }
   };
@@ -282,14 +276,12 @@ const AdminUsers = () => {
   if (usersError) {
     return (
       <AdminLayout
-        title="User Management"
-        description="Manage student and teacher accounts, view progress, and monitor platform usage."
+        title={t("admin.users.title")}
+        description={t("admin.users.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load users. Please try refreshing the page.
-          </AlertDescription>
+          <AlertDescription>{t("admin.users.failedToLoad")}</AlertDescription>
         </Alert>
       </AdminLayout>
     );
@@ -297,8 +289,8 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout
-      title="User Management"
-      description="Manage student and teacher accounts, view progress, and monitor platform usage."
+      title={t("admin.users.title")}
+      description={t("admin.users.description")}
     >
       {usersLoading ? (
         <div className="space-y-4">
@@ -317,16 +309,16 @@ const AdminUsers = () => {
         </div>
       ) : (
         <AdminDataTable
-          title="All Users"
-          description="View and manage all students and teachers on the platform"
+          title={t("admin.users.allUsers")}
+          description={t("admin.users.allUsersDescription")}
           data={users}
           columns={columns}
-          searchPlaceholder="Search users..."
+          searchPlaceholder={t("admin.users.searchPlaceholder")}
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          addButtonText="Add User"
+          addButtonText={t("admin.users.addUser")}
           currentPage={currentPage}
           pageSize={pageSize}
           totalCount={totalUsers}

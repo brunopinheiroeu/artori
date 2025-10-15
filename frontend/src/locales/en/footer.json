@@ -1,5 +1,7 @@
 {
   "description": "The AI Exam Coach that connects students, tutors, and schools through verified, personalized, and responsible learning.",
+  "schoolDescription": "{{brandName}} - Powered by Artori's AI technology to help students excel in their exams.",
+  "poweredBy": "Powered by artori.app",
   "copyright": "All rights reserved.",
   "product": "Product",
   "company": "Company",

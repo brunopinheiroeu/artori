@@ -1,4 +1,5 @@
 {
+  "error": "Error",
   "buttons": {
     "login": "Login",
     "logout": "Logout",
@@ -62,5 +63,11 @@
     "confirmPassword": "Passwords do not match",
     "minLength": "Must be at least {{min}} characters",
     "maxLength": "Must be no more than {{max}} characters"
-  }
+  },
+  "accessDenied": "Access Denied",
+  "tutorAccessDeniedMessage": "You don't have permission to access the tutor panel. Please contact your administrator if you believe this is an error.",
+  "studentAccessDeniedMessage": "You need to be logged in to access the student portal.",
+  "returnToHome": "Return to Home",
+  "signOut": "Sign Out",
+  "signIn": "Sign In"
 }

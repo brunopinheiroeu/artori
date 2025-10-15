@@ -6,6 +6,7 @@ import pricing from "./pricing.json";
 import solutions from "./solutions.json";
 import demo from "./demo.json";
 import footer from "./footer.json";
+import admin from "./admin.json";
 
 export default {
   common,
@@ -16,4 +17,5 @@ export default {
   solutions,
   demo,
   footer,
+  admin,
 };

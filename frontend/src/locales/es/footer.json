@@ -1,5 +1,7 @@
 {
   "description": "El entrenador de exámenes con IA que conecta a estudiantes, tutores y escuelas mediante un aprendizaje verificado, personalizado y responsable.",
+  "schoolDescription": "{{brandName}} - Impulsado por la tecnología IA de Artori para ayudar a los estudiantes a sobresalir en sus exámenes.",
+  "poweredBy": "Impulsado por artori.app",
   "copyright": "Todos los derechos reservados.",
   "product": "Producto",
   "company": "Empresa",
