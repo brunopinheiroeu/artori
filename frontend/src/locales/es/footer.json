@@ -1,0 +1,26 @@
+{
+  "description": "El entrenador de exámenes con IA que conecta a estudiantes, tutores y escuelas mediante un aprendizaje verificado, personalizado y responsable.",
+  "copyright": "Todos los derechos reservados.",
+  "product": "Producto",
+  "company": "Empresa",
+  "resources": "Recursos",
+  "legal": "Legal",
+  "links": {
+    "features": "Características",
+    "pricing": "Precios",
+    "forSchools": "Para Escuelas",
+    "api": "API",
+    "about": "Acerca de",
+    "blog": "Blog",
+    "careers": "Carreras",
+    "press": "Prensa",
+    "helpCenter": "Centro de Ayuda",
+    "community": "Comunidad",
+    "guides": "Guías",
+    "webinars": "Webinars",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "cookiePolicy": "Política de Cookies",
+    "gdpr": "GDPR"
+  }
+}

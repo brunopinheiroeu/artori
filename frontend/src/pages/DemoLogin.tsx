@@ -21,8 +21,10 @@ import {
   BarChart3,
 } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const DemoLogin = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialRole = searchParams.get("role") || "student";
   const [selectedRole, setSelectedRole] = useState(initialRole);
@@ -62,9 +64,9 @@ const DemoLogin = () => {
           </div>
           <div>
             <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              Riverside Academy
+              {t("demo.login.schoolName")}
             </span>
-            <p className="text-xs text-gray-500">Powered by artori.app</p>
+            <p className="text-xs text-gray-500">{t("demo.login.poweredBy")}</p>
           </div>
         </Link>
       </div>
@@ -81,14 +83,12 @@ const DemoLogin = () => {
               </div>
               <CardTitle className="text-2xl font-bold">
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  Welcome to Riverside Academy
+                  {t("demo.login.title")}
                 </span>
               </CardTitle>
-              <CardDescription>
-                Experience our AI-powered learning platform
-              </CardDescription>
+              <CardDescription>{t("demo.login.subtitle")}</CardDescription>
               <Badge className="bg-gradient-to-r from-green-500 to-blue-500 text-white border-0 text-xs">
-                🎯 Demo Environment
+                {t("demo.login.badge")}
               </Badge>
             </CardHeader>
 
@@ -96,7 +96,7 @@ const DemoLogin = () => {
               {/* Role Selection */}
               <div className="mb-6">
                 <Label className="text-sm font-medium mb-3 block">
-                  Choose your role:
+                  {t("demo.login.roleSelection")}
                 </Label>
                 <div className="grid grid-cols-2 gap-3">
                   <Card
@@ -109,8 +109,12 @@ const DemoLogin = () => {
                   >
                     <CardContent className="p-4 text-center">
                       <Users className="h-8 w-8 mx-auto mb-2 text-green-600" />
-                      <p className="font-medium text-sm">Student</p>
-                      <p className="text-xs text-gray-600">Practice & Learn</p>
+                      <p className="font-medium text-sm">
+                        {t("demo.login.student.title")}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {t("demo.login.student.description")}
+                      </p>
                     </CardContent>
                   </Card>
 
@@ -124,8 +128,12 @@ const DemoLogin = () => {
                   >
                     <CardContent className="p-4 text-center">
                       <BarChart3 className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                      <p className="font-medium text-sm">Teacher</p>
-                      <p className="text-xs text-gray-600">Manage & Monitor</p>
+                      <p className="font-medium text-sm">
+                        {t("demo.login.teacher.title")}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {t("demo.login.teacher.description")}
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
@@ -133,7 +141,7 @@ const DemoLogin = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("demo.login.form.email")}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
@@ -141,8 +149,8 @@ const DemoLogin = () => {
                       type="email"
                       placeholder={
                         selectedRole === "student"
-                          ? "alex.johnson@riverside.edu"
-                          : "sarah.wilson@riverside.edu"
+                          ? t("demo.login.form.emailPlaceholder.student")
+                          : t("demo.login.form.emailPlaceholder.teacher")
                       }
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -153,13 +161,15 @@ const DemoLogin = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">
+                    {t("demo.login.form.password")}
+                  </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter demo password"
+                      placeholder={t("demo.login.form.passwordPlaceholder")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -189,17 +199,17 @@ const DemoLogin = () => {
                   size="lg"
                 >
                   {selectedRole === "student"
-                    ? "🎓 Enter as Student"
-                    : "👩‍🏫 Enter as Teacher"}
+                    ? t("demo.login.form.submitStudent")
+                    : t("demo.login.form.submitTeacher")}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 mb-2">
-                  💡 This is a demo environment
+                  {t("demo.login.info.demo")}
                 </p>
                 <p className="text-xs text-gray-500">
-                  Use any email and password to explore the platform
+                  {t("demo.login.info.instructions")}
                 </p>
               </div>
             </CardContent>
@@ -208,7 +218,7 @@ const DemoLogin = () => {
 
         <div className="mt-8 text-center">
           <Badge className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
-            🏫 Experience whitelabeled artori.app platform
+            {t("demo.login.footer")}
           </Badge>
         </div>
       </div>

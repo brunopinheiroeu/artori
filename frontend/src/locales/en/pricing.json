@@ -1,0 +1,71 @@
+{
+  "title": "Simple, Transparent Pricing",
+  "subtitle": "Start free, upgrade when you're ready",
+  "billing": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "saveUpTo": "Save up to 20%",
+    "saveAnnually": "Save {{percentage}}% annually"
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "description": "Perfect for getting started",
+      "cta": "Get Started Free",
+      "features": {
+        "practiceQuestions": "100 practice questions",
+        "basicExplanations": "Basic AI explanations",
+        "progressTracking": "Progress tracking",
+        "oneExamType": "1 exam type",
+        "communitySupport": "Community support"
+      }
+    },
+    "student": {
+      "name": "Student",
+      "description": "Everything you need to succeed",
+      "cta": "Start Free Trial",
+      "features": {
+        "unlimitedQuestions": "Unlimited practice questions",
+        "advancedExplanations": "Advanced AI explanations",
+        "personalizedRecommendations": "Personalized recommendations",
+        "allExamTypes": "All exam types",
+        "detailedAnalytics": "Detailed analytics",
+        "prioritySupport": "Priority support"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "For serious exam preparation",
+      "cta": "Start Free Trial",
+      "features": {
+        "everythingInStudent": "Everything in Student",
+        "aiStudySchedule": "AI study schedule",
+        "customTests": "Custom practice tests",
+        "performancePredictions": "Performance predictions",
+        "studyGroupFeatures": "Study group features",
+        "expertTutorMatching": "Expert tutor matching"
+      }
+    },
+    "school": {
+      "name": "For Schools",
+      "description": "Institutional solutions",
+      "cta": "Explore Solutions",
+      "features": {
+        "everythingInPro": "Everything in Pro",
+        "unlimitedUsers": "Unlimited users",
+        "advancedDashboards": "Advanced dashboards",
+        "customBranding": "Custom branding",
+        "ssoIntegration": "SSO integration",
+        "dedicatedSupport": "Dedicated support"
+      }
+    }
+  },
+  "perMonth": "/month",
+  "mostPopular": "Most Popular",
+  "forInstitutions": "For Institutions",
+  "custom": "Custom",
+  "tailoredToNeeds": "Tailored to your needs",
+  "customPricingNote": "Custom pricing based on your requirements",
+  "needMoreFeatures": "Need more features?",
+  "contactSales": "Contact Sales"
+}

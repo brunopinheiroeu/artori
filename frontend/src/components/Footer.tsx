@@ -1,5 +1,6 @@
 import { Brain, GraduationCap, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface FooterProps {
   variant?: "artori" | "school";
@@ -12,6 +13,7 @@ const Footer = ({
   schoolName,
   schoolColors,
 }: FooterProps) => {
+  const { t } = useTranslation();
   const isSchool = variant === "school";
   const logoGradient = isSchool
     ? "from-green-500 to-blue-600"
@@ -24,28 +26,28 @@ const Footer = ({
 
   const footerLinks = {
     product: [
-      { name: "Features", href: "/#features" },
-      { name: "Pricing", href: "/pricing" },
-      { name: "For Schools", href: "/solutions" },
-      { name: "API", href: "/api" },
+      { name: t("footer.links.features"), href: "/#features" },
+      { name: t("footer.links.pricing"), href: "/pricing" },
+      { name: t("footer.links.forSchools"), href: "/solutions" },
+      { name: t("footer.links.api"), href: "/api" },
     ],
     company: [
-      { name: "About", href: "/about" },
-      { name: "Blog", href: "/blog" },
-      { name: "Careers", href: "/careers" },
-      { name: "Press", href: "/press" },
+      { name: t("footer.links.about"), href: "/about" },
+      { name: t("footer.links.blog"), href: "/blog" },
+      { name: t("footer.links.careers"), href: "/careers" },
+      { name: t("footer.links.press"), href: "/press" },
     ],
     resources: [
-      { name: "Help Center", href: "/help" },
-      { name: "Community", href: "/community" },
-      { name: "Guides", href: "/guides" },
-      { name: "Webinars", href: "/webinars" },
+      { name: t("footer.links.helpCenter"), href: "/help" },
+      { name: t("footer.links.community"), href: "/community" },
+      { name: t("footer.links.guides"), href: "/guides" },
+      { name: t("footer.links.webinars"), href: "/webinars" },
     ],
     legal: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Cookie Policy", href: "/cookies" },
-      { name: "GDPR", href: "/gdpr" },
+      { name: t("footer.links.privacyPolicy"), href: "/privacy" },
+      { name: t("footer.links.termsOfService"), href: "/terms" },
+      { name: t("footer.links.cookiePolicy"), href: "/cookies" },
+      { name: t("footer.links.gdpr"), href: "/gdpr" },
     ],
   };
 
@@ -81,7 +83,7 @@ const Footer = ({
                       {brandName}
                     </span>
                     <p className="text-xs text-gray-500">
-                      Powered by artori.app
+                      {t("footer.poweredBy")}
                     </p>
                   </div>
                 </>
@@ -98,8 +100,8 @@ const Footer = ({
 
             <p className="text-gray-600 mb-6 leading-relaxed">
               {isSchool
-                ? `Empowering ${brandName} students with responsible AI-powered learning that enhances education and promotes critical thinking.`
-                : "We help students master high-stakes exams with transparent, explainable AI that promotes critical thinking."}
+                ? t("footer.schoolDescription", { brandName })
+                : t("footer.description")}
             </p>
 
             {/* Contact Info */}
@@ -136,8 +138,9 @@ const Footer = ({
 
             {/* Copyright integrated into brand section */}
             <div className="text-sm text-gray-600">
-              © 2025 {brandName}. {isSchool ? "Powered by artori.app - " : ""}
-              Responsible AI for better learning. 🌟
+              © 2025 {brandName}.{" "}
+              {isSchool ? `${t("footer.poweredBy")} - ` : ""}
+              {t("footer.copyright")}
             </div>
           </div>
 
@@ -145,7 +148,9 @@ const Footer = ({
           <div className="lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-8">
             {/* Product */}
             <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Product</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">
+                {t("footer.product")}
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
@@ -162,7 +167,9 @@ const Footer = ({
 
             {/* Company */}
             <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Company</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">
+                {t("footer.company")}
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
@@ -179,7 +186,9 @@ const Footer = ({
 
             {/* Resources */}
             <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Resources</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">
+                {t("footer.resources")}
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.resources.map((link) => (
                   <li key={link.name}>
@@ -196,7 +205,9 @@ const Footer = ({
 
             {/* Legal */}
             <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Legal</h3>
+              <h3 className="font-semibold text-gray-800 mb-4">
+                {t("footer.legal")}
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>

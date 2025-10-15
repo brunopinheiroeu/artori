@@ -1,6 +1,8 @@
 import { Brain, GraduationCap, DoorOpen, Building2 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import GradientButton from "@/components/GradientButton";
+import LanguageSelector from "@/components/LanguageSelector";
 
 interface AppHeaderProps {
   variant?: "artori" | "school";
@@ -26,6 +28,7 @@ const AppHeader = ({
   const LogoIcon = isSchool ? GraduationCap : Brain;
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
+  const { t } = useTranslation();
 
   return (
     <header className="container mx-auto px-4 py-6">
@@ -53,6 +56,9 @@ const AppHeader = ({
         </Link>
 
         <div className="hidden md:flex items-center space-x-6">
+          {/* Language Selector */}
+          <LanguageSelector />
+
           {/* Solutions for Schools - only on landing page */}
           {isLandingPage && (
             <Link
@@ -60,7 +66,7 @@ const AppHeader = ({
               className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
             >
               <Building2 className="h-4 w-4" />
-              <span>Solutions for Schools</span>
+              <span>{t("navigation.solutionsForSchools")}</span>
             </Link>
           )}
 
@@ -68,7 +74,7 @@ const AppHeader = ({
           <Link to="/login">
             <GradientButton className="flex items-center space-x-2">
               <DoorOpen className="h-4 w-4" />
-              <span>Sign In</span>
+              <span>{t("navigation.signIn")}</span>
             </GradientButton>
           </Link>
         </div>

@@ -1,0 +1,71 @@
+{
+  "title": "Precios Simples y Transparentes",
+  "subtitle": "Comienza gratis, actualiza cuando estés listo",
+  "billing": {
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "saveUpTo": "Ahorra hasta 20%",
+    "saveAnnually": "Ahorra {{percentage}}% anualmente"
+  },
+  "plans": {
+    "free": {
+      "name": "Gratis",
+      "description": "Perfecto para comenzar",
+      "cta": "Comenzar Gratis",
+      "features": {
+        "practiceQuestions": "100 preguntas de práctica",
+        "basicExplanations": "Explicaciones básicas de IA",
+        "progressTracking": "Seguimiento de progreso",
+        "oneExamType": "1 tipo de examen",
+        "communitySupport": "Soporte de la comunidad"
+      }
+    },
+    "student": {
+      "name": "Estudiante",
+      "description": "Todo lo que necesitas para tener éxito",
+      "cta": "Iniciar Prueba Gratis",
+      "features": {
+        "unlimitedQuestions": "Preguntas de práctica ilimitadas",
+        "advancedExplanations": "Explicaciones avanzadas de IA",
+        "personalizedRecommendations": "Recomendaciones personalizadas",
+        "allExamTypes": "Todos los tipos de examen",
+        "detailedAnalytics": "Análisis detallados",
+        "prioritySupport": "Soporte prioritario"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Para preparación seria de exámenes",
+      "cta": "Iniciar Prueba Gratis",
+      "features": {
+        "everythingInStudent": "Todo en el plan Estudiante",
+        "aiStudySchedule": "Horario de estudio con IA",
+        "customTests": "Pruebas de práctica personalizadas",
+        "performancePredictions": "Predicciones de rendimiento",
+        "studyGroupFeatures": "Características de grupo de estudio",
+        "expertTutorMatching": "Emparejamiento con tutores expertos"
+      }
+    },
+    "school": {
+      "name": "Para Escuelas",
+      "description": "Soluciones institucionales",
+      "cta": "Explorar Soluciones",
+      "features": {
+        "everythingInPro": "Todo en el plan Pro",
+        "unlimitedUsers": "Usuarios ilimitados",
+        "advancedDashboards": "Paneles avanzados",
+        "customBranding": "Marca personalizada",
+        "ssoIntegration": "Integración SSO",
+        "dedicatedSupport": "Soporte dedicado"
+      }
+    }
+  },
+  "perMonth": "/mes",
+  "mostPopular": "Más Popular",
+  "forInstitutions": "Para Instituciones",
+  "custom": "Personalizado",
+  "tailoredToNeeds": "Adaptado a tus necesidades",
+  "customPricingNote": "Precios personalizados basados en tus requisitos",
+  "needMoreFeatures": "¿Necesitas más características?",
+  "contactSales": "Contactar Ventas"
+}

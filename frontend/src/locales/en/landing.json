@@ -1,0 +1,85 @@
+{
+  "hero": {
+    "aiPoweredExamPrep": "🎯 AI-Powered Exam Prep",
+    "yourAiStudyCompanion": "Your AI Study Companion",
+    "heroDescription": "Get personalized practice questions, detailed explanations, and track your progress across SAT, ENEM, A-Levels, and more. Our AI tutor adapts to your learning style while maintaining academic integrity.",
+    "joinStudents": "Join 50,000+ students worldwide",
+    "startPracticingFree": "🚀 Start Practicing Free",
+    "learnMore": "📖 Learn More"
+  },
+  "trustBadges": {
+    "soc2Compliant": "SOC 2 Compliant",
+    "gdprReady": "GDPR Ready",
+    "studentRating": "4.9/5 Student Rating",
+    "edtechAward": "EdTech Award Winner"
+  },
+  "exams": {
+    "supportedExams": "Supported Exams",
+    "practiceForExam": "Practice for your exam with AI-powered questions and explanations",
+    "searchExamsCountries": "Search exams or countries...",
+    "sat": "Scholastic Assessment Test - College entrance exam for US universities",
+    "enem": "Exame Nacional do Ensino Médio - Brazilian national high school exam",
+    "leavingCertificate": "Irish state examination for secondary school completion",
+    "selectividad": "Spanish university entrance examination",
+    "aLevels": "Advanced Level qualifications for UK university admission",
+    "abitur": "German qualification for university entrance",
+    "ib": "International Baccalaureate - Global education program",
+    "bac": "French national academic qualification",
+    "startPracticing": "Start Practicing",
+    "comingSoon": "Coming Soon",
+    "moreExams": "More Exams",
+    "requestExamType": "Don't see your exam? Request it and we'll add it to our platform",
+    "requestExam": "Request Exam"
+  },
+  "features": {
+    "responsibleAiFeatures": "Responsible AI Features",
+    "builtForStudents": "Built for students, by educators",
+    "explainableAi": "Explainable AI",
+    "explainableAiDescription": "Our AI provides clear explanations and shows its reasoning, helping you understand concepts rather than just memorize answers",
+    "adaptiveLearning": "Adaptive Learning",
+    "adaptiveLearningDescription": "Questions adjust to your skill level, focusing on areas where you need the most improvement for efficient studying",
+    "biasDetection": "Bias Detection",
+    "biasDetectionDescription": "Advanced algorithms detect and minimize bias in questions and explanations, ensuring fair and inclusive learning",
+    "teacherCollaboration": "Teacher Collaboration",
+    "teacherCollaborationDescription": "Connect with certified teachers for additional support and guidance throughout your learning journey",
+    "reflectionActivities": "Reflection Activities",
+    "reflectionActivitiesDescription": "Structured reflection prompts help you think critically about your learning process and build metacognitive skills",
+    "studyJourneys": "Personalized Study Journeys",
+    "studyJourneysDescription": "AI creates customized learning paths based on your goals, timeline, and current knowledge level"
+  },
+  "testimonials": {
+    "lovedByStudents": "Loved by Students Worldwide",
+    "seeHowArtori": "See how Artori has helped students achieve their academic goals",
+    "sarahChen": "Sarah Chen",
+    "satStudent": "SAT Student",
+    "sarahTestimonial": "Artori helped me improve my SAT score by 200 points! The AI explanations were so clear and personalized.",
+    "sarahScore": "1450 → 1520",
+    "miguelSantos": "Miguel Santos",
+    "enemStudent": "ENEM Student",
+    "miguelTestimonial": "The Portuguese explanations made all the difference. I finally understood complex math concepts!",
+    "miguelScore": "720 → 850",
+    "emmaThompson": "Emma Thompson",
+    "aLevelStudent": "A-Level Student",
+    "emmaTestimonial": "The adaptive learning feature knew exactly where I was struggling and helped me focus on those areas.",
+    "emmaScore": "B → A*"
+  },
+  "newsletter": {
+    "stayUpdated": "Stay Updated",
+    "getLatestUpdates": "Get the latest updates on new features, study tips, and exam preparation strategies",
+    "enterEmail": "Enter your email address",
+    "subscribe": "Subscribe"
+  },
+  "stats": {
+    "trustedByStudents": "Trusted by Students Worldwide",
+    "activeStudents": "Active Students",
+    "questionsAnswered": "Questions Answered",
+    "satisfactionRate": "Satisfaction Rate",
+    "partnerSchools": "Partner Schools"
+  },
+  "cta": {
+    "readyToTransform": "Ready to Transform Your Study Experience?",
+    "joinThousands": "Join thousands of students who have improved their scores with Artori. ",
+    "startFreeToday": "Start free today!",
+    "startFreePractice": "🎯 Start Free Practice"
+  }
+}

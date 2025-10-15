@@ -1,0 +1,135 @@
+{
+  "header": {
+    "requestDemo": "Request Demo",
+    "contactSales": "Contact Sales"
+  },
+  "hero": {
+    "badge": "🏫 Educational Solutions",
+    "title": "Empower Your School",
+    "titleHighlight": "with Responsible AI",
+    "subtitle": "Give your teachers the tools they need to guide students through AI-powered learning. Our school plugin integrates seamlessly with your existing systems while maintaining academic integrity and promoting deep learning.",
+    "ctaPrimary": "📞 Schedule Demo",
+    "ctaSecondary": "📋 Download Brochure"
+  },
+  "demo": {
+    "title": "Try Our Platform",
+    "subtitle": "Experience artori.app through the eyes of Riverside Academy",
+    "schoolName": "Riverside Academy",
+    "poweredBy": "Powered by artori.app",
+    "description": "See how our whitelabeled platform looks and feels with your school's branding",
+    "student": {
+      "title": "Student Experience",
+      "description": "Experience the platform as a student would",
+      "features": [
+        "AI-powered practice questions",
+        "Explainable AI responses",
+        "Progress tracking"
+      ],
+      "cta": "Try Student Demo"
+    },
+    "teacher": {
+      "title": "Teacher Dashboard",
+      "description": "See the powerful analytics and management tools",
+      "features": [
+        "Class performance analytics",
+        "AI interaction monitoring",
+        "Intervention recommendations"
+      ],
+      "cta": "Try Teacher Demo"
+    },
+    "note": "💡 This demo shows how artori.app can be completely customized with your school's branding and colors"
+  },
+  "features": {
+    "title": "Built for Educators",
+    "subtitle": "Comprehensive tools that enhance teaching, don't replace it",
+    "items": {
+      "dashboards": {
+        "title": "Teacher Dashboards",
+        "description": "Real-time analytics on student progress, learning gaps, and AI interaction patterns"
+      },
+      "management": {
+        "title": "Class Management",
+        "description": "Organize students, assign practice sets, and monitor collective performance"
+      },
+      "collaboration": {
+        "title": "AI Collaboration",
+        "description": "Teachers can annotate AI explanations and add cultural/ethical context"
+      },
+      "tracing": {
+        "title": "Ethical Tracing",
+        "description": "Full transparency with citations and attribution to prevent plagiarism"
+      },
+      "alerts": {
+        "title": "Intervention Alerts",
+        "description": "AI-generated suggestions for when and how to help struggling students"
+      },
+      "integration": {
+        "title": "Curriculum Integration",
+        "description": "Seamlessly integrate with existing LMS and curriculum standards"
+      }
+    }
+  },
+  "benefits": {
+    "title": "Why Schools Choose artori.app",
+    "items": [
+      "Reduce teacher workload with automated progress tracking",
+      "Identify learning gaps before they become problems",
+      "Maintain academic integrity with transparent AI",
+      "Enhance student engagement with personalized learning",
+      "Support teachers with data-driven insights",
+      "Scale quality education across all classrooms"
+    ],
+    "stats": {
+      "title": "200+ Schools Trust artori.app",
+      "improvement": {
+        "value": "23%",
+        "label": "Average Score Improvement"
+      },
+      "satisfaction": {
+        "value": "85%",
+        "label": "Teacher Satisfaction"
+      },
+      "timeSaved": {
+        "value": "40%",
+        "label": "Time Saved on Grading"
+      },
+      "engagement": {
+        "value": "95%",
+        "label": "Student Engagement"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "What Educators Say",
+    "items": {
+      "sarah": {
+        "name": "Dr. Sarah Chen",
+        "role": "Mathematics Department Head",
+        "school": "Lincoln High School",
+        "quote": "artori.app has transformed how we approach exam preparation. Teachers love the insights, and students are more engaged than ever."
+      },
+      "miguel": {
+        "name": "Prof. Miguel Santos",
+        "role": "ENEM Coordinator",
+        "school": "Colégio São Paulo",
+        "quote": "The bias detection and explainable AI features give us confidence that students are learning responsibly."
+      },
+      "emma": {
+        "name": "Emma Thompson",
+        "role": "A-Level Coordinator",
+        "school": "Cambridge Academy",
+        "quote": "Our pass rates improved by 23% after implementing artori.app. The teacher collaboration features are game-changing."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your School?",
+    "subtitle": "Join hundreds of schools already using artori.app to enhance student learning and support teachers.",
+    "primary": "📞 Schedule Your Demo",
+    "secondary": "💬 Contact Sales Team"
+  },
+  "footer": {
+    "title": "for Schools",
+    "tagline": "Empowering educators with responsible AI since 2025 🎓"
+  }
+}

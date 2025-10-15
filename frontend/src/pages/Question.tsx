@@ -538,7 +538,7 @@ const Question = () => {
                   }}
                   className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0"
                 >
-                  🤖 AI Tutor
+                  AI Tutor
                 </Button>
               </div>
               <CardDescription>

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from enum import Enum
 
-from fastapi import FastAPI, HTTPException, Depends, status, Query
+from fastapi import FastAPI, HTTPException, Depends, status, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr, field_validator
@@ -14,6 +14,7 @@ from jose import JWTError, jwt
 from pymongo import MongoClient
 from bson import ObjectId
 from dotenv import load_dotenv
+import json
 
 # Configure logging first
 logging.basicConfig(level=logging.INFO)
@@ -1053,7 +1054,7 @@ async def login(user_data: UserLogin):
             logger.info("❌ Password verification failed")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password"
+                detail=get_translation("errors.incorrectCredentials", language)
             )
         else:
             logger.info("✅ Password verification successful")
@@ -1239,7 +1240,7 @@ async def set_user_exam(
         }
     )
     
-    return {"message": "Exam selected successfully"}
+    return {"message": get_translation("messages.examSelectedSuccessfully", language)}
 
 # Dashboard endpoint
 @app.get("/api/v1/users/me/dashboard", response_model=DashboardResponse)
@@ -1521,6 +1522,7 @@ async def submit_answer(
 @app.get("/api/v1/questions/{question_id}/ai-explanation", response_model=AnswerResponse)
 async def get_ai_explanation(
     question_id: str,
+    request: Request,
     selected_answer: Optional[str] = Query(None, description="User's selected answer"),
     current_user = Depends(get_current_user)
 ):
@@ -1530,6 +1532,8 @@ async def get_ai_explanation(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database connection not available"
         )
+    
+    language = getattr(request.state, 'language', DEFAULT_LANGUAGE)
     
     # Get the question
     try:
@@ -1566,7 +1570,8 @@ async def get_ai_explanation(
             correct_answer=question["correct_answer"],
             selected_answer=selected_answer,
             subject=subject_name,
-            difficulty=question.get("difficulty", "medium")
+            difficulty=question.get("difficulty", "medium"),
+            language=language
         )
         
         # Convert to Explanation model
@@ -1605,6 +1610,7 @@ async def get_ai_explanation(
 async def ai_chat(
     question_id: str,
     chat_request: ChatRequest,
+    request: Request,
     current_user = Depends(get_current_user)
 ):
     """Handle conversational AI chat for a specific question"""
@@ -1613,6 +1619,8 @@ async def ai_chat(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database connection not available"
         )
+    
+    language = getattr(request.state, 'language', DEFAULT_LANGUAGE)
     
     # Get the question
     try:
@@ -1654,7 +1662,8 @@ async def ai_chat(
     try:
         ai_response = await ai_service.generate_chat_response(
             messages=[{"role": msg.role, "content": msg.content} for msg in chat_request.messages],
-            question_context=question_context
+            question_context=question_context,
+            language=language
         )
         
         return ChatResponse(

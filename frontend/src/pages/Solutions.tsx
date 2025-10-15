@@ -23,85 +23,74 @@ import {
   Monitor,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Solutions = () => {
+  const { t } = useTranslation();
+
   const features = [
     {
       icon: BarChart3,
-      title: "Teacher Dashboards",
-      description:
-        "Real-time analytics on student progress, learning gaps, and AI interaction patterns",
+      title: t("solutions.features.items.dashboards.title"),
+      description: t("solutions.features.items.dashboards.description"),
       gradient: "from-blue-500 to-cyan-500",
     },
     {
       icon: Users,
-      title: "Class Management",
-      description:
-        "Organize students, assign practice sets, and monitor collective performance",
+      title: t("solutions.features.items.management.title"),
+      description: t("solutions.features.items.management.description"),
       gradient: "from-green-500 to-emerald-500",
     },
     {
       icon: MessageSquare,
-      title: "AI Collaboration",
-      description:
-        "Teachers can annotate AI explanations and add cultural/ethical context",
+      title: t("solutions.features.items.collaboration.title"),
+      description: t("solutions.features.items.collaboration.description"),
       gradient: "from-purple-500 to-pink-500",
     },
     {
       icon: Shield,
-      title: "Ethical Tracing",
-      description:
-        "Full transparency with citations and attribution to prevent plagiarism",
+      title: t("solutions.features.items.tracing.title"),
+      description: t("solutions.features.items.tracing.description"),
       gradient: "from-orange-500 to-red-500",
     },
     {
       icon: Target,
-      title: "Intervention Alerts",
-      description:
-        "AI-generated suggestions for when and how to help struggling students",
+      title: t("solutions.features.items.alerts.title"),
+      description: t("solutions.features.items.alerts.description"),
       gradient: "from-indigo-500 to-purple-500",
     },
     {
       icon: BookOpen,
-      title: "Curriculum Integration",
-      description:
-        "Seamlessly integrate with existing LMS and curriculum standards",
+      title: t("solutions.features.items.integration.title"),
+      description: t("solutions.features.items.integration.description"),
       gradient: "from-teal-500 to-blue-500",
     },
   ];
 
-  const benefits = [
-    "Reduce teacher workload with automated progress tracking",
-    "Identify learning gaps before they become problems",
-    "Maintain academic integrity with transparent AI",
-    "Enhance student engagement with personalized learning",
-    "Support teachers with data-driven insights",
-    "Scale quality education across all classrooms",
-  ];
+  const benefits = t("solutions.benefits.items", {
+    returnObjects: true,
+  }) as string[];
 
   const testimonials = [
     {
-      name: "Dr. Sarah Chen",
-      role: "Mathematics Department Head",
-      school: "Lincoln High School",
-      quote:
-        "artori.app has transformed how we approach exam preparation. Teachers love the insights, and students are more engaged than ever.",
+      name: t("solutions.testimonials.items.sarah.name"),
+      role: t("solutions.testimonials.items.sarah.role"),
+      school: t("solutions.testimonials.items.sarah.school"),
+      quote: t("solutions.testimonials.items.sarah.quote"),
       avatar: "👩‍🏫",
     },
     {
-      name: "Prof. Miguel Santos",
-      role: "ENEM Coordinator",
-      school: "Colégio São Paulo",
-      quote:
-        "The bias detection and explainable AI features give us confidence that students are learning responsibly.",
+      name: t("solutions.testimonials.items.miguel.name"),
+      role: t("solutions.testimonials.items.miguel.role"),
+      school: t("solutions.testimonials.items.miguel.school"),
+      quote: t("solutions.testimonials.items.miguel.quote"),
       avatar: "👨‍🏫",
     },
     {
-      name: "Emma Thompson",
-      role: "A-Level Coordinator",
-      school: "Cambridge Academy",
-      quote:
-        "Our pass rates improved by 23% after implementing artori.app. The teacher collaboration features are game-changing.",
+      name: t("solutions.testimonials.items.emma.name"),
+      role: t("solutions.testimonials.items.emma.role"),
+      school: t("solutions.testimonials.items.emma.school"),
+      quote: t("solutions.testimonials.items.emma.quote"),
       avatar: "👩‍💼",
     },
   ];
@@ -117,9 +106,9 @@ const Solutions = () => {
           </Link>
 
           <div className="flex items-center space-x-4">
-            <Button variant="ghost">Request Demo</Button>
+            <Button variant="ghost">{t("solutions.header.requestDemo")}</Button>
             <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
-              Contact Sales
+              {t("solutions.header.contactSales")}
             </Button>
           </div>
         </nav>
@@ -132,24 +121,21 @@ const Solutions = () => {
 
           <div className="relative z-10 p-12">
             <Badge className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-4 py-2">
-              🏫 Educational Solutions
+              {t("solutions.hero.badge")}
             </Badge>
 
             <h1 className="text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Empower Your School
+                {t("solutions.hero.title")}
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                with Responsible AI
+                {t("solutions.hero.titleHighlight")}
               </span>
             </h1>
 
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Give your teachers the tools they need to guide students through
-              AI-powered learning. Our school plugin integrates seamlessly with
-              your existing systems while maintaining academic integrity and
-              promoting deep learning.
+              {t("solutions.hero.subtitle")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -157,14 +143,14 @@ const Solutions = () => {
                 size="lg"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-lg px-8 py-4"
               >
-                📞 Schedule Demo
+                {t("solutions.hero.ctaPrimary")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-indigo-200 hover:bg-indigo-50 text-lg px-8 py-4"
               >
-                📋 Download Brochure
+                {t("solutions.hero.ctaSecondary")}
               </Button>
             </div>
           </div>
@@ -176,11 +162,11 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              Try Our Platform
+              {t("solutions.demo.title")}
             </span>
           </h2>
           <p className="text-gray-600 text-lg">
-            Experience artori.app through the eyes of Riverside Academy
+            {t("solutions.demo.subtitle")}
           </p>
         </div>
 
@@ -195,14 +181,15 @@ const Solutions = () => {
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                    Riverside Academy
+                    {t("solutions.demo.schoolName")}
                   </h3>
-                  <p className="text-sm text-gray-500">Powered by artori.app</p>
+                  <p className="text-sm text-gray-500">
+                    {t("solutions.demo.poweredBy")}
+                  </p>
                 </div>
               </div>
               <p className="text-gray-600 mb-8">
-                See how our whitelabeled platform looks and feels with your
-                school's branding
+                {t("solutions.demo.description")}
               </p>
             </div>
 
@@ -214,31 +201,32 @@ const Solutions = () => {
                     <Users className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl text-green-700">
-                    Student Experience
+                    {t("solutions.demo.student.title")}
                   </CardTitle>
                   <CardDescription className="text-green-600">
-                    Experience the platform as a student would
+                    {t("solutions.demo.student.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="space-y-4 mb-6">
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span>AI-powered practice questions</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span>Explainable AI responses</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span>Progress tracking</span>
-                    </div>
+                    {(
+                      t("solutions.demo.student.features", {
+                        returnObjects: true,
+                      }) as string[]
+                    ).map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center space-x-2 text-sm text-gray-600"
+                      >
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
                   <Link to="/demo-login?role=student">
                     <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg">
                       <Play className="h-4 w-4 mr-2" />
-                      Try Student Demo
+                      {t("solutions.demo.student.cta")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -251,31 +239,32 @@ const Solutions = () => {
                     <BarChart3 className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl text-blue-700">
-                    Teacher Dashboard
+                    {t("solutions.demo.teacher.title")}
                   </CardTitle>
                   <CardDescription className="text-blue-600">
-                    See the powerful analytics and management tools
+                    {t("solutions.demo.teacher.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="space-y-4 mb-6">
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-blue-500" />
-                      <span>Class performance analytics</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-blue-500" />
-                      <span>AI interaction monitoring</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <CheckCircle className="h-4 w-4 text-blue-500" />
-                      <span>Intervention recommendations</span>
-                    </div>
+                    {(
+                      t("solutions.demo.teacher.features", {
+                        returnObjects: true,
+                      }) as string[]
+                    ).map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center space-x-2 text-sm text-gray-600"
+                      >
+                        <CheckCircle className="h-4 w-4 text-blue-500" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
                   <Link to="/demo-login?role=teacher">
                     <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg">
                       <Monitor className="h-4 w-4 mr-2" />
-                      Try Teacher Demo
+                      {t("solutions.demo.teacher.cta")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -284,8 +273,7 @@ const Solutions = () => {
 
             <div className="text-center mt-8">
               <p className="text-sm text-gray-500">
-                💡 This demo shows how artori.app can be completely customized
-                with your school's branding and colors
+                {t("solutions.demo.note")}
               </p>
             </div>
           </div>
@@ -297,11 +285,11 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Built for Educators
+              {t("solutions.features.title")}
             </span>
           </h2>
           <p className="text-gray-600 text-lg">
-            Comprehensive tools that enhance teaching, don't replace it
+            {t("solutions.features.subtitle")}
           </p>
         </div>
 
@@ -337,7 +325,7 @@ const Solutions = () => {
           <div>
             <h2 className="text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                Why Schools Choose artori.app
+                {t("solutions.benefits.title")}
               </span>
             </h2>
             <div className="space-y-4">
@@ -358,37 +346,39 @@ const Solutions = () => {
               <div className="text-center">
                 <GraduationCap className="h-24 w-24 mx-auto mb-6 text-indigo-600" />
                 <h3 className="text-2xl font-bold mb-4">
-                  200+ Schools Trust artori.app
+                  {t("solutions.benefits.stats.title")}
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
                     <div className="text-3xl font-bold text-indigo-600">
-                      23%
+                      {t("solutions.benefits.stats.improvement.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Average Score Improvement
+                      {t("solutions.benefits.stats.improvement.label")}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-purple-600">
-                      85%
+                      {t("solutions.benefits.stats.satisfaction.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Teacher Satisfaction
+                      {t("solutions.benefits.stats.satisfaction.label")}
                     </div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-green-600">40%</div>
+                    <div className="text-3xl font-bold text-green-600">
+                      {t("solutions.benefits.stats.timeSaved.value")}
+                    </div>
                     <div className="text-sm text-gray-600">
-                      Time Saved on Grading
+                      {t("solutions.benefits.stats.timeSaved.label")}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-orange-600">
-                      95%
+                      {t("solutions.benefits.stats.engagement.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Student Engagement
+                      {t("solutions.benefits.stats.engagement.label")}
                     </div>
                   </div>
                 </div>
@@ -403,7 +393,7 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              What Educators Say
+              {t("solutions.testimonials.title")}
             </span>
           </h2>
         </div>
@@ -437,26 +427,25 @@ const Solutions = () => {
           <div className="relative z-10 p-12">
             <h2 className="text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Ready to Transform Your School?
+                {t("solutions.cta.title")}
               </span>
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Join hundreds of schools already using artori.app to enhance
-              student learning and support teachers.
+              {t("solutions.cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-lg px-8 py-4"
               >
-                📞 Schedule Your Demo
+                {t("solutions.cta.primary")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-indigo-200 hover:bg-indigo-50 text-lg px-8 py-4"
               >
-                💬 Contact Sales Team
+                {t("solutions.cta.secondary")}
               </Button>
             </div>
           </div>
@@ -469,12 +458,10 @@ const Solutions = () => {
           <div className="flex items-center justify-center space-x-2 mb-4">
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              for Schools
+              {t("solutions.footer.title")}
             </span>
           </div>
-          <p className="text-gray-500">
-            Empowering educators with responsible AI since 2025 🎓
-          </p>
+          <p className="text-gray-500">{t("solutions.footer.tagline")}</p>
         </div>
       </footer>
     </div>

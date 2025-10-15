@@ -1,0 +1,26 @@
+{
+  "description": "O coach de exames com IA que conecta estudantes, tutores e escolas por meio de um aprendizado verificado, personalizado e responsável.",
+  "copyright": "Todos os direitos reservados.",
+  "product": "Produto",
+  "company": "Empresa",
+  "resources": "Recursos",
+  "legal": "Legal",
+  "links": {
+    "features": "Recursos",
+    "pricing": "Preços",
+    "forSchools": "Para Escolas",
+    "api": "API",
+    "about": "Sobre",
+    "blog": "Blog",
+    "careers": "Carreiras",
+    "press": "Imprensa",
+    "helpCenter": "Central de Ajuda",
+    "community": "Comunidade",
+    "guides": "Guias",
+    "webinars": "Webinars",
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Serviço",
+    "cookiePolicy": "Política de Cookies",
+    "gdpr": "GDPR"
+  }
+}

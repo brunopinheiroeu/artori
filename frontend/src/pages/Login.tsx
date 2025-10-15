@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,6 +41,7 @@ const validatePasswordStrength = (
 };
 
 const Login = () => {
+  const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -171,8 +173,8 @@ const Login = () => {
         // Signup logic
         if (!name.trim()) {
           toast({
-            title: "Error",
-            description: "Name is required",
+            title: t("common.error"),
+            description: t("auth.nameRequired"),
             variant: "destructive",
           });
           return;
@@ -181,8 +183,8 @@ const Login = () => {
         // Check password strength before submitting
         if (!passwordValidation.isValid) {
           toast({
-            title: "Password Requirements Not Met",
-            description: "Please ensure your password meets all requirements",
+            title: t("auth.passwordRequirementsNotMet"),
+            description: t("auth.ensurePasswordRequirements"),
             variant: "destructive",
           });
           return;
@@ -190,17 +192,18 @@ const Login = () => {
 
         await signupMutation.mutateAsync({ name, email, password });
         toast({
-          title: "Account created",
-          description:
-            "Welcome to artori.app! Please select an exam to get started.",
+          title: t("auth.accountCreated"),
+          description: t("auth.welcomeToArtori"),
         });
         navigate("/practice"); // New users need to select an exam first
       }
     } catch (error) {
       toast({
-        title: "Error",
+        title: t("common.error"),
         description:
-          error instanceof Error ? error.message : "Authentication failed",
+          error instanceof Error
+            ? error.message
+            : t("auth.authenticationFailed"),
         variant: "destructive",
       });
     }
@@ -234,13 +237,13 @@ const Login = () => {
               </div>
               <CardTitle className="text-2xl font-bold">
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {isLogin ? "Welcome Back!" : "Join artori.app"}
+                  {isLogin ? t("auth.welcomeBack") : t("auth.joinArtori")}
                 </span>
               </CardTitle>
               <CardDescription>
                 {isLogin
-                  ? "Sign in to continue your study journey"
-                  : "Create your account to start practicing"}
+                  ? t("auth.signInDescription")
+                  : t("auth.signUpDescription")}
               </CardDescription>
             </CardHeader>
 
@@ -248,11 +251,11 @@ const Login = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">{t("auth.fullName")}</Label>
                     <Input
                       id="name"
                       type="text"
-                      placeholder="Enter your full name"
+                      placeholder={t("auth.enterFullName")}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="bg-white/50 backdrop-blur-sm border-white/20"
@@ -262,13 +265,13 @@ const Login = () => {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("auth.email")}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={t("auth.enterEmail")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -278,13 +281,13 @@ const Login = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("auth.password")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+                      placeholder={t("auth.enterPassword")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -307,7 +310,7 @@ const Login = () => {
                   {!isLogin && password && (
                     <div className="mt-3 p-3 bg-white/30 backdrop-blur-sm rounded-lg border border-white/20">
                       <p className="text-sm font-medium text-gray-700 mb-2">
-                        Password Requirements:
+                        {t("auth.passwordRequirements")}
                       </p>
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
@@ -323,7 +326,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            At least 8 characters
+                            {t("auth.atLeast8Characters")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -339,7 +342,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            One uppercase letter
+                            {t("auth.oneUppercaseLetter")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -355,7 +358,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            One number
+                            {t("auth.oneNumber")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -371,7 +374,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            One special character (!@#$%^&*(),.?":{}|&lt;&gt;)
+                            {t("auth.oneSpecialCharacter")}
                           </span>
                         </div>
                       </div>
@@ -389,32 +392,32 @@ const Login = () => {
                 >
                   {isLoading
                     ? isLogin
-                      ? "Signing In..."
-                      : "Creating Account..."
+                      ? t("auth.signingIn")
+                      : t("auth.creatingAccount")
                     : isLogin
-                    ? "🚀 Sign In"
-                    : "✨ Create Account"}
+                    ? t("auth.signInButton")
+                    : t("auth.createAccountButton")}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-gray-600">
                   {isLogin
-                    ? "Don't have an account?"
-                    : "Already have an account?"}
+                    ? t("auth.dontHaveAccount")
+                    : t("auth.alreadyHaveAccount")}
                 </p>
                 <button
                   onClick={() => setIsLogin(!isLogin)}
                   className="text-indigo-600 hover:text-indigo-700 font-medium"
                 >
-                  {isLogin ? "Sign up here" : "Sign in here"}
+                  {isLogin ? t("auth.signUpHere") : t("auth.signInHere")}
                 </button>
               </div>
 
               {isLogin && (
                 <div className="mt-4 text-center">
                   <button className="text-sm text-gray-500 hover:text-gray-700">
-                    Forgot your password?
+                    {t("auth.forgotPassword")}
                   </button>
                 </div>
               )}
@@ -424,7 +427,7 @@ const Login = () => {
 
         <div className="mt-8 text-center">
           <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-            🎯 Join 50,000+ students already studying smarter!
+            {t("auth.joinStudents")}
           </Badge>
         </div>
       </div>

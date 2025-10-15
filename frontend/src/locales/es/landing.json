@@ -1,0 +1,85 @@
+{
+  "hero": {
+    "aiPoweredExamPrep": "🎯 Preparación de Exámenes con IA",
+    "yourAiStudyCompanion": "Tu Compañero de Estudios con IA",
+    "heroDescription": "Obtén preguntas de práctica personalizadas, explicaciones detalladas y rastrea tu progreso en SAT, ENEM, A-Levels y más. Nuestro tutor de IA se adapta a tu estilo de aprendizaje manteniendo la integridad académica.",
+    "joinStudents": "Únete a más de 50,000 estudiantes en todo el mundo",
+    "startPracticingFree": "🚀 Comenzar a Practicar Gratis",
+    "learnMore": "📖 Saber Más"
+  },
+  "trustBadges": {
+    "soc2Compliant": "Compatible con SOC 2",
+    "gdprReady": "Listo para GDPR",
+    "studentRating": "Calificación de 4.9/5 de Estudiantes",
+    "edtechAward": "Ganador del Premio EdTech"
+  },
+  "exams": {
+    "supportedExams": "Exámenes Soportados",
+    "practiceForExam": "Practica para tu examen con preguntas y explicaciones impulsadas por IA",
+    "searchExamsCountries": "Buscar exámenes o países...",
+    "sat": "Prueba de Evaluación Escolar - Examen de ingreso para universidades estadounidenses",
+    "enem": "Exame Nacional do Ensino Médio - Examen nacional brasileño de educación secundaria",
+    "leavingCertificate": "Examen estatal irlandés para la finalización de la educación secundaria",
+    "selectividad": "Examen de ingreso universitario español",
+    "aLevels": "Calificaciones de Nivel Avanzado para admisión universitaria en el Reino Unido",
+    "abitur": "Calificación alemana para el ingreso universitario",
+    "ib": "Bachillerato Internacional - Programa educativo global",
+    "bac": "Calificación académica nacional francesa",
+    "startPracticing": "Comenzar a Practicar",
+    "comingSoon": "Próximamente",
+    "moreExams": "Más Exámenes",
+    "requestExamType": "¿No ves tu examen? Solicítalo y lo agregaremos a nuestra plataforma",
+    "requestExam": "Solicitar Examen"
+  },
+  "features": {
+    "responsibleAiFeatures": "Características de IA Responsable",
+    "builtForStudents": "Construido para estudiantes, por educadores",
+    "explainableAi": "IA Explicable",
+    "explainableAiDescription": "Nuestra IA proporciona explicaciones claras y muestra su razonamiento, ayudándote a entender conceptos en lugar de solo memorizar respuestas",
+    "adaptiveLearning": "Aprendizaje Adaptativo",
+    "adaptiveLearningDescription": "Las preguntas se ajustan a tu nivel de habilidad, enfocándose en áreas donde necesitas más mejora para estudiar eficientemente",
+    "biasDetection": "Detección de Sesgo",
+    "biasDetectionDescription": "Algoritmos avanzados detectan y minimizan el sesgo en preguntas y explicaciones, asegurando un aprendizaje justo e inclusivo",
+    "teacherCollaboration": "Colaboración con Profesores",
+    "teacherCollaborationDescription": "Conéctate con profesores certificados para apoyo adicional y orientación durante tu viaje de aprendizaje",
+    "reflectionActivities": "Actividades de Reflexión",
+    "reflectionActivitiesDescription": "Las indicaciones de reflexión estructuradas te ayudan a pensar críticamente sobre tu proceso de aprendizaje y desarrollar habilidades metacognitivas",
+    "studyJourneys": "Viajes de Estudio Personalizados",
+    "studyJourneysDescription": "La IA crea caminos de aprendizaje personalizados basados en tus objetivos, cronograma y nivel de conocimiento actual"
+  },
+  "testimonials": {
+    "lovedByStudents": "Amado por Estudiantes en Todo el Mundo",
+    "seeHowArtori": "Ve cómo Artori ha ayudado a estudiantes a alcanzar sus objetivos académicos",
+    "sarahChen": "Sarah Chen",
+    "satStudent": "Estudiante de SAT",
+    "sarahTestimonial": "¡Artori me ayudó a mejorar mi puntuación del SAT en 200 puntos! Las explicaciones de la IA eran tan claras y personalizadas.",
+    "sarahScore": "1450 → 1520",
+    "miguelSantos": "Miguel Santos",
+    "enemStudent": "Estudiante de ENEM",
+    "miguelTestimonial": "Las explicaciones en portugués hicieron toda la diferencia. ¡Finalmente entendí conceptos complejos de matemáticas!",
+    "miguelScore": "720 → 850",
+    "emmaThompson": "Emma Thompson",
+    "aLevelStudent": "Estudiante de A-Level",
+    "emmaTestimonial": "La función de aprendizaje adaptativo sabía exactamente dónde estaba luchando y me ayudó a enfocarme en esas áreas.",
+    "emmaScore": "B → A*"
+  },
+  "newsletter": {
+    "stayUpdated": "Mantente Actualizado",
+    "getLatestUpdates": "Obtén las últimas actualizaciones sobre nuevas características, consejos de estudio y estrategias de preparación para exámenes",
+    "enterEmail": "Ingresa tu dirección de correo electrónico",
+    "subscribe": "Suscribirse"
+  },
+  "stats": {
+    "trustedByStudents": "Confiado por Estudiantes en Todo el Mundo",
+    "activeStudents": "Estudiantes Activos",
+    "questionsAnswered": "Preguntas Respondidas",
+    "satisfactionRate": "Tasa de Satisfacción",
+    "partnerSchools": "Escuelas Asociadas"
+  },
+  "cta": {
+    "readyToTransform": "¿Listo para Transformar tu Experiencia de Estudio?",
+    "joinThousands": "Únete a miles de estudiantes que han mejorado sus puntuaciones con Artori. ",
+    "startFreeToday": "¡Comienza gratis hoy!",
+    "startFreePractice": "🎯 Comenzar Práctica Gratis"
+  }
+}

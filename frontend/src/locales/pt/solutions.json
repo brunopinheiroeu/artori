@@ -1,0 +1,135 @@
+{
+  "header": {
+    "requestDemo": "Solicitar Demo",
+    "contactSales": "Contatar Vendas"
+  },
+  "hero": {
+    "badge": "🏫 Soluções Educacionais",
+    "title": "Capacite Sua Escola",
+    "titleHighlight": "com IA Responsável",
+    "subtitle": "Dê aos seus professores as ferramentas necessárias para orientar os alunos através do aprendizado com IA. Nosso plugin escolar se integra perfeitamente com seus sistemas existentes, mantendo a integridade acadêmica e promovendo aprendizado profundo.",
+    "ctaPrimary": "📞 Agendar Demo",
+    "ctaSecondary": "📋 Baixar Brochura"
+  },
+  "demo": {
+    "title": "Experimente Nossa Plataforma",
+    "subtitle": "Viva a experiência do artori.app através dos olhos da Academia Riverside",
+    "schoolName": "Academia Riverside",
+    "poweredBy": "Powered by artori.app",
+    "description": "Veja como nossa plataforma com marca branca fica com a identidade visual da sua escola",
+    "student": {
+      "title": "Experiência do Estudante",
+      "description": "Experimente a plataforma como um estudante",
+      "features": [
+        "Questões de prática com IA",
+        "Respostas explicáveis da IA",
+        "Acompanhamento de progresso"
+      ],
+      "cta": "Experimentar Demo Estudante"
+    },
+    "teacher": {
+      "title": "Painel do Professor",
+      "description": "Veja as poderosas ferramentas de análise e gestão",
+      "features": [
+        "Análises de desempenho da turma",
+        "Monitoramento de interações com IA",
+        "Recomendações de intervenção"
+      ],
+      "cta": "Experimentar Demo Professor"
+    },
+    "note": "💡 Esta demo mostra como o artori.app pode ser completamente personalizado com a marca e cores da sua escola"
+  },
+  "features": {
+    "title": "Construído para Educadores",
+    "subtitle": "Ferramentas abrangentes que aprimoram o ensino, não o substituem",
+    "items": {
+      "dashboards": {
+        "title": "Painéis para Professores",
+        "description": "Análises em tempo real sobre progresso dos alunos, lacunas de aprendizagem e padrões de interação com IA"
+      },
+      "management": {
+        "title": "Gestão de Turmas",
+        "description": "Organize alunos, atribua conjuntos de prática e monitore o desempenho coletivo"
+      },
+      "collaboration": {
+        "title": "Colaboração com IA",
+        "description": "Professores podem anotar explicações da IA e adicionar contexto cultural/ético"
+      },
+      "tracing": {
+        "title": "Rastreamento Ético",
+        "description": "Transparência total com citações e atribuições para prevenir plágio"
+      },
+      "alerts": {
+        "title": "Alertas de Intervenção",
+        "description": "Sugestões geradas por IA sobre quando e como ajudar alunos com dificuldades"
+      },
+      "integration": {
+        "title": "Integração Curricular",
+        "description": "Integre perfeitamente com LMS existente e padrões curriculares"
+      }
+    }
+  },
+  "benefits": {
+    "title": "Por Que Escolas Escolhem artori.app",
+    "items": [
+      "Reduza a carga de trabalho dos professores com acompanhamento automatizado",
+      "Identifique lacunas de aprendizagem antes que se tornem problemas",
+      "Mantenha integridade acadêmica com IA transparente",
+      "Aumente o engajamento dos alunos com aprendizagem personalizada",
+      "Apoie professores com insights baseados em dados",
+      "Escale educação de qualidade em todas as salas de aula"
+    ],
+    "stats": {
+      "title": "Mais de 200 Escolas Confiam no artori.app",
+      "improvement": {
+        "value": "23%",
+        "label": "Melhoria Média na Pontuação"
+      },
+      "satisfaction": {
+        "value": "85%",
+        "label": "Satisfação dos Professores"
+      },
+      "timeSaved": {
+        "value": "40%",
+        "label": "Tempo Economizado na Correção"
+      },
+      "engagement": {
+        "value": "95%",
+        "label": "Engajamento dos Alunos"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "O Que Educadores Dizem",
+    "items": {
+      "sarah": {
+        "name": "Dra. Sarah Chen",
+        "role": "Chefe do Departamento de Matemática",
+        "school": "Lincoln High School",
+        "quote": "O artori.app transformou nossa abordagem à preparação para exames. Os professores adoram os insights, e os alunos estão mais engajados do que nunca."
+      },
+      "miguel": {
+        "name": "Prof. Miguel Santos",
+        "role": "Coordenador ENEM",
+        "school": "Colégio São Paulo",
+        "quote": "Os recursos de detecção de viés e IA explicável nos dão confiança de que os alunos estão aprendendo de forma responsável."
+      },
+      "emma": {
+        "name": "Emma Thompson",
+        "role": "Coordenadora A-Level",
+        "school": "Cambridge Academy",
+        "quote": "Nossas taxas de aprovação melhoraram 23% após implementar o artori.app. Os recursos de colaboração para professores são revolucionários."
+      }
+    }
+  },
+  "cta": {
+    "title": "Pronto para Transformar Sua Escola?",
+    "subtitle": "Junte-se a centenas de escolas já usando artori.app para aprimorar o aprendizado dos alunos e apoiar professores.",
+    "primary": "📞 Agendar Sua Demo",
+    "secondary": "💬 Contatar Equipe de Vendas"
+  },
+  "footer": {
+    "title": "para Escolas",
+    "tagline": "Capacitando educadores com IA responsável desde 2025 🎓"
+  }
+}

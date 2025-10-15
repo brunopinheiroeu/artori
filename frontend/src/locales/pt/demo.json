@@ -1,0 +1,195 @@
+{
+  "login": {
+    "schoolName": "Academia Riverside",
+    "poweredBy": "Powered by artori.app",
+    "title": "Bem-vindo à Academia Riverside",
+    "subtitle": "Experimente nossa plataforma de aprendizagem com IA",
+    "badge": "🎯 Ambiente de Demo",
+    "roleSelection": "Escolha seu papel:",
+    "student": {
+      "title": "Estudante",
+      "description": "Praticar e Aprender"
+    },
+    "teacher": {
+      "title": "Professor",
+      "description": "Gerenciar e Monitorar"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Senha",
+      "emailPlaceholder": {
+        "student": "alex.johnson@riverside.edu",
+        "teacher": "sarah.wilson@riverside.edu"
+      },
+      "passwordPlaceholder": "Digite a senha da demo",
+      "submitStudent": "🎓 Entrar como Estudante",
+      "submitTeacher": "👩‍🏫 Entrar como Professor"
+    },
+    "info": {
+      "demo": "💡 Este é um ambiente de demonstração",
+      "instructions": "Use qualquer email e senha para explorar a plataforma"
+    },
+    "footer": "🏫 Experimente a plataforma artori.app com marca branca"
+  },
+  "practice": {
+    "welcome": {
+      "badge": "Preparação SAT 2025",
+      "title": "Bem-vindo de volta, {{name}}!",
+      "subtitle": "Continue sua preparação para o SAT com prática com IA"
+    },
+    "progress": {
+      "title": "Progresso Geral",
+      "subtitle": "Seu desempenho em todas as seções",
+      "complete": "Completo",
+      "daysLeft": "Dias restantes",
+      "stats": {
+        "questionsSolved": "Questões Resolvidas",
+        "accuracyRate": "Taxa de Acerto",
+        "studyTime": "Tempo de Estudo",
+        "dayStreak": "Sequência de Dias"
+      }
+    },
+    "subjects": {
+      "reading": {
+        "name": "Leitura Baseada em Evidências",
+        "description": "Compreensão de leitura, vocabulário em contexto e análise de textos"
+      },
+      "writing": {
+        "name": "Escrita e Linguagem",
+        "description": "Gramática, uso e retórica em contexto"
+      },
+      "mathNoCalc": {
+        "name": "Matemática (Sem Calculadora)",
+        "description": "Álgebra, matemática avançada e resolução de problemas sem calculadora"
+      },
+      "mathCalc": {
+        "name": "Matemática (Com Calculadora)",
+        "description": "Resolução de problemas, análise de dados, álgebra e matemática avançada"
+      },
+      "progress": "Progresso",
+      "questions": "questões",
+      "thisWeek": "+7% esta semana",
+      "continue": "Continuar Estudando"
+    },
+    "quickActions": {
+      "practiceTest": {
+        "title": "Teste Prático Completo",
+        "description": "Faça um teste prático completo do SAT em condições cronometradas",
+        "cta": "Iniciar Teste Prático"
+      },
+      "smartReview": {
+        "title": "Revisão Inteligente",
+        "description": "Revise questões que você errou com explicações da IA",
+        "cta": "Iniciar Revisão"
+      },
+      "studyPlan": {
+        "title": "Plano de Estudos",
+        "description": "Veja seu cronograma personalizado até o dia da prova",
+        "cta": "Ver Cronograma"
+      }
+    },
+    "menu": {
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "analytics": "Análises de Estudo",
+      "schedule": "Cronograma de Estudos",
+      "schoolPlan": "Plano Escolar",
+      "premium": "Premium",
+      "help": "Ajuda e Suporte",
+      "exitDemo": "Sair da Demo"
+    }
+  },
+  "tutor": {
+    "welcome": {
+      "badge": "Painel do Professor",
+      "title": "Bem-vindo, {{name}}",
+      "subtitle": "Monitore o progresso dos seus alunos e interações com IA"
+    },
+    "stats": {
+      "totalStudents": "Total de Alunos",
+      "avgProgress": "Progresso Médio",
+      "needAttention": "Precisam de Atenção",
+      "aiAccuracy": "Precisão da IA",
+      "thisWeek": "+5 esta semana",
+      "progressUp": "+3% esta semana",
+      "reviewNeeded": "Revisão necessária",
+      "excellent": "Excelente"
+    },
+    "classes": {
+      "title": "Suas Turmas",
+      "calculus": "Cálculo Avançado",
+      "satMorning": "Preparação SAT - Manhã",
+      "satAfternoon": "Preparação SAT - Tarde",
+      "students": "alunos",
+      "active": "ativos",
+      "alerts": "alertas",
+      "needAttention": "precisam de atenção",
+      "classAverage": "Média da Turma",
+      "viewDetails": "Ver Detalhes da Turma"
+    },
+    "alerts": {
+      "title": "Alertas de Alunos",
+      "subtitle": "Alunos Precisando de Atenção",
+      "description": "Recomendações de intervenção geradas por IA",
+      "students": {
+        "alex": {
+          "name": "Alex Johnson",
+          "issue": "Dificuldades com equações quadráticas",
+          "lastActive": "2 horas atrás"
+        },
+        "emma": {
+          "name": "Emma Davis",
+          "issue": "Baixo engajamento em compreensão de leitura",
+          "lastActive": "1 dia atrás"
+        },
+        "michael": {
+          "name": "Michael Chen",
+          "issue": "Precisa revisar fundamentos de álgebra",
+          "lastActive": "3 horas atrás"
+        }
+      },
+      "lastActive": "Última atividade:",
+      "review": "Revisar"
+    },
+    "quickActions": {
+      "analytics": {
+        "title": "Análises",
+        "description": "Veja análises detalhadas de desempenho",
+        "cta": "Ver Relatórios"
+      },
+      "assignments": {
+        "title": "Tarefas",
+        "description": "Crie e gerencie conjuntos de prática",
+        "cta": "Gerenciar"
+      },
+      "aiInsights": {
+        "title": "Insights da IA",
+        "description": "Revise explicações da IA e adicione contexto",
+        "cta": "Revisar"
+      },
+      "resources": {
+        "title": "Recursos",
+        "description": "Acesse materiais didáticos e guias",
+        "cta": "Navegar"
+      }
+    },
+    "menu": {
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "analytics": "Painel de Análises",
+      "schedule": "Cronograma de Aulas",
+      "resources": "Recursos para Professores",
+      "exitDemo": "Sair da Demo"
+    }
+  },
+  "footer": {
+    "schoolName": "Academia Riverside",
+    "poweredBy": "Powered by artori.app",
+    "links": {
+      "about": "Sobre",
+      "privacy": "Privacidade",
+      "contact": "Contato"
+    },
+    "copyright": "© 2025 Academia Riverside. Powered by artori.app - IA Responsável para melhor aprendizagem. 🌟"
+  }
+}

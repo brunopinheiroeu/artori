@@ -39,7 +39,8 @@ class AIService:
         correct_answer: str,
         selected_answer: Optional[str] = None,
         subject: str = "General",
-        difficulty: str = "medium"
+        difficulty: str = "medium",
+        language: str = "en"
     ) -> Dict[str, any]:
         """
         Generate an AI explanation for a question
@@ -86,9 +87,18 @@ Student was {'CORRECT' if selected_answer == correct_answer else 'INCORRECT'}
                 user_context = ""
                 explanation_focus = "Provide a general explanation of the concept and correct answer."
             
+            # Language-specific instructions
+            language_instructions = {
+                "en": "You are an expert educational AI tutor. Generate a comprehensive, personalized explanation for this {subject} question. Respond in English.",
+                "pt": "Você é um tutor de IA educacional especialista. Gere uma explicação abrangente e personalizada para esta questão de {subject}. Responda em português brasileiro.",
+                "es": "Eres un tutor de IA educativo experto. Genera una explicación integral y personalizada para esta pregunta de {subject}. Responde en español."
+            }
+            
+            base_instruction = language_instructions.get(language, language_instructions["en"]).format(subject=subject)
+            
             # Create the prompt
             prompt = f"""
-You are an expert educational AI tutor. Generate a comprehensive, personalized explanation for this {subject} question.
+{base_instruction}
 
 Question: {question}
 
@@ -192,7 +202,8 @@ Make sure the explanation is:
     async def generate_chat_response(
         self,
         messages: List[Dict[str, str]],
-        question_context: Optional[Dict[str, any]] = None
+        question_context: Optional[Dict[str, any]] = None,
+        language: str = "en"
     ) -> str:
         """
         Generate a conversational AI response based on chat history
@@ -208,8 +219,9 @@ Make sure the explanation is:
             return self._get_fallback_chat_response()
         
         try:
-            # Build the system prompt for conversational tutoring
-            system_prompt = """You are an expert AI tutor helping students understand educational concepts. You maintain context throughout the conversation and provide helpful, educational responses.
+            # Language-specific system prompts
+            system_prompts = {
+                "en": """You are an expert AI tutor helping students understand educational concepts. You maintain context throughout the conversation and provide helpful, educational responses in English.
 
 Guidelines:
 - Maintain conversation context and remember what was discussed
@@ -218,7 +230,33 @@ Guidelines:
 - Explain concepts clearly and encourage learning
 - Be supportive and encouraging
 - If asked about topics outside the original question, still try to be helpful while staying educational
-- Keep responses concise but informative"""
+- Keep responses concise but informative
+- Always respond in English""",
+                "pt": """Você é um tutor de IA especialista ajudando estudantes a entender conceitos educacionais. Você mantém o contexto durante a conversa e fornece respostas úteis e educacionais em português brasileiro.
+
+Diretrizes:
+- Mantenha o contexto da conversa e lembre-se do que foi discutido
+- Forneça respostas úteis e educacionais às perguntas dos estudantes
+- Quando solicitado recursos (como vídeos do YouTube, livros, sites), forneça sugestões específicas e relevantes
+- Explique conceitos claramente e incentive o aprendizado
+- Seja solidário e encorajador
+- Se perguntado sobre tópicos fora da questão original, ainda tente ser útil mantendo-se educacional
+- Mantenha as respostas concisas mas informativas
+- Sempre responda em português brasileiro""",
+                "es": """Eres un tutor de IA experto que ayuda a los estudiantes a entender conceptos educativos. Mantienes el contexto durante la conversación y proporcionas respuestas útiles y educativas en español.
+
+Pautas:
+- Mantén el contexto de la conversación y recuerda lo que se ha discutido
+- Proporciona respuestas útiles y educativas a las preguntas de los estudiantes
+- Cuando se soliciten recursos (como videos de YouTube, libros, sitios web), proporciona sugerencias específicas y relevantes
+- Explica conceptos claramente y fomenta el aprendizaje
+- Sé solidario y alentador
+- Si se pregunta sobre temas fuera de la pregunta original, aún trata de ser útil manteniéndote educativo
+- Mantén las respuestas concisas pero informativas
+- Siempre responde en español"""
+            }
+            
+            system_prompt = system_prompts.get(language, system_prompts["en"])
 
             # Add question context if provided
             if question_context:

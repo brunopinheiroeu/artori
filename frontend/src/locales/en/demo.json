@@ -1,0 +1,195 @@
+{
+  "login": {
+    "schoolName": "Riverside Academy",
+    "poweredBy": "Powered by artori.app",
+    "title": "Welcome to Riverside Academy",
+    "subtitle": "Experience our AI-powered learning platform",
+    "badge": "🎯 Demo Environment",
+    "roleSelection": "Choose your role:",
+    "student": {
+      "title": "Student",
+      "description": "Practice & Learn"
+    },
+    "teacher": {
+      "title": "Teacher",
+      "description": "Manage & Monitor"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": {
+        "student": "alex.johnson@riverside.edu",
+        "teacher": "sarah.wilson@riverside.edu"
+      },
+      "passwordPlaceholder": "Enter demo password",
+      "submitStudent": "🎓 Enter as Student",
+      "submitTeacher": "👩‍🏫 Enter as Teacher"
+    },
+    "info": {
+      "demo": "💡 This is a demo environment",
+      "instructions": "Use any email and password to explore the platform"
+    },
+    "footer": "🏫 Experience whitelabeled artori.app platform"
+  },
+  "practice": {
+    "welcome": {
+      "badge": "SAT 2025 Prep",
+      "title": "Welcome Back, {{name}}!",
+      "subtitle": "Continue your SAT preparation with AI-powered practice"
+    },
+    "progress": {
+      "title": "Overall Progress",
+      "subtitle": "Your performance across all sections",
+      "complete": "Complete",
+      "daysLeft": "Days left",
+      "stats": {
+        "questionsSolved": "Questions Solved",
+        "accuracyRate": "Accuracy Rate",
+        "studyTime": "Study Time",
+        "dayStreak": "Day Streak"
+      }
+    },
+    "subjects": {
+      "reading": {
+        "name": "Evidence-Based Reading",
+        "description": "Reading comprehension, vocabulary in context, and analysis of texts"
+      },
+      "writing": {
+        "name": "Writing and Language",
+        "description": "Grammar, usage, and rhetoric in context"
+      },
+      "mathNoCalc": {
+        "name": "Math (No Calculator)",
+        "description": "Algebra, advanced math, and problem-solving without calculator"
+      },
+      "mathCalc": {
+        "name": "Math (Calculator)",
+        "description": "Problem solving, data analysis, algebra, and advanced math"
+      },
+      "progress": "Progress",
+      "questions": "questions",
+      "thisWeek": "+7% this week",
+      "continue": "Continue Studying"
+    },
+    "quickActions": {
+      "practiceTest": {
+        "title": "Full Practice Test",
+        "description": "Take a complete SAT practice test under timed conditions",
+        "cta": "Start Practice Test"
+      },
+      "smartReview": {
+        "title": "Smart Review",
+        "description": "Review questions you got wrong with AI explanations",
+        "cta": "Start Review"
+      },
+      "studyPlan": {
+        "title": "Study Plan",
+        "description": "View your personalized schedule until test day",
+        "cta": "View Schedule"
+      }
+    },
+    "menu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "analytics": "Study Analytics",
+      "schedule": "Study Schedule",
+      "schoolPlan": "School Plan",
+      "premium": "Premium",
+      "help": "Help & Support",
+      "exitDemo": "Exit Demo"
+    }
+  },
+  "tutor": {
+    "welcome": {
+      "badge": "Teacher Dashboard",
+      "title": "Welcome, {{name}}",
+      "subtitle": "Monitor your students' progress and AI interactions"
+    },
+    "stats": {
+      "totalStudents": "Total Students",
+      "avgProgress": "Avg Progress",
+      "needAttention": "Need Attention",
+      "aiAccuracy": "AI Accuracy",
+      "thisWeek": "+5 this week",
+      "progressUp": "+3% this week",
+      "reviewNeeded": "Review needed",
+      "excellent": "Excellent"
+    },
+    "classes": {
+      "title": "Your Classes",
+      "calculus": "AP Calculus BC",
+      "satMorning": "SAT Prep - Morning",
+      "satAfternoon": "SAT Prep - Afternoon",
+      "students": "students",
+      "active": "active",
+      "alerts": "alerts",
+      "needAttention": "need attention",
+      "classAverage": "Class Average",
+      "viewDetails": "View Class Details"
+    },
+    "alerts": {
+      "title": "Student Alerts",
+      "subtitle": "Students Needing Attention",
+      "description": "AI-generated intervention recommendations",
+      "students": {
+        "alex": {
+          "name": "Alex Johnson",
+          "issue": "Struggling with quadratic equations",
+          "lastActive": "2 hours ago"
+        },
+        "emma": {
+          "name": "Emma Davis",
+          "issue": "Low engagement in reading comprehension",
+          "lastActive": "1 day ago"
+        },
+        "michael": {
+          "name": "Michael Chen",
+          "issue": "Needs review of algebra fundamentals",
+          "lastActive": "3 hours ago"
+        }
+      },
+      "lastActive": "Last active:",
+      "review": "Review"
+    },
+    "quickActions": {
+      "analytics": {
+        "title": "Analytics",
+        "description": "View detailed performance analytics",
+        "cta": "View Reports"
+      },
+      "assignments": {
+        "title": "Assignments",
+        "description": "Create and manage practice sets",
+        "cta": "Manage"
+      },
+      "aiInsights": {
+        "title": "AI Insights",
+        "description": "Review AI explanations and add context",
+        "cta": "Review"
+      },
+      "resources": {
+        "title": "Resources",
+        "description": "Access teaching materials and guides",
+        "cta": "Browse"
+      }
+    },
+    "menu": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "analytics": "Analytics Dashboard",
+      "schedule": "Class Schedule",
+      "resources": "Teacher Resources",
+      "exitDemo": "Exit Demo"
+    }
+  },
+  "footer": {
+    "schoolName": "Riverside Academy",
+    "poweredBy": "Powered by artori.app",
+    "links": {
+      "about": "About",
+      "privacy": "Privacy",
+      "contact": "Contact"
+    },
+    "copyright": "© 2025 Riverside Academy. Powered by artori.app - Responsible AI for better learning. 🌟"
+  }
+}

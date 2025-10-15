@@ -1,0 +1,71 @@
+{
+  "title": "Preços Simples e Transparentes",
+  "subtitle": "Comece grátis, faça upgrade quando estiver pronto",
+  "billing": {
+    "monthly": "Mensal",
+    "annual": "Anual",
+    "saveUpTo": "Economize até 20%",
+    "saveAnnually": "Economize {{percentage}}% anualmente"
+  },
+  "plans": {
+    "free": {
+      "name": "Grátis",
+      "description": "Perfeito para começar",
+      "cta": "Começar Grátis",
+      "features": {
+        "practiceQuestions": "100 questões práticas",
+        "basicExplanations": "Explicações básicas de IA",
+        "progressTracking": "Acompanhamento de progresso",
+        "oneExamType": "1 tipo de exame",
+        "communitySupport": "Suporte da comunidade"
+      }
+    },
+    "student": {
+      "name": "Estudante",
+      "description": "Tudo que você precisa para ter sucesso",
+      "cta": "Iniciar Teste Grátis",
+      "features": {
+        "unlimitedQuestions": "Questões práticas ilimitadas",
+        "advancedExplanations": "Explicações avançadas de IA",
+        "personalizedRecommendations": "Recomendações personalizadas",
+        "allExamTypes": "Todos os tipos de exame",
+        "detailedAnalytics": "Análises detalhadas",
+        "prioritySupport": "Suporte prioritário"
+      }
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Para preparação séria para exames",
+      "cta": "Iniciar Teste Grátis",
+      "features": {
+        "everythingInStudent": "Tudo do plano Estudante",
+        "aiStudySchedule": "Cronograma de estudos com IA",
+        "customTests": "Testes práticos personalizados",
+        "performancePredictions": "Previsões de desempenho",
+        "studyGroupFeatures": "Recursos de grupo de estudo",
+        "expertTutorMatching": "Correspondência com tutores especialistas"
+      }
+    },
+    "school": {
+      "name": "Para Escolas",
+      "description": "Soluções institucionais",
+      "cta": "Explorar Soluções",
+      "features": {
+        "everythingInPro": "Tudo do plano Pro",
+        "unlimitedUsers": "Usuários ilimitados",
+        "advancedDashboards": "Painéis avançados",
+        "customBranding": "Marca personalizada",
+        "ssoIntegration": "Integração SSO",
+        "dedicatedSupport": "Suporte dedicado"
+      }
+    }
+  },
+  "perMonth": "/mês",
+  "mostPopular": "Mais Popular",
+  "forInstitutions": "Para Instituições",
+  "custom": "Personalizado",
+  "tailoredToNeeds": "Adaptado às suas necessidades",
+  "customPricingNote": "Preços personalizados baseados em seus requisitos",
+  "needMoreFeatures": "Precisa de mais recursos?",
+  "contactSales": "Contatar Vendas"
+}

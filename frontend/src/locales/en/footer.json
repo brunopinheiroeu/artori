@@ -1,0 +1,26 @@
+{
+  "description": "The AI Exam Coach that connects students, tutors, and schools through verified, personalized, and responsible learning.",
+  "copyright": "All rights reserved.",
+  "product": "Product",
+  "company": "Company",
+  "resources": "Resources",
+  "legal": "Legal",
+  "links": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "forSchools": "For Schools",
+    "api": "API",
+    "about": "About",
+    "blog": "Blog",
+    "careers": "Careers",
+    "press": "Press",
+    "helpCenter": "Help Center",
+    "community": "Community",
+    "guides": "Guides",
+    "webinars": "Webinars",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "gdpr": "GDPR"
+  }
+}

@@ -74,7 +74,7 @@ export const AITutorChat = ({
     const contextMessage: Message = {
       id: Date.now().toString(),
       role: "assistant",
-      content: `Hi! I'm your AI Tutor 🤖
+      content: `Hi! I'm your AI Tutor
 
 I can see you just answered this question:
 **"${question.question}"**
@@ -182,7 +182,7 @@ Feel free to ask me anything about this question!`,
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Bot className="h-5 w-5 text-blue-600" />
-            <span>🤖 AI Tutor Chat</span>
+            <span>AI Tutor Chat</span>
           </DialogTitle>
           <DialogDescription>
             Ask me anything about this question and I'll help you understand!
