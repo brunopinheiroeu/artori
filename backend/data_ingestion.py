@@ -253,12 +253,13 @@ class DataIngestionPipeline:
         logger.info(f"✅ Loaded {len(all_documents)} total documents from {directory_path}")
         return all_documents
     
-    def ingest_documents(self, documents: List[Document]) -> bool:
+    def ingest_documents(self, documents: List[Document], subject: str = None) -> bool:
         """
-        Ingest documents into the RAG system
+        Ingest documents into the RAG system for a specific subject
         
         Args:
             documents: List of Document objects to ingest
+            subject: Subject to ingest documents into (optional, uses default if None)
             
         Returns:
             Success status
@@ -268,55 +269,95 @@ class DataIngestionPipeline:
             return False
         
         try:
-            success = rag_service.add_documents(documents)
+            success = rag_service.add_documents(documents, subject)
             if success:
-                logger.info(f"✅ Successfully ingested {len(documents)} documents")
+                subject_info = f" for subject '{subject}'" if subject else ""
+                logger.info(f"✅ Successfully ingested {len(documents)} documents{subject_info}")
             else:
-                logger.error("❌ Failed to ingest documents")
+                logger.error(f"❌ Failed to ingest documents for subject '{subject}'")
             
             return success
             
         except Exception as e:
-            logger.error(f"❌ Error during document ingestion: {e}")
+            logger.error(f"❌ Error during document ingestion for subject '{subject}': {e}")
             return False
     
     def ingest_from_file(
-        self, 
-        file_path: str, 
-        metadata: Optional[Dict[str, Any]] = None
+        self,
+        file_path: str,
+        metadata: Optional[Dict[str, Any]] = None,
+        subject: str = None
     ) -> bool:
         """
-        Load and ingest a single file
+        Load and ingest a single file for a specific subject
         
         Args:
             file_path: Path to the file
             metadata: Additional metadata
+            subject: Subject to ingest documents into (optional, uses default if None)
             
         Returns:
             Success status
         """
         documents = self.load_document(file_path, metadata)
-        return self.ingest_documents(documents)
+        return self.ingest_documents(documents, subject)
     
     def ingest_from_directory(
-        self, 
-        directory_path: str, 
+        self,
+        directory_path: str,
         recursive: bool = True,
-        default_metadata: Optional[Dict[str, Any]] = None
+        default_metadata: Optional[Dict[str, Any]] = None,
+        subject: str = None
     ) -> bool:
         """
-        Load and ingest all documents from a directory
+        Load and ingest all documents from a directory for a specific subject
         
         Args:
             directory_path: Path to the directory
             recursive: Whether to search recursively
             default_metadata: Default metadata for all documents
+            subject: Subject to ingest documents into (optional, uses default if None)
             
         Returns:
             Success status
         """
         documents = self.load_directory(directory_path, recursive, default_metadata)
-        return self.ingest_documents(documents)
+        return self.ingest_documents(documents, subject)
+    
+    def ingest_subject_from_metadata(self, documents: List[Document]) -> Dict[str, bool]:
+        """
+        Ingest documents into subject-specific collections based on their metadata
+        
+        Args:
+            documents: List of Document objects with subject metadata
+            
+        Returns:
+            Dictionary mapping subjects to success status
+        """
+        if not documents:
+            logger.warning("No documents provided for subject-based ingestion")
+            return {}
+        
+        # Group documents by subject
+        subject_groups = {}
+        for doc in documents:
+            subject = doc.metadata.get('subject', 'general')
+            if subject not in subject_groups:
+                subject_groups[subject] = []
+            subject_groups[subject].append(doc)
+        
+        # Ingest each subject group
+        results = {}
+        for subject, subject_docs in subject_groups.items():
+            try:
+                success = self.ingest_documents(subject_docs, subject)
+                results[subject] = success
+                logger.info(f"✅ Ingested {len(subject_docs)} documents for subject '{subject}': {'Success' if success else 'Failed'}")
+            except Exception as e:
+                logger.error(f"❌ Failed to ingest documents for subject '{subject}': {e}")
+                results[subject] = False
+        
+        return results
 
 # Global ingestion pipeline instance
 ingestion_pipeline = DataIngestionPipeline()

@@ -32,14 +32,14 @@ class RAGService:
         """
         self.persist_directory = persist_directory
         self.embeddings = None
-        self.vectorstore = None
-        self.qa_chain = None
+        self.vectorstores = {}  # Dictionary to store subject-specific vectorstores
+        self.qa_chains = {}     # Dictionary to store subject-specific QA chains
         self.client = None
+        self.default_collection = "artori"  # Default collection name
         
         # Initialize components
         self._initialize_embeddings()
-        self._initialize_vectorstore()
-        self._initialize_qa_chain()
+        self._initialize_client()
         
     def _initialize_embeddings(self):
         """Initialize the embedding model for multilingual support"""
@@ -53,8 +53,8 @@ class RAGService:
             logger.error(f"❌ Failed to initialize embeddings: {e}")
             raise
     
-    def _initialize_vectorstore(self):
-        """Initialize ChromaDB vectorstore"""
+    def _initialize_client(self):
+        """Initialize ChromaDB client"""
         try:
             # Check if we should use ChromaDB Cloud
             chroma_api_key = os.getenv("CHROMA_API_KEY")
@@ -72,14 +72,7 @@ class RAGService:
                     database=chroma_database
                 )
                 
-                # Initialize Chroma vectorstore with LangChain (no persist_directory for cloud)
-                self.vectorstore = Chroma(
-                    client=self.client,
-                    collection_name="artori",
-                    embedding_function=self.embeddings
-                )
-                
-                logger.info("✅ ChromaDB vectorstore (cloud) initialized successfully")
+                logger.info("✅ ChromaDB client (cloud) initialized successfully")
             else:
                 # Local development: Use PersistentClient
                 logger.info(f"💾 Using local ChromaDB at {self.persist_directory}")
@@ -93,87 +86,136 @@ class RAGService:
                     settings=Settings(anonymized_telemetry=False)
                 )
                 
-                # Initialize Chroma vectorstore with LangChain
-                self.vectorstore = Chroma(
-                    client=self.client,
-                    collection_name="artori",
-                    embedding_function=self.embeddings,
-                    persist_directory=self.persist_directory
-                )
-                
-                logger.info("✅ ChromaDB vectorstore (local) initialized successfully")
+                logger.info("✅ ChromaDB client (local) initialized successfully")
                 
         except Exception as e:
-            logger.error(f"❌ Failed to initialize vectorstore: {e}")
+            logger.error(f"❌ Failed to initialize ChromaDB client: {e}")
             raise
     
-    def _initialize_qa_chain(self):
-        """Initialize the QA chain for generation"""
-        try:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                logger.warning("⚠️ OPENAI_API_KEY not found, QA chain will not be available")
-                return
-            
-            # Initialize OpenAI LLM
-            llm = OpenAI(
-                openai_api_key=api_key,
-                temperature=0.7,
-                max_tokens=500
-            )
-            
-            # Create custom prompt template for educational content
-            prompt_template = """You are an expert educational AI tutor. Use the following context to answer the student's question. 
-            
-            Context: {context}
-            
-            Question: {question}
-            
-            Instructions:
-            - Provide a clear, educational answer based on the context
-            - If the context doesn't contain enough information, say so clearly
-            - Include specific references to the source material when possible
-            - Keep the answer appropriate for educational purposes
-            - Be encouraging and supportive in your tone
-            
-            Answer:"""
-            
-            PROMPT = PromptTemplate(
-                template=prompt_template,
-                input_variables=["context", "question"]
-            )
-            
-            # Create retrieval QA chain
-            self.qa_chain = RetrievalQA.from_chain_type(
-                llm=llm,
-                chain_type="stuff",
-                retriever=self.vectorstore.as_retriever(
-                    search_type="similarity",
-                    search_kwargs={"k": 4}  # Retrieve top 4 most relevant chunks
-                ),
-                chain_type_kwargs={"prompt": PROMPT},
-                return_source_documents=True
-            )
-            
-            logger.info("✅ QA chain initialized successfully")
-        except Exception as e:
-            logger.error(f"❌ Failed to initialize QA chain: {e}")
-            self.qa_chain = None
+    def _get_collection_name(self, subject: str = None) -> str:
+        """Get collection name for a subject"""
+        if subject:
+            # Normalize subject name for collection naming
+            normalized_subject = subject.lower().replace(" ", "_").replace("-", "_")
+            return f"artori_{normalized_subject}"
+        return self.default_collection
     
-    def is_available(self) -> bool:
-        """Check if RAG service is available"""
-        return (
-            self.embeddings is not None and 
-            self.vectorstore is not None and 
-            self.qa_chain is not None
-        )
+    def _get_vectorstore(self, subject: str = None) -> Optional[Chroma]:
+        """Get or create vectorstore for a subject"""
+        collection_name = self._get_collection_name(subject)
+        
+        if collection_name not in self.vectorstores:
+            try:
+                # Check if we're using cloud or local
+                chroma_api_key = os.getenv("CHROMA_API_KEY")
+                
+                if chroma_api_key:
+                    # Cloud: no persist_directory
+                    vectorstore = Chroma(
+                        client=self.client,
+                        collection_name=collection_name,
+                        embedding_function=self.embeddings
+                    )
+                else:
+                    # Local: with persist_directory
+                    vectorstore = Chroma(
+                        client=self.client,
+                        collection_name=collection_name,
+                        embedding_function=self.embeddings,
+                        persist_directory=self.persist_directory
+                    )
+                
+                self.vectorstores[collection_name] = vectorstore
+                logger.info(f"✅ Vectorstore for collection '{collection_name}' initialized")
+                
+            except Exception as e:
+                logger.error(f"❌ Failed to initialize vectorstore for collection '{collection_name}': {e}")
+                return None
+        
+        return self.vectorstores[collection_name]
     
-    def add_documents(self, documents: List[Document]) -> bool:
+    def _get_qa_chain(self, subject: str = None) -> Optional[RetrievalQA]:
+        """Get or create QA chain for a subject"""
+        collection_name = self._get_collection_name(subject)
+        
+        if collection_name not in self.qa_chains:
+            try:
+                api_key = os.getenv("OPENAI_API_KEY")
+                if not api_key:
+                    logger.warning("⚠️ OPENAI_API_KEY not found, QA chain will not be available")
+                    return None
+                
+                vectorstore = self._get_vectorstore(subject)
+                if not vectorstore:
+                    return None
+                
+                # Initialize OpenAI LLM
+                llm = OpenAI(
+                    openai_api_key=api_key,
+                    temperature=0.7,
+                    max_tokens=500
+                )
+                
+                # Create custom prompt template for educational content
+                prompt_template = """You are an expert educational AI tutor. Use the following context to answer the student's question.
+                
+                Context: {context}
+                
+                Question: {question}
+                
+                Instructions:
+                - Provide a clear, educational answer based on the context
+                - If the context doesn't contain enough information, say so clearly
+                - Include specific references to the source material when possible
+                - Keep the answer appropriate for educational purposes
+                - Be encouraging and supportive in your tone
+                
+                Answer:"""
+                
+                PROMPT = PromptTemplate(
+                    template=prompt_template,
+                    input_variables=["context", "question"]
+                )
+                
+                # Create retrieval QA chain
+                qa_chain = RetrievalQA.from_chain_type(
+                    llm=llm,
+                    chain_type="stuff",
+                    retriever=vectorstore.as_retriever(
+                        search_type="similarity",
+                        search_kwargs={"k": 4}  # Retrieve top 4 most relevant chunks
+                    ),
+                    chain_type_kwargs={"prompt": PROMPT},
+                    return_source_documents=True
+                )
+                
+                self.qa_chains[collection_name] = qa_chain
+                logger.info(f"✅ QA chain for collection '{collection_name}' initialized")
+                
+            except Exception as e:
+                logger.error(f"❌ Failed to initialize QA chain for collection '{collection_name}': {e}")
+                return None
+        
+        return self.qa_chains[collection_name]
+    
+    def is_available(self, subject: str = None) -> bool:
+        """Check if RAG service is available for a subject"""
+        if self.embeddings is None or self.client is None:
+            return False
+        
+        # For basic availability, just check if we can create a vectorstore
+        vectorstore = self._get_vectorstore(subject)
+        qa_chain = self._get_qa_chain(subject)
+        
+        return vectorstore is not None and qa_chain is not None
+    
+    def add_documents(self, documents: List[Document], subject: str = None) -> bool:
         """
-        Add documents to the vectorstore
+        Add documents to the vectorstore for a specific subject
         
         Args:
             documents: List of LangChain Document objects
+            subject: Subject to add documents to (optional, uses default if None)
             
         Returns:
             bool: Success status
@@ -181,6 +223,11 @@ class RAGService:
         try:
             if not documents:
                 logger.warning("No documents provided to add")
+                return False
+            
+            vectorstore = self._get_vectorstore(subject)
+            if not vectorstore:
+                logger.error(f"Failed to get vectorstore for subject: {subject}")
                 return False
             
             # Split documents into chunks
@@ -193,13 +240,14 @@ class RAGService:
             split_docs = text_splitter.split_documents(documents)
             
             # Add documents to vectorstore
-            self.vectorstore.add_documents(split_docs)
+            vectorstore.add_documents(split_docs)
             
-            logger.info(f"✅ Added {len(split_docs)} document chunks to vectorstore")
+            collection_name = self._get_collection_name(subject)
+            logger.info(f"✅ Added {len(split_docs)} document chunks to collection '{collection_name}'")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Failed to add documents: {e}")
+            logger.error(f"❌ Failed to add documents to subject '{subject}': {e}")
             return False
     
     def query(
@@ -211,37 +259,39 @@ class RAGService:
         max_results: int = 4
     ) -> Dict[str, Any]:
         """
-        Query the RAG system
+        Query the RAG system for a specific subject
         
         Args:
             question: User's question
             interface_language: Language for AI responses/explanations (en, pt, es)
             content_language: Language of the original content/exam (optional filter)
-            subject: Subject filter (optional)
+            subject: Subject to query (uses subject-specific collection)
             max_results: Maximum number of results to retrieve
             
         Returns:
             Dictionary with answer and source information
         """
-        if not self.is_available():
+        if not self.is_available(subject):
             return self._get_fallback_response(question, interface_language)
         
         try:
-            # Update retriever with current parameters
-            self.qa_chain.retriever.search_kwargs["k"] = max_results
+            qa_chain = self._get_qa_chain(subject)
+            if not qa_chain:
+                return self._get_fallback_response(question, interface_language)
             
-            # Add content language and subject filters if needed
+            # Update retriever with current parameters
+            qa_chain.retriever.search_kwargs["k"] = max_results
+            
+            # Add content language filter if needed
             filter_dict = {}
             if content_language:
                 filter_dict["content_language"] = content_language
-            if subject:
-                filter_dict["subject"] = subject
             
             if filter_dict:
-                self.qa_chain.retriever.search_kwargs["filter"] = filter_dict
+                qa_chain.retriever.search_kwargs["filter"] = filter_dict
             
             # Query the chain
-            result = self.qa_chain({"query": question})
+            result = qa_chain({"query": question})
             
             # Extract answer and sources
             answer = result["result"]
@@ -263,14 +313,16 @@ class RAGService:
                 "confidence": self._calculate_confidence(sources),
                 "interface_language": interface_language,
                 "content_language": content_language,
+                "subject": subject,
                 "retrieved_chunks": len(source_documents)
             }
             
-            logger.info(f"✅ RAG query processed successfully for interface language: {interface_language}")
+            collection_name = self._get_collection_name(subject)
+            logger.info(f"✅ RAG query processed successfully for collection '{collection_name}' with interface language: {interface_language}")
             return response
             
         except Exception as e:
-            logger.error(f"❌ Failed to process RAG query: {e}")
+            logger.error(f"❌ Failed to process RAG query for subject '{subject}': {e}")
             return self._get_fallback_response(question, interface_language)
     
     def _calculate_confidence(self, sources: List[Dict]) -> float:
@@ -315,23 +367,61 @@ class RAGService:
             "fallback": True
         }
     
-    def get_collection_stats(self) -> Dict[str, Any]:
-        """Get statistics about the knowledge base"""
+    def get_collection_stats(self, subject: str = None) -> Dict[str, Any]:
+        """Get statistics about the knowledge base for a subject"""
         try:
             if not self.client:
                 return {"error": "ChromaDB client not initialized"}
             
-            collection = self.client.get_collection("artori")
-            count = collection.count()
+            collection_name = self._get_collection_name(subject)
             
-            return {
-                "total_documents": count,
-                "collection_name": "artori",
-                "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2"
-            }
+            try:
+                collection = self.client.get_collection(collection_name)
+                count = collection.count()
+                
+                return {
+                    "total_documents": count,
+                    "collection_name": collection_name,
+                    "subject": subject,
+                    "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2"
+                }
+            except Exception as collection_error:
+                # Collection might not exist yet
+                return {
+                    "total_documents": 0,
+                    "collection_name": collection_name,
+                    "subject": subject,
+                    "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2",
+                    "note": "Collection not yet created"
+                }
+                
         except Exception as e:
-            logger.error(f"Failed to get collection stats: {e}")
+            logger.error(f"Failed to get collection stats for subject '{subject}': {e}")
             return {"error": str(e)}
+    
+    def get_all_subjects(self) -> List[str]:
+        """Get list of all subjects with collections"""
+        try:
+            if not self.client:
+                return []
+            
+            collections = self.client.list_collections()
+            subjects = []
+            
+            for collection in collections:
+                name = collection.name
+                if name.startswith("artori_"):
+                    # Extract subject from collection name
+                    subject = name.replace("artori_", "").replace("_", " ").title()
+                    subjects.append(subject)
+                elif name == self.default_collection:
+                    subjects.append("General")
+            
+            return subjects
+            
+        except Exception as e:
+            logger.error(f"Failed to get subjects list: {e}")
+            return []
 
 # Global RAG service instance
 rag_service = RAGService()

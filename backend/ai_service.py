@@ -33,9 +33,9 @@ class AIService:
         """Check if AI service is available"""
         return self.client is not None
     
-    def is_rag_available(self) -> bool:
-        """Check if RAG service is available"""
-        return rag_service.is_available()
+    def is_rag_available(self, subject: str = None) -> bool:
+        """Check if RAG service is available for a subject"""
+        return rag_service.is_available(subject)
     
     async def generate_rag_explanation(
         self,
@@ -64,7 +64,7 @@ class AIService:
         Returns:
             Dictionary with explanation components including sources
         """
-        if not self.is_rag_available():
+        if not self.is_rag_available(subject):
             # Fall back to regular explanation if RAG is not available
             return await self.generate_explanation(
                 question, options, correct_answer, selected_answer,
@@ -116,7 +116,7 @@ class AIService:
                 question=rag_query,
                 interface_language=interface_language,
                 content_language=content_language,
-                subject=subject.lower() if subject != "General" else None,
+                subject=subject.lower() if subject and subject != "General" else None,
                 max_results=4
             )
             
