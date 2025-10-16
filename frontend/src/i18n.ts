@@ -8,15 +8,9 @@ import pt from "./locales/pt/index";
 import es from "./locales/es/index";
 
 const resources = {
-  en: {
-    translation: en,
-  },
-  pt: {
-    translation: pt,
-  },
-  es: {
-    translation: es,
-  },
+  en,
+  pt,
+  es,
 };
 
 i18n
@@ -41,8 +35,21 @@ i18n
     },
 
     // Namespace configuration
-    defaultNS: "translation",
-    ns: ["translation"],
+    defaultNS: "common",
+    ns: [
+      "common",
+      "admin",
+      "landing",
+      "auth",
+      "navigation",
+      "footer",
+      "pricing",
+      "solutions",
+      "demo",
+      "student",
+      "tutor",
+      "questions",
+    ],
 
     // React options
     react: {

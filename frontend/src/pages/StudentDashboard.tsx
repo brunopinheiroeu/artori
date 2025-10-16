@@ -24,8 +24,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import { Link } from "react-router-dom";
 import { format, addDays } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const StudentDashboard = () => {
+  const { t } = useTranslation("student");
   // Fetch dashboard data
   const {
     data: dashboardData,
@@ -92,13 +94,16 @@ const StudentDashboard = () => {
   if (dashboardError) {
     return (
       <StudentLayout
-        title="Dashboard"
-        description="Your personalized learning hub and progress overview."
+        title={t("dashboard.title")}
+        description={t("dashboard.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load dashboard data. Please try refreshing the page.
+            {t("dashboard.errorMessage", {
+              defaultValue:
+                "Failed to load dashboard data. Please try refreshing the page.",
+            })}
           </AlertDescription>
         </Alert>
       </StudentLayout>
@@ -107,8 +112,8 @@ const StudentDashboard = () => {
 
   return (
     <StudentLayout
-      title="Dashboard"
-      description="Your personalized learning hub and progress overview."
+      title={t("dashboard.title")}
+      description={t("dashboard.description")}
     >
       <div className="space-y-6">
         {/* Welcome Section */}
@@ -117,11 +122,13 @@ const StudentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Welcome back! 👋
+                  {t("dashboard.welcomeBack")}! 👋
                 </h2>
                 <p className="text-gray-600">
-                  Ready to continue your learning journey? Let's make today
-                  count!
+                  {t("dashboard.welcomeMessage", {
+                    defaultValue:
+                      "Ready to continue your learning journey? Let's make today count!",
+                  })}
                 </p>
               </div>
               <div className="hidden md:block">
@@ -145,14 +152,18 @@ const StudentDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Questions Solved
+                      {t("dashboard.questionsSolved", {
+                        defaultValue: "Questions Solved",
+                      })}
                     </p>
                     <p className="text-3xl font-bold text-blue-600">
                       {dashboardData?.user_progress?.questions_solved || 0}
                     </p>
                     <p className="text-sm text-blue-600 flex items-center mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      Keep going!
+                      {t("dashboard.keepGoing", {
+                        defaultValue: "Keep going!",
+                      })}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-blue-100">
@@ -175,7 +186,7 @@ const StudentDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Accuracy Rate
+                      {t("progress.accuracy")}
                     </p>
                     <p className="text-3xl font-bold text-green-600">
                       {dashboardData?.user_progress
@@ -185,7 +196,7 @@ const StudentDashboard = () => {
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <Target className="h-3 w-3 mr-1" />
-                      Excellent!
+                      {t("dashboard.excellent", { defaultValue: "Excellent!" })}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-green-100">
@@ -208,14 +219,16 @@ const StudentDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Study Streak
+                      {t("dashboard.studyStreak")}
                     </p>
                     <p className="text-3xl font-bold text-orange-600">
                       {dashboardData?.user_progress?.current_streak_days || 0}
                     </p>
                     <p className="text-sm text-orange-600 flex items-center mt-1">
                       <Zap className="h-3 w-3 mr-1" />
-                      Days in a row
+                      {t("dashboard.daysInRow", {
+                        defaultValue: "Days in a row",
+                      })}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-orange-100">
@@ -238,14 +251,14 @@ const StudentDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Study Time
+                      {t("dashboard.studyTime", { defaultValue: "Study Time" })}
                     </p>
                     <p className="text-3xl font-bold text-purple-600">
                       {dashboardData?.user_progress?.study_time_hours || 0}h
                     </p>
                     <p className="text-sm text-purple-600 flex items-center mt-1">
                       <Clock className="h-3 w-3 mr-1" />
-                      Total hours
+                      {t("dashboard.totalHours")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-purple-100">
@@ -264,7 +277,7 @@ const StudentDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="h-5 w-5" />
-                <span>Overall Progress</span>
+                <span>{t("progress.overallProgress")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -278,7 +291,11 @@ const StudentDashboard = () => {
                 <>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Exam Preparation</span>
+                      <span>
+                        {t("dashboard.examPreparation", {
+                          defaultValue: "Exam Preparation",
+                        })}
+                      </span>
                       <span>
                         {dashboardData?.user_progress
                           ? Math.round(
@@ -300,13 +317,19 @@ const StudentDashboard = () => {
                       <div className="font-semibold text-blue-600">
                         {dashboardData?.selected_exam?.subjects?.length || 0}
                       </div>
-                      <div className="text-gray-600">Subjects</div>
+                      <div className="text-gray-600">
+                        {t("dashboard.subjects", { defaultValue: "Subjects" })}
+                      </div>
                     </div>
                     <div className="text-center p-3 bg-green-50 rounded-lg">
                       <div className="font-semibold text-green-600">
                         {dashboardData?.selected_exam?.total_questions || 0}
                       </div>
-                      <div className="text-gray-600">Questions</div>
+                      <div className="text-gray-600">
+                        {t("dashboard.questions", {
+                          defaultValue: "Questions",
+                        })}
+                      </div>
                     </div>
                   </div>
                 </>
@@ -319,26 +342,32 @@ const StudentDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Play className="h-5 w-5" />
-                <span>Quick Actions</span>
+                <span>
+                  {t("dashboard.quickActions", {
+                    defaultValue: "Quick Actions",
+                  })}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Link to="/practice">
                 <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:shadow-lg transition-all">
                   <BookOpen className="h-4 w-4 mr-2" />
-                  Continue Practice
+                  {t("practice.continueStudying")}
                 </Button>
               </Link>
               <Link to="/student/tutors">
                 <Button variant="outline" className="w-full">
                   <Users className="h-4 w-4 mr-2" />
-                  Find a Tutor
+                  {t("tutors.title")}
                 </Button>
               </Link>
               <Link to="/student/progress">
                 <Button variant="outline" className="w-full">
                   <TrendingUp className="h-4 w-4 mr-2" />
-                  View Analytics
+                  {t("dashboard.viewAnalytics", {
+                    defaultValue: "View Analytics",
+                  })}
                 </Button>
               </Link>
             </CardContent>
@@ -352,7 +381,7 @@ const StudentDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Users className="h-5 w-5" />
-                <span>Upcoming Sessions</span>
+                <span>{t("dashboard.upcomingSessions")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -384,11 +413,11 @@ const StudentDashboard = () => {
                   <div className="text-center py-6">
                     <Users className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
-                      No upcoming sessions
+                      {t("dashboard.noUpcomingSessions")}
                     </p>
                     <Link to="/student/tutors">
                       <Button variant="outline" size="sm" className="mt-2">
-                        Find a Tutor
+                        {t("tutors.title")}
                       </Button>
                     </Link>
                   </div>
@@ -402,7 +431,7 @@ const StudentDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Target className="h-5 w-5" />
-                <span>Study Goals</span>
+                <span>{t("dashboard.studyGoals")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -433,7 +462,7 @@ const StudentDashboard = () => {
                 ))}
                 <Link to="/student/goals">
                   <Button variant="outline" size="sm" className="w-full">
-                    View All Goals
+                    {t("dashboard.viewAllGoals")}
                   </Button>
                 </Link>
               </div>
@@ -446,7 +475,7 @@ const StudentDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Award className="h-5 w-5" />
-              <span>Recent Achievements</span>
+              <span>{t("dashboard.achievements")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -466,7 +495,9 @@ const StudentDashboard = () => {
               <div className="text-center p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border-2 border-dashed border-gray-300">
                 <Brain className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                 <div className="text-sm text-gray-600">
-                  Keep studying to unlock more achievements!
+                  {t("dashboard.keepStudyingMessage", {
+                    defaultValue: "Keep studying to unlock more achievements!",
+                  })}
                 </div>
               </div>
             </div>

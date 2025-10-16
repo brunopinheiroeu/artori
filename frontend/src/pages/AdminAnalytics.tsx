@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 
 const AdminAnalytics = () => {
+  const { t } = useTranslation("admin");
   const [timeRange, setTimeRange] = useState("7d");
 
   const {
@@ -98,14 +100,12 @@ const AdminAnalytics = () => {
   if (statsError || analyticsError) {
     return (
       <AdminLayout
-        title="Advanced Analytics"
-        description="Detailed insights and performance metrics for the platform."
+        title={t("analytics.title")}
+        description={t("analytics.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load analytics data. Please try refreshing the page.
-          </AlertDescription>
+          <AlertDescription>{t("analytics.failedToLoad")}</AlertDescription>
         </Alert>
       </AdminLayout>
     );
@@ -113,8 +113,8 @@ const AdminAnalytics = () => {
 
   return (
     <AdminLayout
-      title="Advanced Analytics"
-      description="Detailed insights and performance metrics for the platform."
+      title={t("analytics.title")}
+      description={t("analytics.description")}
     >
       <div className="space-y-6">
         {/* Time Range Selector */}
@@ -125,20 +125,20 @@ const AdminAnalytics = () => {
                 <SelectValue placeholder="Time range" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1d">Last 24 hours</SelectItem>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
+                <SelectItem value="1d">{t("analytics.last24Hours")}</SelectItem>
+                <SelectItem value="7d">{t("analytics.last7Days")}</SelectItem>
+                <SelectItem value="30d">{t("analytics.last30Days")}</SelectItem>
+                <SelectItem value="90d">{t("analytics.last90Days")}</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm">
               <Calendar className="h-4 w-4 mr-2" />
-              Custom Range
+              {t("analytics.customRange")}
             </Button>
           </div>
           <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
             <Download className="h-4 w-4 mr-2" />
-            Export Report
+            {t("analytics.exportReport")}
           </Button>
         </div>
 
@@ -156,14 +156,15 @@ const AdminAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Users
+                      {t("analytics.totalUsers")}
                     </p>
                     <p className="text-3xl font-bold text-indigo-600">
                       {dashboardStats?.total_users.toLocaleString() || 0}
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      {dashboardStats?.new_users_today || 0} new today
+                      {dashboardStats?.new_users_today || 0}{" "}
+                      {t("analytics.newToday")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-indigo-100">
@@ -186,7 +187,7 @@ const AdminAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Active Users
+                      {t("analytics.activeUsers")}
                     </p>
                     <p className="text-3xl font-bold text-green-600">
                       {dashboardStats?.active_users.toLocaleString() || 0}
@@ -200,7 +201,7 @@ const AdminAnalytics = () => {
                               100
                           )
                         : 0}
-                      % active
+                      % {t("analytics.active")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-green-100">
@@ -223,14 +224,14 @@ const AdminAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      User Retention
+                      {t("analytics.userRetention")}
                     </p>
                     <p className="text-3xl font-bold text-purple-600">
                       {userAnalytics?.user_retention_rate.toFixed(1) || 0}%
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      Excellent retention
+                      {t("analytics.excellentRetention")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-purple-100">
@@ -253,7 +254,7 @@ const AdminAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      System Health
+                      {t("analytics.systemHealth")}
                     </p>
                     <p className="text-3xl font-bold text-emerald-600">
                       {systemHealth?.status === "healthy" ? "99.9%" : "N/A"}

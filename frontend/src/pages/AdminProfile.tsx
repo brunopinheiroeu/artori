@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ interface PasswordFormData {
 }
 
 const AdminProfile = () => {
+  const { t } = useTranslation("admin");
   const {
     data: profile,
     isLoading: profileLoading,
@@ -110,13 +112,13 @@ const AdminProfile = () => {
     try {
       await updateProfileMutation.mutateAsync(profileForm);
       toast({
-        title: "Profile updated",
-        description: "Personal information has been saved successfully.",
+        title: t("profile.profileUpdated"),
+        description: t("profile.profileUpdatedDescription"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
+        title: t("common.error"),
+        description: t("profile.failedToUpdateProfile"),
         variant: "destructive",
       });
     }
@@ -125,8 +127,8 @@ const AdminProfile = () => {
   const handlePasswordChange = async () => {
     if (passwordForm.new_password !== passwordForm.confirm_password) {
       toast({
-        title: "Error",
-        description: "New passwords do not match.",
+        title: t("common.error"),
+        description: t("profile.passwordsDoNotMatch"),
         variant: "destructive",
       });
       return;
@@ -134,8 +136,8 @@ const AdminProfile = () => {
 
     if (passwordForm.new_password.length < 8) {
       toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long.",
+        title: t("common.error"),
+        description: t("profile.passwordTooShort"),
         variant: "destructive",
       });
       return;
@@ -147,8 +149,8 @@ const AdminProfile = () => {
         new_password: passwordForm.new_password,
       });
       toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
+        title: t("profile.passwordUpdated"),
+        description: t("profile.passwordUpdatedDescription"),
       });
       setPasswordForm({
         current_password: "",
@@ -157,9 +159,8 @@ const AdminProfile = () => {
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description:
-          "Failed to change password. Please check your current password.",
+        title: t("common.error"),
+        description: t("profile.failedToChangePassword"),
         variant: "destructive",
       });
     }
@@ -169,14 +170,13 @@ const AdminProfile = () => {
     try {
       await updatePreferencesMutation.mutateAsync(notificationSettings);
       toast({
-        title: "Preferences saved",
-        description: "Notification preferences have been updated.",
+        title: t("profile.preferencesSaved"),
+        description: t("profile.preferencesSavedDescription"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description:
-          "Failed to save notification preferences. Please try again.",
+        title: t("common.error"),
+        description: t("profile.failedToSavePreferences"),
         variant: "destructive",
       });
     }
@@ -209,8 +209,8 @@ const AdminProfile = () => {
   if (profileLoading) {
     return (
       <AdminLayout
-        title="Profile Settings"
-        description="Manage your admin account information and preferences."
+        title={t("profile.title")}
+        description={t("profile.description")}
       >
         <div className="space-y-6">
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -237,13 +237,13 @@ const AdminProfile = () => {
   if (profileError) {
     return (
       <AdminLayout
-        title="Profile Settings"
-        description="Manage your admin account information and preferences."
+        title={t("profile.title")}
+        description={t("profile.description")}
       >
         <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
           <CardContent className="p-6">
             <p className="text-center text-red-600">
-              Failed to load profile data. Please try again.
+              {t("profile.failedToLoadProfile")}
             </p>
           </CardContent>
         </Card>
@@ -253,8 +253,8 @@ const AdminProfile = () => {
 
   return (
     <AdminLayout
-      title="Profile Settings"
-      description="Manage your admin account information and preferences."
+      title={t("profile.title")}
+      description={t("profile.description")}
     >
       <div className="space-y-6">
         {/* Profile Overview Card */}
@@ -262,7 +262,7 @@ const AdminProfile = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <User className="h-5 w-5" />
-              <span>Profile Overview</span>
+              <span>{t("profile.profileOverview")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -334,13 +334,13 @@ const AdminProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="h-5 w-5" />
-                <span>Personal Information</span>
+                <span>{t("profile.personalInformation")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">{t("profile.firstName")}</Label>
                   <Input
                     id="firstName"
                     value={profileForm.first_name}
@@ -353,7 +353,7 @@ const AdminProfile = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t("profile.lastName")}</Label>
                   <Input
                     id="lastName"
                     value={profileForm.last_name}
@@ -367,7 +367,7 @@ const AdminProfile = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">{t("profile.emailAddress")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -381,7 +381,7 @@ const AdminProfile = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t("profile.phoneNumber")}</Label>
                 <Input
                   id="phone"
                   value={profileForm.phone || ""}
@@ -394,7 +394,7 @@ const AdminProfile = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location">{t("profile.location")}</Label>
                 <Input
                   id="location"
                   value={profileForm.location || ""}
@@ -416,7 +416,7 @@ const AdminProfile = () => {
                 ) : (
                   <Save className="h-4 w-4 mr-2" />
                 )}
-                Save Changes
+                {t("profile.saveChanges")}
               </Button>
             </CardContent>
           </Card>

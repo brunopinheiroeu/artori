@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ import { useState } from "react";
 import { format, subDays, startOfMonth, endOfMonth, subMonths } from "date-fns";
 
 const TutorEarnings = () => {
+  const { t } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState("this-month");
 
   // Mock earnings data - in a real app, this would come from an API
@@ -162,8 +164,8 @@ const TutorEarnings = () => {
 
   return (
     <TutorLayout
-      title="Earnings"
-      description="Track your income and manage payouts."
+      title={t("tutor:earnings.title")}
+      description={t("tutor:earnings.description")}
     >
       <div className="space-y-6">
         {/* Key Metrics */}
@@ -173,14 +175,14 @@ const TutorEarnings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Total Earnings
+                    {t("tutor:earnings.totalEarnings")}
                   </p>
                   <p className="text-3xl font-bold text-emerald-600">
                     ${earningsData.totalEarnings.toLocaleString()}
                   </p>
                   <p className="text-sm text-green-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    All time
+                    {t("tutor:earnings.allTime")}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-emerald-100">
@@ -195,14 +197,14 @@ const TutorEarnings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    This Month
+                    {t("tutor:earnings.thisMonth")}
                   </p>
                   <p className="text-3xl font-bold text-blue-600">
                     ${earningsData.thisMonth}
                   </p>
                   <p className="text-sm text-blue-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +18% from last month
+                    {t("tutor:earnings.monthlyGrowth")}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-blue-100">
@@ -217,14 +219,14 @@ const TutorEarnings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Hourly Rate
+                    {t("tutor:earnings.hourlyRate")}
                   </p>
                   <p className="text-3xl font-bold text-purple-600">
                     ${earningsData.averageHourlyRate}
                   </p>
                   <p className="text-sm text-purple-600 flex items-center mt-1">
                     <Clock className="h-3 w-3 mr-1" />
-                    Average rate
+                    {t("tutor:earnings.averageRate")}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-purple-100">
@@ -238,13 +240,15 @@ const TutorEarnings = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Pending</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    {t("tutor:earnings.pending")}
+                  </p>
                   <p className="text-3xl font-bold text-orange-600">
                     ${earningsData.pendingPayouts}
                   </p>
                   <p className="text-sm text-orange-600 flex items-center mt-1">
                     <AlertCircle className="h-3 w-3 mr-1" />
-                    Awaiting payout
+                    {t("tutor:earnings.awaitingPayout")}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-orange-100">
@@ -263,7 +267,7 @@ const TutorEarnings = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="h-5 w-5" />
-                  <span>Monthly Earnings</span>
+                  <span>{t("tutor:earnings.monthlyEarnings")}</span>
                 </CardTitle>
                 <Select
                   value={selectedPeriod}
@@ -273,10 +277,18 @@ const TutorEarnings = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="this-month">This Month</SelectItem>
-                    <SelectItem value="last-3-months">Last 3 Months</SelectItem>
-                    <SelectItem value="last-6-months">Last 6 Months</SelectItem>
-                    <SelectItem value="this-year">This Year</SelectItem>
+                    <SelectItem value="this-month">
+                      {t("tutor:earnings.thisMonth")}
+                    </SelectItem>
+                    <SelectItem value="last-3-months">
+                      {t("tutor:earnings.last3Months")}
+                    </SelectItem>
+                    <SelectItem value="last-6-months">
+                      {t("tutor:earnings.last6Months")}
+                    </SelectItem>
+                    <SelectItem value="this-year">
+                      {t("tutor:earnings.thisYear")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -308,7 +320,7 @@ const TutorEarnings = () => {
                         ${month.earnings}
                       </div>
                       <div className="text-xs text-gray-600">
-                        {month.sessions} sessions
+                        {month.sessions} {t("tutor:earnings.sessions")}
                       </div>
                     </div>
                   </div>
@@ -322,7 +334,7 @@ const TutorEarnings = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <CheckCircle className="h-5 w-5" />
-                <span>Performance Stats</span>
+                <span>{t("tutor:earnings.performanceStats")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -332,21 +344,23 @@ const TutorEarnings = () => {
                     {earningsData.sessionsCompleted}
                   </div>
                   <div className="text-sm text-gray-600">
-                    Sessions Completed
+                    {t("tutor:earnings.sessionsCompleted")}
                   </div>
                 </div>
                 <div className="text-center p-4 bg-white/40 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600">
                     {earningsData.totalHours}h
                   </div>
-                  <div className="text-sm text-gray-600">Total Hours</div>
+                  <div className="text-sm text-gray-600">
+                    {t("tutor:earnings.totalHours")}
+                  </div>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span>Completion Rate</span>
+                    <span>{t("tutor:earnings.completionRate")}</span>
                     <span>94%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -358,7 +372,7 @@ const TutorEarnings = () => {
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span>Student Satisfaction</span>
+                    <span>{t("tutor:earnings.studentSatisfaction")}</span>
                     <span>4.8/5</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -370,7 +384,7 @@ const TutorEarnings = () => {
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span>Response Time</span>
+                    <span>{t("tutor:earnings.responseTime")}</span>
                     <span>&lt; 2h</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -390,18 +404,18 @@ const TutorEarnings = () => {
           <div className="flex items-center justify-between mb-4">
             <TabsList className="backdrop-blur-sm bg-white/60 border-white/20">
               <TabsTrigger value="all">
-                All Transactions ({transactions.length})
+                {t("tutor:earnings.allTransactions")} ({transactions.length})
               </TabsTrigger>
               <TabsTrigger value="completed">
-                Completed ({completedTransactions.length})
+                {t("tutor:earnings.completed")} ({completedTransactions.length})
               </TabsTrigger>
               <TabsTrigger value="pending">
-                Pending ({pendingTransactions.length})
+                {t("tutor:earnings.pending")} ({pendingTransactions.length})
               </TabsTrigger>
             </TabsList>
             <Button variant="outline" className="bg-white/60">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              {t("tutor:earnings.export")}
             </Button>
           </div>
 
@@ -410,14 +424,14 @@ const TutorEarnings = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Student</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Rate</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Payout Date</TableHead>
+                    <TableHead>{t("tutor:earnings.student")}</TableHead>
+                    <TableHead>{t("tutor:earnings.subject")}</TableHead>
+                    <TableHead>{t("tutor:earnings.date")}</TableHead>
+                    <TableHead>{t("tutor:earnings.duration")}</TableHead>
+                    <TableHead>{t("tutor:earnings.rate")}</TableHead>
+                    <TableHead>{t("tutor:earnings.amount")}</TableHead>
+                    <TableHead>{t("tutor:earnings.status")}</TableHead>
+                    <TableHead>{t("tutor:earnings.payoutDate")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

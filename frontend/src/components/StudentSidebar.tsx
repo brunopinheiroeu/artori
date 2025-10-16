@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useApi";
+import { useTranslation } from "react-i18next";
 
 interface StudentSidebarProps {
   className?: string;
@@ -41,6 +42,7 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
+  const { t } = useTranslation("student");
 
   const handleLogout = () => {
     try {
@@ -49,8 +51,12 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
 
       // Show success message
       toast({
-        title: "Logged out successfully",
-        description: "You have been signed out of your account.",
+        title: t("sidebar.logoutSuccess", {
+          defaultValue: "Logged out successfully",
+        }),
+        description: t("sidebar.logoutDescription", {
+          defaultValue: "You have been signed out of your account.",
+        }),
       });
 
       // Redirect to login page
@@ -58,8 +64,10 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
     } catch (error) {
       console.error("Logout error:", error);
       toast({
-        title: "Logout Error",
-        description: "There was an issue logging out. Please try again.",
+        title: t("sidebar.logoutError", { defaultValue: "Logout Error" }),
+        description: t("sidebar.logoutErrorDescription", {
+          defaultValue: "There was an issue logging out. Please try again.",
+        }),
         variant: "destructive",
       });
     }
@@ -68,19 +76,19 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
   // Navigation items for students
   const navigation = [
     {
-      name: "Dashboard",
+      name: t("dashboard.title"),
       href: "/student",
       icon: LayoutDashboard,
       current: location.pathname === "/student",
     },
     {
-      name: "Study Progress",
+      name: t("progress.title"),
       href: "/student/progress",
       icon: BarChart3,
       current: location.pathname.startsWith("/student/progress"),
     },
     {
-      name: "Practice",
+      name: t("practice.title"),
       href: "/practice",
       icon: BookOpen,
       current:
@@ -89,25 +97,25 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
         location.pathname.startsWith("/results"),
     },
     {
-      name: "Find Tutors",
+      name: t("tutors.title"),
       href: "/student/tutors",
       icon: Users,
       current: location.pathname.startsWith("/student/tutors"),
     },
     {
-      name: "Schedule",
+      name: t("schedule.title"),
       href: "/student/schedule",
       icon: Calendar,
       current: location.pathname.startsWith("/student/schedule"),
     },
     {
-      name: "Messages",
+      name: t("messages.title"),
       href: "/student/messages",
       icon: MessageSquare,
       current: location.pathname.startsWith("/student/messages"),
     },
     {
-      name: "Study Goals",
+      name: t("goals.title"),
       href: "/student/goals",
       icon: Target,
       current: location.pathname.startsWith("/student/goals"),
@@ -119,16 +127,16 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
     ? {
         name: user.name,
         email: user.email,
-        role: "Student",
-        examName: "Selected Exam", // Will be populated from dashboard data
+        role: t("profile.student"),
+        examName: t("sidebar.selectedExam", { defaultValue: "Selected Exam" }), // Will be populated from dashboard data
         studyStreak: 0, // Will be populated from dashboard data
         totalStudyTime: 0, // Will be populated from dashboard data
       }
     : {
-        name: "Loading...",
-        email: "Loading...",
-        role: "Loading...",
-        examName: "Loading...",
+        name: t("sidebar.loading", { defaultValue: "Loading..." }),
+        email: t("sidebar.loading", { defaultValue: "Loading..." }),
+        role: t("sidebar.loading", { defaultValue: "Loading..." }),
+        examName: t("sidebar.loading", { defaultValue: "Loading..." }),
         studyStreak: 0,
         totalStudyTime: 0,
       };
@@ -164,7 +172,9 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
           <div className="flex items-center px-6 py-6 border-b border-blue-700">
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <div className="ml-3">
-              <p className="text-xs text-blue-300">Student Portal</p>
+              <p className="text-xs text-blue-300">
+                {t("sidebar.studentPortal", { defaultValue: "Student Portal" })}
+              </p>
             </div>
           </div>
 
@@ -202,7 +212,8 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
                     <p className="text-xs text-blue-300">{studentUser.email}</p>
                     {studentUser.studyStreak > 0 && (
                       <p className="text-xs text-blue-300">
-                        🔥 {studentUser.studyStreak} day streak
+                        🔥 {studentUser.studyStreak}{" "}
+                        {t("sidebar.dayStreak", { defaultValue: "day streak" })}
                       </p>
                     )}
                   </div>
@@ -228,7 +239,10 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
                       {studentUser.studyStreak > 0 && (
                         <div className="flex items-center space-x-2 mt-1">
                           <Clock className="h-3 w-3" />
-                          <span>{studentUser.totalStudyTime}h studied</span>
+                          <span>
+                            {studentUser.totalStudyTime}h{" "}
+                            {t("sidebar.studied", { defaultValue: "studied" })}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -242,7 +256,7 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
                 >
                   <Link to="/student/profile">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <span>{t("profile.title")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -252,7 +266,9 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
                 >
                   <Link to="/student/settings">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>
+                      {t("sidebar.settings", { defaultValue: "Settings" })}
+                    </span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -263,7 +279,9 @@ const StudentSidebar = ({ className }: StudentSidebarProps) => {
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>
+                    {t("sidebar.logout", { defaultValue: "Log out" })}
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -26,71 +26,71 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const Solutions = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("solutions");
 
   const features = [
     {
       icon: BarChart3,
-      title: t("solutions.features.items.dashboards.title"),
-      description: t("solutions.features.items.dashboards.description"),
+      title: t("features.items.dashboards.title"),
+      description: t("features.items.dashboards.description"),
       gradient: "from-blue-500 to-cyan-500",
     },
     {
       icon: Users,
-      title: t("solutions.features.items.management.title"),
-      description: t("solutions.features.items.management.description"),
+      title: t("features.items.management.title"),
+      description: t("features.items.management.description"),
       gradient: "from-green-500 to-emerald-500",
     },
     {
       icon: MessageSquare,
-      title: t("solutions.features.items.collaboration.title"),
-      description: t("solutions.features.items.collaboration.description"),
+      title: t("features.items.collaboration.title"),
+      description: t("features.items.collaboration.description"),
       gradient: "from-purple-500 to-pink-500",
     },
     {
       icon: Shield,
-      title: t("solutions.features.items.tracing.title"),
-      description: t("solutions.features.items.tracing.description"),
+      title: t("features.items.tracing.title"),
+      description: t("features.items.tracing.description"),
       gradient: "from-orange-500 to-red-500",
     },
     {
       icon: Target,
-      title: t("solutions.features.items.alerts.title"),
-      description: t("solutions.features.items.alerts.description"),
+      title: t("features.items.alerts.title"),
+      description: t("features.items.alerts.description"),
       gradient: "from-indigo-500 to-purple-500",
     },
     {
       icon: BookOpen,
-      title: t("solutions.features.items.integration.title"),
-      description: t("solutions.features.items.integration.description"),
+      title: t("features.items.integration.title"),
+      description: t("features.items.integration.description"),
       gradient: "from-teal-500 to-blue-500",
     },
   ];
 
-  const benefits = t("solutions.benefits.items", {
+  const benefits = t("benefits.items", {
     returnObjects: true,
   }) as string[];
 
   const testimonials = [
     {
-      name: t("solutions.testimonials.items.sarah.name"),
-      role: t("solutions.testimonials.items.sarah.role"),
-      school: t("solutions.testimonials.items.sarah.school"),
-      quote: t("solutions.testimonials.items.sarah.quote"),
+      name: t("testimonials.items.sarah.name"),
+      role: t("testimonials.items.sarah.role"),
+      school: t("testimonials.items.sarah.school"),
+      quote: t("testimonials.items.sarah.quote"),
       avatar: "👩‍🏫",
     },
     {
-      name: t("solutions.testimonials.items.miguel.name"),
-      role: t("solutions.testimonials.items.miguel.role"),
-      school: t("solutions.testimonials.items.miguel.school"),
-      quote: t("solutions.testimonials.items.miguel.quote"),
+      name: t("testimonials.items.miguel.name"),
+      role: t("testimonials.items.miguel.role"),
+      school: t("testimonials.items.miguel.school"),
+      quote: t("testimonials.items.miguel.quote"),
       avatar: "👨‍🏫",
     },
     {
-      name: t("solutions.testimonials.items.emma.name"),
-      role: t("solutions.testimonials.items.emma.role"),
-      school: t("solutions.testimonials.items.emma.school"),
-      quote: t("solutions.testimonials.items.emma.quote"),
+      name: t("testimonials.items.emma.name"),
+      role: t("testimonials.items.emma.role"),
+      school: t("testimonials.items.emma.school"),
+      quote: t("testimonials.items.emma.quote"),
       avatar: "👩‍💼",
     },
   ];
@@ -106,9 +106,9 @@ const Solutions = () => {
           </Link>
 
           <div className="flex items-center space-x-4">
-            <Button variant="ghost">{t("solutions.header.requestDemo")}</Button>
+            <Button variant="ghost">{t("header.requestDemo")}</Button>
             <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
-              {t("solutions.header.contactSales")}
+              {t("header.contactSales")}
             </Button>
           </div>
         </nav>
@@ -121,21 +121,21 @@ const Solutions = () => {
 
           <div className="relative z-10 p-12">
             <Badge className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-4 py-2">
-              {t("solutions.hero.badge")}
+              {t("hero.badge")}
             </Badge>
 
             <h1 className="text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {t("solutions.hero.title")}
+                {t("hero.title")}
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                {t("solutions.hero.titleHighlight")}
+                {t("hero.titleHighlight")}
               </span>
             </h1>
 
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              {t("solutions.hero.subtitle")}
+              {t("hero.subtitle")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -143,14 +143,14 @@ const Solutions = () => {
                 size="lg"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-lg px-8 py-4"
               >
-                {t("solutions.hero.ctaPrimary")}
+                {t("hero.ctaPrimary")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-indigo-200 hover:bg-indigo-50 text-lg px-8 py-4"
               >
-                {t("solutions.hero.ctaSecondary")}
+                {t("hero.ctaSecondary")}
               </Button>
             </div>
           </div>
@@ -162,12 +162,10 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              {t("solutions.demo.title")}
+              {t("demo.title")}
             </span>
           </h2>
-          <p className="text-gray-600 text-lg">
-            {t("solutions.demo.subtitle")}
-          </p>
+          <p className="text-gray-600 text-lg">{t("demo.subtitle")}</p>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
@@ -181,16 +179,12 @@ const Solutions = () => {
                 </div>
                 <div>
                   <h3 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                    {t("solutions.demo.schoolName")}
+                    {t("demo.schoolName")}
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    {t("solutions.demo.poweredBy")}
-                  </p>
+                  <p className="text-sm text-gray-500">{t("demo.poweredBy")}</p>
                 </div>
               </div>
-              <p className="text-gray-600 mb-8">
-                {t("solutions.demo.description")}
-              </p>
+              <p className="text-gray-600 mb-8">{t("demo.description")}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -201,16 +195,16 @@ const Solutions = () => {
                     <Users className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl text-green-700">
-                    {t("solutions.demo.student.title")}
+                    {t("demo.student.title")}
                   </CardTitle>
                   <CardDescription className="text-green-600">
-                    {t("solutions.demo.student.description")}
+                    {t("demo.student.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="space-y-4 mb-6">
                     {(
-                      t("solutions.demo.student.features", {
+                      t("demo.student.features", {
                         returnObjects: true,
                       }) as string[]
                     ).map((feature, index) => (
@@ -226,7 +220,7 @@ const Solutions = () => {
                   <Link to="/demo-login?role=student">
                     <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg">
                       <Play className="h-4 w-4 mr-2" />
-                      {t("solutions.demo.student.cta")}
+                      {t("demo.student.cta")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -239,16 +233,16 @@ const Solutions = () => {
                     <BarChart3 className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl text-blue-700">
-                    {t("solutions.demo.teacher.title")}
+                    {t("demo.teacher.title")}
                   </CardTitle>
                   <CardDescription className="text-blue-600">
-                    {t("solutions.demo.teacher.description")}
+                    {t("demo.teacher.description")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="space-y-4 mb-6">
                     {(
-                      t("solutions.demo.teacher.features", {
+                      t("demo.teacher.features", {
                         returnObjects: true,
                       }) as string[]
                     ).map((feature, index) => (
@@ -264,7 +258,7 @@ const Solutions = () => {
                   <Link to="/demo-login?role=teacher">
                     <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg">
                       <Monitor className="h-4 w-4 mr-2" />
-                      {t("solutions.demo.teacher.cta")}
+                      {t("demo.teacher.cta")}
                     </Button>
                   </Link>
                 </CardContent>
@@ -272,9 +266,7 @@ const Solutions = () => {
             </div>
 
             <div className="text-center mt-8">
-              <p className="text-sm text-gray-500">
-                {t("solutions.demo.note")}
-              </p>
+              <p className="text-sm text-gray-500">{t("demo.note")}</p>
             </div>
           </div>
         </div>
@@ -285,12 +277,10 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {t("solutions.features.title")}
+              {t("features.title")}
             </span>
           </h2>
-          <p className="text-gray-600 text-lg">
-            {t("solutions.features.subtitle")}
-          </p>
+          <p className="text-gray-600 text-lg">{t("features.subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -325,7 +315,7 @@ const Solutions = () => {
           <div>
             <h2 className="text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                {t("solutions.benefits.title")}
+                {t("benefits.title")}
               </span>
             </h2>
             <div className="space-y-4">
@@ -346,39 +336,39 @@ const Solutions = () => {
               <div className="text-center">
                 <GraduationCap className="h-24 w-24 mx-auto mb-6 text-indigo-600" />
                 <h3 className="text-2xl font-bold mb-4">
-                  {t("solutions.benefits.stats.title")}
+                  {t("benefits.stats.title")}
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
                     <div className="text-3xl font-bold text-indigo-600">
-                      {t("solutions.benefits.stats.improvement.value")}
+                      {t("benefits.stats.improvement.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {t("solutions.benefits.stats.improvement.label")}
+                      {t("benefits.stats.improvement.label")}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-purple-600">
-                      {t("solutions.benefits.stats.satisfaction.value")}
+                      {t("benefits.stats.satisfaction.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {t("solutions.benefits.stats.satisfaction.label")}
+                      {t("benefits.stats.satisfaction.label")}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-green-600">
-                      {t("solutions.benefits.stats.timeSaved.value")}
+                      {t("benefits.stats.timeSaved.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {t("solutions.benefits.stats.timeSaved.label")}
+                      {t("benefits.stats.timeSaved.label")}
                     </div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold text-orange-600">
-                      {t("solutions.benefits.stats.engagement.value")}
+                      {t("benefits.stats.engagement.value")}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {t("solutions.benefits.stats.engagement.label")}
+                      {t("benefits.stats.engagement.label")}
                     </div>
                   </div>
                 </div>
@@ -393,7 +383,7 @@ const Solutions = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t("solutions.testimonials.title")}
+              {t("testimonials.title")}
             </span>
           </h2>
         </div>
@@ -427,25 +417,25 @@ const Solutions = () => {
           <div className="relative z-10 p-12">
             <h2 className="text-4xl font-bold mb-6">
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {t("solutions.cta.title")}
+                {t("cta.title")}
               </span>
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              {t("solutions.cta.subtitle")}
+              {t("cta.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-lg px-8 py-4"
               >
-                {t("solutions.cta.primary")}
+                {t("cta.primary")}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-2 border-indigo-200 hover:bg-indigo-50 text-lg px-8 py-4"
               >
-                {t("solutions.cta.secondary")}
+                {t("cta.secondary")}
               </Button>
             </div>
           </div>
@@ -458,10 +448,10 @@ const Solutions = () => {
           <div className="flex items-center justify-center space-x-2 mb-4">
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {t("solutions.footer.title")}
+              {t("footer.title")}
             </span>
           </div>
-          <p className="text-gray-500">{t("solutions.footer.tagline")}</p>
+          <p className="text-gray-500">{t("footer.tagline")}</p>
         </div>
       </footer>
     </div>

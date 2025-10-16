@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ import { useState } from "react";
 import { format, subDays, addDays } from "date-fns";
 
 const TutorSessions = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSession, setSelectedSession] = useState<
     (typeof sessions)[0] | null
@@ -350,8 +352,8 @@ const TutorSessions = () => {
 
   return (
     <TutorLayout
-      title="Sessions"
-      description="View and manage your tutoring sessions."
+      title={t("tutor:sessions.title")}
+      description={t("tutor:sessions.description")}
     >
       <div className="space-y-6">
         {/* Search and Stats */}
@@ -359,7 +361,7 @@ const TutorSessions = () => {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search sessions..."
+              placeholder={t("tutor:sessions.searchSessions")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 backdrop-blur-sm bg-white/60 border-white/20"
@@ -370,25 +372,33 @@ const TutorSessions = () => {
               <div className="font-semibold text-green-600">
                 {completedSessions.length}
               </div>
-              <div className="text-gray-600">Completed</div>
+              <div className="text-gray-600">
+                {t("tutor:sessions.completed")}
+              </div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-blue-600">
                 {scheduledSessions.length}
               </div>
-              <div className="text-gray-600">Scheduled</div>
+              <div className="text-gray-600">
+                {t("tutor:sessions.scheduled")}
+              </div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-orange-600">
                 {inProgressSessions.length}
               </div>
-              <div className="text-gray-600">In Progress</div>
+              <div className="text-gray-600">
+                {t("tutor:sessions.inProgress")}
+              </div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-emerald-600">
                 ${sessions.reduce((sum, s) => sum + s.earnings, 0)}
               </div>
-              <div className="text-gray-600">Total Earnings</div>
+              <div className="text-gray-600">
+                {t("tutor:sessions.totalEarnings")}
+              </div>
             </div>
           </div>
         </div>
@@ -397,19 +407,19 @@ const TutorSessions = () => {
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-5 backdrop-blur-sm bg-white/60 border-white/20">
             <TabsTrigger value="all">
-              All ({filteredSessions.length})
+              {t("tutor:sessions.all")} ({filteredSessions.length})
             </TabsTrigger>
             <TabsTrigger value="completed">
-              Completed ({completedSessions.length})
+              {t("tutor:sessions.completed")} ({completedSessions.length})
             </TabsTrigger>
             <TabsTrigger value="scheduled">
-              Scheduled ({scheduledSessions.length})
+              {t("tutor:sessions.scheduled")} ({scheduledSessions.length})
             </TabsTrigger>
             <TabsTrigger value="in-progress">
-              In Progress ({inProgressSessions.length})
+              {t("tutor:sessions.inProgress")} ({inProgressSessions.length})
             </TabsTrigger>
             <TabsTrigger value="cancelled">
-              Cancelled ({cancelledSessions.length})
+              {t("tutor:sessions.cancelled")} ({cancelledSessions.length})
             </TabsTrigger>
           </TabsList>
 
@@ -459,12 +469,12 @@ const TutorSessions = () => {
             <CardContent className="p-12 text-center">
               <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No sessions found
+                {t("tutor:sessions.noSessionsFound")}
               </h3>
               <p className="text-gray-600">
                 {searchTerm
-                  ? "Try adjusting your search terms."
-                  : "You haven't conducted any sessions yet."}
+                  ? t("tutor:sessions.adjustSearchTerms")
+                  : t("tutor:sessions.noConductedSessions")}
               </p>
             </CardContent>
           </Card>
@@ -477,9 +487,9 @@ const TutorSessions = () => {
         >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Session Details</DialogTitle>
+              <DialogTitle>{t("tutor:sessions.sessionDetails")}</DialogTitle>
               <DialogDescription>
-                Detailed information about the tutoring session.
+                {t("tutor:sessions.detailedInformation")}
               </DialogDescription>
             </DialogHeader>
             {selectedSession && (
@@ -509,33 +519,45 @@ const TutorSessions = () => {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium">Date:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.date")}:
+                    </span>
                     <span className="ml-2">
                       {format(selectedSession.date, "MMM d, yyyy")}
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium">Time:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.time")}:
+                    </span>
                     <span className="ml-2">
                       {selectedSession.startTime} - {selectedSession.endTime}
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium">Duration:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.duration")}:
+                    </span>
                     <span className="ml-2">{selectedSession.duration}</span>
                   </div>
                   <div>
-                    <span className="font-medium">Type:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.type")}:
+                    </span>
                     <span className="ml-2 capitalize">
                       {selectedSession.type}
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium">Location:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.location")}:
+                    </span>
                     <span className="ml-2">{selectedSession.location}</span>
                   </div>
                   <div>
-                    <span className="font-medium">Earnings:</span>
+                    <span className="font-medium">
+                      {t("tutor:sessions.earnings")}:
+                    </span>
                     <span className="ml-2 text-emerald-600 font-semibold">
                       ${selectedSession.earnings}
                     </span>
@@ -544,7 +566,9 @@ const TutorSessions = () => {
 
                 {selectedSession.rating && (
                   <div>
-                    <span className="font-medium text-sm">Rating:</span>
+                    <span className="font-medium text-sm">
+                      {t("tutor:sessions.rating")}:
+                    </span>
                     <div className="flex items-center space-x-2 mt-1">
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (
@@ -568,7 +592,7 @@ const TutorSessions = () => {
                 {selectedSession.feedback && (
                   <div>
                     <span className="font-medium text-sm">
-                      Student Feedback:
+                      {t("tutor:sessions.studentFeedback")}:
                     </span>
                     <p className="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded-lg">
                       {selectedSession.feedback}
@@ -578,7 +602,9 @@ const TutorSessions = () => {
 
                 {selectedSession.notes && (
                   <div>
-                    <span className="font-medium text-sm">Session Notes:</span>
+                    <span className="font-medium text-sm">
+                      {t("tutor:sessions.sessionNotes")}:
+                    </span>
                     <p className="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded-lg">
                       {selectedSession.notes}
                     </p>
@@ -587,7 +613,9 @@ const TutorSessions = () => {
 
                 {selectedSession.materials.length > 0 && (
                   <div>
-                    <span className="font-medium text-sm">Materials:</span>
+                    <span className="font-medium text-sm">
+                      {t("tutor:sessions.materials")}:
+                    </span>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {selectedSession.materials.map((material, index) => (
                         <Badge

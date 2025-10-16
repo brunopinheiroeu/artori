@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ import { apiClient, TutorDashboardStats } from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 
 const TutorDashboard = () => {
+  const { t } = useTranslation();
   const {
     data: stats,
     isLoading: statsLoading,
@@ -62,13 +64,13 @@ const TutorDashboard = () => {
   if (statsError) {
     return (
       <TutorLayout
-        title="Dashboard"
-        description="Overview of your tutoring activities and performance."
+        title={t("tutor:dashboard.title")}
+        description={t("tutor:dashboard.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load dashboard data. Please try refreshing the page.
+            {t("tutor:dashboard.failedToLoad")}
           </AlertDescription>
         </Alert>
       </TutorLayout>
@@ -77,8 +79,8 @@ const TutorDashboard = () => {
 
   return (
     <TutorLayout
-      title="Dashboard"
-      description="Overview of your tutoring activities and performance."
+      title={t("tutor:dashboard.title")}
+      description={t("tutor:dashboard.description")}
     >
       <div className="space-y-6">
         {/* Key Metrics */}
@@ -95,14 +97,14 @@ const TutorDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Students
+                      {t("tutor:dashboard.totalStudents")}
                     </p>
                     <p className="text-3xl font-bold text-emerald-600">
                       {stats?.total_students || 0}
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <TrendingUp className="h-3 w-3 mr-1" />
-                      Active learners
+                      {t("tutor:dashboard.activeLearners")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-emerald-100">
@@ -125,14 +127,14 @@ const TutorDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Active Sessions
+                      {t("tutor:dashboard.activeSessions")}
                     </p>
                     <p className="text-3xl font-bold text-blue-600">
                       {stats?.active_sessions || 0}
                     </p>
                     <p className="text-sm text-blue-600 flex items-center mt-1">
                       <Clock className="h-3 w-3 mr-1" />
-                      In progress
+                      {t("tutor:dashboard.inProgress")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-blue-100">
@@ -155,14 +157,14 @@ const TutorDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Average Rating
+                      {t("tutor:dashboard.averageRating")}
                     </p>
                     <p className="text-3xl font-bold text-yellow-600">
                       {stats?.average_rating?.toFixed(1) || "0.0"}
                     </p>
                     <p className="text-sm text-yellow-600 flex items-center mt-1">
                       <Star className="h-3 w-3 mr-1" />
-                      Student feedback
+                      {t("tutor:dashboard.studentFeedback")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-yellow-100">
@@ -185,14 +187,14 @@ const TutorDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">
-                      Total Earnings
+                      {t("tutor:dashboard.totalEarnings")}
                     </p>
                     <p className="text-3xl font-bold text-green-600">
                       ${stats?.total_earnings?.toFixed(0) || "0"}
                     </p>
                     <p className="text-sm text-green-600 flex items-center mt-1">
                       <DollarSign className="h-3 w-3 mr-1" />
-                      This month
+                      {t("tutor:dashboard.thisMonth")}
                     </p>
                   </div>
                   <div className="p-3 rounded-full bg-green-100">
@@ -210,7 +212,7 @@ const TutorDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BookOpen className="h-5 w-5" />
-                <span>Session Overview</span>
+                <span>{t("tutor:dashboard.sessionOverview")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -224,7 +226,7 @@ const TutorDashboard = () => {
                 <>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Completed Sessions</span>
+                      <span>{t("tutor:dashboard.completedSessions")}</span>
                       <span>{stats?.completed_sessions || 0}</span>
                     </div>
                     <Progress
@@ -237,7 +239,7 @@ const TutorDashboard = () => {
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Upcoming Sessions</span>
+                      <span>{t("tutor:dashboard.upcomingSessions")}</span>
                       <span>{stats?.upcoming_sessions || 0}</span>
                     </div>
                     <Progress
@@ -250,7 +252,7 @@ const TutorDashboard = () => {
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Student Satisfaction</span>
+                      <span>{t("tutor:dashboard.studentSatisfaction")}</span>
                       <span>
                         {stats?.average_rating?.toFixed(1) || "0.0"}/5.0
                       </span>
@@ -269,7 +271,7 @@ const TutorDashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5" />
-                <span>Upcoming Sessions</span>
+                <span>{t("tutor:dashboard.upcomingSessions")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -302,7 +304,9 @@ const TutorDashboard = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">No upcoming sessions</p>
+                  <p className="text-sm text-gray-500">
+                    {t("tutor:dashboard.noUpcomingSessions")}
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -314,30 +318,36 @@ const TutorDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="h-5 w-5" />
-              <span>Quick Actions</span>
+              <span>{t("tutor:dashboard.quickActions")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-white/40 rounded-lg border border-white/20 text-center">
                 <MessageSquare className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <div className="text-sm font-medium">Message Students</div>
+                <div className="text-sm font-medium">
+                  {t("tutor:dashboard.messageStudents")}
+                </div>
                 <div className="text-xs text-gray-600">
-                  Send updates or reminders
+                  {t("tutor:dashboard.sendUpdates")}
                 </div>
               </div>
               <div className="p-4 bg-white/40 rounded-lg border border-white/20 text-center">
                 <Calendar className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
-                <div className="text-sm font-medium">Schedule Session</div>
+                <div className="text-sm font-medium">
+                  {t("tutor:dashboard.scheduleSession")}
+                </div>
                 <div className="text-xs text-gray-600">
-                  Book new tutoring sessions
+                  {t("tutor:dashboard.bookSessions")}
                 </div>
               </div>
               <div className="p-4 bg-white/40 rounded-lg border border-white/20 text-center">
                 <BookOpen className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <div className="text-sm font-medium">Create Materials</div>
+                <div className="text-sm font-medium">
+                  {t("tutor:dashboard.createMaterials")}
+                </div>
                 <div className="text-xs text-gray-600">
-                  Prepare lesson content
+                  {t("tutor:dashboard.prepareLessons")}
                 </div>
               </div>
             </div>

@@ -1,5 +1,6 @@
 {
   "error": "Erro",
+  "loading": "Carregando...",
   "buttons": {
     "login": "Entrar",
     "logout": "Sair",

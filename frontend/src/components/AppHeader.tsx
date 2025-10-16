@@ -59,22 +59,20 @@ const AppHeader = ({
           {/* Language Selector */}
           <LanguageSelector />
 
-          {/* Solutions for Schools - only on landing page */}
-          {isLandingPage && (
-            <Link
-              to="/solutions"
-              className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
-            >
-              <Building2 className="h-4 w-4" />
-              <span>{t("navigation.solutionsForSchools")}</span>
-            </Link>
-          )}
+          {/* Solutions for Schools */}
+          <Link
+            to="/solutions"
+            className="flex items-center space-x-2 text-gray-600 hover:text-indigo-600 transition-colors"
+          >
+            <Building2 className="h-4 w-4" />
+            <span>{t("navigation:solutionsForSchools")}</span>
+          </Link>
 
           {/* Single consolidated Sign In button with door icon and gradient style */}
           <Link to="/login">
             <GradientButton className="flex items-center space-x-2">
               <DoorOpen className="h-4 w-4" />
-              <span>{t("navigation.signIn")}</span>
+              <span>{t("navigation:signIn")}</span>
             </GradientButton>
           </Link>
         </div>

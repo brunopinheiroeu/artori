@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ import {
 } from "date-fns";
 
 const TutorMessages = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedConversation, setSelectedConversation] = useState<
     string | null
@@ -206,8 +208,8 @@ const TutorMessages = () => {
 
   return (
     <TutorLayout
-      title="Messages"
-      description="Communicate with your students and manage conversations."
+      title={t("tutor:messages.title")}
+      description={t("tutor:messages.description")}
     >
       <div className="h-[calc(100vh-200px)] flex gap-6">
         {/* Conversations List */}
@@ -216,7 +218,7 @@ const TutorMessages = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center space-x-2">
                 <MessageSquare className="h-5 w-5" />
-                <span>Messages</span>
+                <span>{t("tutor:messages.title")}</span>
               </CardTitle>
               <Dialog>
                 <DialogTrigger asChild>
@@ -229,9 +231,9 @@ const TutorMessages = () => {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>New Message</DialogTitle>
+                    <DialogTitle>{t("tutor:messages.newMessage")}</DialogTitle>
                     <DialogDescription>
-                      Start a new conversation with a student.
+                      {t("tutor:messages.startConversation")}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="p-4 text-center text-gray-600">
@@ -247,7 +249,7 @@ const TutorMessages = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search conversations..."
+                placeholder={t("tutor:messages.searchConversations")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-white/40 border-white/20"
@@ -347,8 +349,8 @@ const TutorMessages = () => {
                       </h3>
                       <p className="text-sm text-gray-600">
                         {selectedConv.isOnline
-                          ? "Online"
-                          : "Last seen recently"}{" "}
+                          ? t("tutor:messages.online")
+                          : t("tutor:messages.lastSeenRecently")}{" "}
                         • {selectedConv.subject}
                       </p>
                     </div>
@@ -416,7 +418,7 @@ const TutorMessages = () => {
                   </Button>
                   <div className="flex-1">
                     <Textarea
-                      placeholder="Type your message..."
+                      placeholder={t("tutor:messages.typeMessage")}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       className="min-h-[40px] max-h-[120px] resize-none bg-white/40 border-white/20"
@@ -443,9 +445,9 @@ const TutorMessages = () => {
               <div className="text-center text-gray-500">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No conversation selected
+                  {t("tutor:messages.noConversations")}
                 </h3>
-                <p>Choose a conversation from the list to start messaging.</p>
+                <p>{t("tutor:messages.startConversation")}</p>
               </div>
             </CardContent>
           )}
@@ -460,7 +462,9 @@ const TutorMessages = () => {
             <div className="text-2xl font-bold text-blue-600">
               {conversations.length}
             </div>
-            <div className="text-sm text-gray-600">Total Conversations</div>
+            <div className="text-sm text-gray-600">
+              {t("tutor:messages.totalConversations")}
+            </div>
           </CardContent>
         </Card>
         <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -471,7 +475,9 @@ const TutorMessages = () => {
             <div className="text-2xl font-bold text-emerald-600">
               {conversations.reduce((sum, c) => sum + c.unreadCount, 0)}
             </div>
-            <div className="text-sm text-gray-600">Unread Messages</div>
+            <div className="text-sm text-gray-600">
+              {t("tutor:messages.unreadMessages")}
+            </div>
           </CardContent>
         </Card>
         <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -482,7 +488,9 @@ const TutorMessages = () => {
             <div className="text-2xl font-bold text-green-600">
               {conversations.filter((c) => c.isOnline).length}
             </div>
-            <div className="text-sm text-gray-600">Students Online</div>
+            <div className="text-sm text-gray-600">
+              {t("tutor:messages.studentsOnline")}
+            </div>
           </CardContent>
         </Card>
         <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -491,7 +499,9 @@ const TutorMessages = () => {
             <div className="text-2xl font-bold text-purple-600">
               {conversations.filter((c) => isToday(c.lastMessageTime)).length}
             </div>
-            <div className="text-sm text-gray-600">Messages Today</div>
+            <div className="text-sm text-gray-600">
+              {t("tutor:messages.messagesToday")}
+            </div>
           </CardContent>
         </Card>
       </div>

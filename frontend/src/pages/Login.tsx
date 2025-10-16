@@ -174,7 +174,7 @@ const Login = () => {
         if (!name.trim()) {
           toast({
             title: t("common.error"),
-            description: t("auth.nameRequired"),
+            description: t("auth:nameRequired"),
             variant: "destructive",
           });
           return;
@@ -183,8 +183,8 @@ const Login = () => {
         // Check password strength before submitting
         if (!passwordValidation.isValid) {
           toast({
-            title: t("auth.passwordRequirementsNotMet"),
-            description: t("auth.ensurePasswordRequirements"),
+            title: t("auth:passwordRequirementsNotMet"),
+            description: t("auth:ensurePasswordRequirements"),
             variant: "destructive",
           });
           return;
@@ -192,8 +192,8 @@ const Login = () => {
 
         await signupMutation.mutateAsync({ name, email, password });
         toast({
-          title: t("auth.accountCreated"),
-          description: t("auth.welcomeToArtori"),
+          title: t("auth:accountCreated"),
+          description: t("auth:welcomeToArtori"),
         });
         navigate("/practice"); // New users need to select an exam first
       }
@@ -203,7 +203,7 @@ const Login = () => {
         description:
           error instanceof Error
             ? error.message
-            : t("auth.authenticationFailed"),
+            : t("auth:authenticationFailed"),
         variant: "destructive",
       });
     }
@@ -237,13 +237,13 @@ const Login = () => {
               </div>
               <CardTitle className="text-2xl font-bold">
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {isLogin ? t("auth.welcomeBack") : t("auth.joinArtori")}
+                  {isLogin ? t("auth:welcomeBack") : t("auth:joinArtori")}
                 </span>
               </CardTitle>
               <CardDescription>
                 {isLogin
-                  ? t("auth.signInDescription")
-                  : t("auth.signUpDescription")}
+                  ? t("auth:signInDescription")
+                  : t("auth:signUpDescription")}
               </CardDescription>
             </CardHeader>
 
@@ -251,11 +251,11 @@ const Login = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                   <div className="space-y-2">
-                    <Label htmlFor="name">{t("auth.fullName")}</Label>
+                    <Label htmlFor="name">{t("auth:fullName")}</Label>
                     <Input
                       id="name"
                       type="text"
-                      placeholder={t("auth.enterFullName")}
+                      placeholder={t("auth:enterFullName")}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="bg-white/50 backdrop-blur-sm border-white/20"
@@ -265,13 +265,13 @@ const Login = () => {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">{t("auth.email")}</Label>
+                  <Label htmlFor="email">{t("auth:email")}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder={t("auth.enterEmail")}
+                      placeholder={t("auth:enterEmail")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -281,13 +281,13 @@ const Login = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">{t("auth.password")}</Label>
+                  <Label htmlFor="password">{t("auth:password")}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder={t("auth.enterPassword")}
+                      placeholder={t("auth:enterPassword")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 pr-10 bg-white/50 backdrop-blur-sm border-white/20"
@@ -310,7 +310,7 @@ const Login = () => {
                   {!isLogin && password && (
                     <div className="mt-3 p-3 bg-white/30 backdrop-blur-sm rounded-lg border border-white/20">
                       <p className="text-sm font-medium text-gray-700 mb-2">
-                        {t("auth.passwordRequirements")}
+                        {t("auth:passwordRequirements")}
                       </p>
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
@@ -326,7 +326,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            {t("auth.atLeast8Characters")}
+                            {t("auth:atLeast8Characters")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -342,7 +342,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            {t("auth.oneUppercaseLetter")}
+                            {t("auth:oneUppercaseLetter")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -358,7 +358,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            {t("auth.oneNumber")}
+                            {t("auth:oneNumber")}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -374,7 +374,7 @@ const Login = () => {
                                 : "text-red-600"
                             }`}
                           >
-                            {t("auth.oneSpecialCharacter")}
+                            {t("auth:oneSpecialCharacter")}
                           </span>
                         </div>
                       </div>
@@ -392,32 +392,32 @@ const Login = () => {
                 >
                   {isLoading
                     ? isLogin
-                      ? t("auth.signingIn")
-                      : t("auth.creatingAccount")
+                      ? t("auth:signingIn")
+                      : t("auth:creatingAccount")
                     : isLogin
-                    ? t("auth.signInButton")
-                    : t("auth.createAccountButton")}
+                    ? t("auth:signInButton")
+                    : t("auth:createAccountButton")}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
                 <p className="text-gray-600">
                   {isLogin
-                    ? t("auth.dontHaveAccount")
-                    : t("auth.alreadyHaveAccount")}
+                    ? t("auth:dontHaveAccount")
+                    : t("auth:alreadyHaveAccount")}
                 </p>
                 <button
                   onClick={() => setIsLogin(!isLogin)}
                   className="text-indigo-600 hover:text-indigo-700 font-medium"
                 >
-                  {isLogin ? t("auth.signUpHere") : t("auth.signInHere")}
+                  {isLogin ? t("auth:signUpHere") : t("auth:signInHere")}
                 </button>
               </div>
 
               {isLogin && (
                 <div className="mt-4 text-center">
                   <button className="text-sm text-gray-500 hover:text-gray-700">
-                    {t("auth.forgotPassword")}
+                    {t("auth:login.forgotPassword")}
                   </button>
                 </div>
               )}
@@ -427,7 +427,7 @@ const Login = () => {
 
         <div className="mt-8 text-center">
           <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-            {t("auth.joinStudents")}
+            {t("auth:joinStudents")}
           </Badge>
         </div>
       </div>

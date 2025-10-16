@@ -37,6 +37,7 @@ import {
   Filter,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const StudentTutors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +45,7 @@ const StudentTutors = () => {
   const [selectedTutor, setSelectedTutor] = useState<(typeof tutors)[0] | null>(
     null
   );
+  const { t } = useTranslation("student");
 
   // Mock tutor data - in a real app, this would come from an API
   const tutors = [
@@ -299,7 +301,10 @@ const StudentTutors = () => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <MessageSquare className="h-3 w-3" />
-                  <span>Responds {tutor.responseTime}</span>
+                  <span>
+                    {t("tutors.responds", { defaultValue: "Responds" })}{" "}
+                    {tutor.responseTime}
+                  </span>
                 </div>
               </div>
               <Badge
@@ -326,13 +331,13 @@ const StudentTutors = () => {
                     onClick={() => setSelectedTutor(tutor)}
                   >
                     <User className="h-3 w-3 mr-1" />
-                    View Profile
+                    {t("tutors.viewProfile")}
                   </Button>
                 </DialogTrigger>
               </Dialog>
               <Button className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600">
                 <MessageSquare className="h-3 w-3 mr-1" />
-                Contact
+                {t("tutors.contact", { defaultValue: "Contact" })}
               </Button>
             </div>
           </div>
@@ -343,8 +348,8 @@ const StudentTutors = () => {
 
   return (
     <StudentLayout
-      title="Find Tutors"
-      description="Connect with expert tutors to accelerate your learning."
+      title={t("tutors.title")}
+      description={t("tutors.description")}
     >
       <div className="space-y-6">
         {/* Search and Filters */}
@@ -354,7 +359,7 @@ const StudentTutors = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search tutors by name, subject, or expertise..."
+                  placeholder={t("tutors.searchTutors")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-white/40 border-white/20"
@@ -365,19 +370,19 @@ const StudentTutors = () => {
                 onValueChange={setSelectedSubject}
               >
                 <SelectTrigger className="w-full md:w-48 bg-white/40 border-white/20">
-                  <SelectValue placeholder="All Subjects" />
+                  <SelectValue placeholder={t("tutors.allSubjects")} />
                 </SelectTrigger>
                 <SelectContent>
                   {subjects.map((subject) => (
                     <SelectItem key={subject} value={subject}>
-                      {subject === "all" ? "All Subjects" : subject}
+                      {subject === "all" ? t("tutors.allSubjects") : subject}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <Button variant="outline" className="bg-white/40 border-white/20">
                 <Filter className="h-4 w-4 mr-2" />
-                More Filters
+                {t("tutors.moreFilters", { defaultValue: "More Filters" })}
               </Button>
             </div>
           </CardContent>
@@ -391,7 +396,11 @@ const StudentTutors = () => {
               <div className="text-2xl font-bold text-blue-600">
                 {filteredTutors.length}
               </div>
-              <div className="text-sm text-gray-600">Available Tutors</div>
+              <div className="text-sm text-gray-600">
+                {t("tutors.availableTutors", {
+                  defaultValue: "Available Tutors",
+                })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -402,14 +411,18 @@ const StudentTutors = () => {
               <div className="text-2xl font-bold text-green-600">
                 {onlineTutors.length}
               </div>
-              <div className="text-sm text-gray-600">Online Now</div>
+              <div className="text-sm text-gray-600">
+                {t("tutors.onlineNow", { defaultValue: "Online Now" })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
             <CardContent className="p-4 text-center">
               <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-yellow-600">4.8</div>
-              <div className="text-sm text-gray-600">Avg Rating</div>
+              <div className="text-sm text-gray-600">
+                {t("tutors.avgRating", { defaultValue: "Avg Rating" })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -418,7 +431,9 @@ const StudentTutors = () => {
               <div className="text-2xl font-bold text-red-600">
                 {favoriteTutors.length}
               </div>
-              <div className="text-sm text-gray-600">Favorites</div>
+              <div className="text-sm text-gray-600">
+                {t("tutors.favorites", { defaultValue: "Favorites" })}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -427,13 +442,16 @@ const StudentTutors = () => {
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-3 backdrop-blur-sm bg-white/60 border-white/20">
             <TabsTrigger value="all">
-              All Tutors ({filteredTutors.length})
+              {t("tutors.allTutors", { defaultValue: "All Tutors" })} (
+              {filteredTutors.length})
             </TabsTrigger>
             <TabsTrigger value="online">
-              Online Now ({onlineTutors.length})
+              {t("tutors.onlineNow", { defaultValue: "Online Now" })} (
+              {onlineTutors.length})
             </TabsTrigger>
             <TabsTrigger value="favorites">
-              Favorites ({favoriteTutors.length})
+              {t("tutors.favorites", { defaultValue: "Favorites" })} (
+              {favoriteTutors.length})
             </TabsTrigger>
           </TabsList>
 
@@ -464,11 +482,15 @@ const StudentTutors = () => {
                   <CardContent className="p-12 text-center">
                     <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No favorite tutors yet
+                      {t("tutors.noFavorites", {
+                        defaultValue: "No favorite tutors yet",
+                      })}
                     </h3>
                     <p className="text-gray-600">
-                      Click the heart icon on any tutor to add them to your
-                      favorites.
+                      {t("tutors.noFavoritesDescription", {
+                        defaultValue:
+                          "Click the heart icon on any tutor to add them to your favorites.",
+                      })}
                     </p>
                   </CardContent>
                 </Card>
@@ -482,10 +504,13 @@ const StudentTutors = () => {
             <CardContent className="p-12 text-center">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No tutors found
+                {t("tutors.noTutorsFound", { defaultValue: "No tutors found" })}
               </h3>
               <p className="text-gray-600">
-                Try adjusting your search terms or filters to find more tutors.
+                {t("tutors.noTutorsFoundDescription", {
+                  defaultValue:
+                    "Try adjusting your search terms or filters to find more tutors.",
+                })}
               </p>
             </CardContent>
           </Card>
@@ -498,9 +523,14 @@ const StudentTutors = () => {
         >
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Tutor Profile</DialogTitle>
+              <DialogTitle>
+                {t("tutors.tutorProfile", { defaultValue: "Tutor Profile" })}
+              </DialogTitle>
               <DialogDescription>
-                Learn more about this tutor and book a session.
+                {t("tutors.tutorProfileDescription", {
+                  defaultValue:
+                    "Learn more about this tutor and book a session.",
+                })}
               </DialogDescription>
             </DialogHeader>
             {selectedTutor && (
@@ -535,7 +565,8 @@ const StudentTutors = () => {
                           {selectedTutor.rating}
                         </span>
                         <span className="text-gray-600">
-                          ({selectedTutor.reviewCount} reviews)
+                          ({selectedTutor.reviewCount}{" "}
+                          {t("tutors.reviews", { defaultValue: "reviews" })})
                         </span>
                       </div>
                       <Badge className="bg-green-100 text-green-800">
@@ -547,37 +578,49 @@ const StudentTutors = () => {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium">Experience:</span>
+                    <span className="font-medium">
+                      {t("tutors.experience")}:
+                    </span>
                     <span className="ml-2">{selectedTutor.experience}</span>
                   </div>
                   <div>
-                    <span className="font-medium">Location:</span>
+                    <span className="font-medium">
+                      {t("tutors.location", { defaultValue: "Location" })}:
+                    </span>
                     <span className="ml-2">{selectedTutor.location}</span>
                   </div>
                   <div>
-                    <span className="font-medium">Languages:</span>
+                    <span className="font-medium">
+                      {t("tutors.languages")}:
+                    </span>
                     <span className="ml-2">
                       {selectedTutor.languages.join(", ")}
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium">Sessions:</span>
+                    <span className="font-medium">
+                      {t("tutors.sessions", { defaultValue: "Sessions" })}:
+                    </span>
                     <span className="ml-2">{selectedTutor.totalSessions}+</span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">About</h4>
+                  <h4 className="font-medium mb-2">
+                    {t("tutors.about", { defaultValue: "About" })}
+                  </h4>
                   <p className="text-gray-700">{selectedTutor.description}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Education</h4>
+                  <h4 className="font-medium mb-2">{t("tutors.education")}</h4>
                   <p className="text-gray-700">{selectedTutor.education}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Subjects</h4>
+                  <h4 className="font-medium mb-2">
+                    {t("tutors.subjects", { defaultValue: "Subjects" })}
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTutor.subjects.map((subject, index) => (
                       <Badge key={index} variant="secondary">
@@ -588,7 +631,9 @@ const StudentTutors = () => {
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Achievements</h4>
+                  <h4 className="font-medium mb-2">
+                    {t("tutors.achievements")}
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedTutor.achievements.map((achievement, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
@@ -602,11 +647,11 @@ const StudentTutors = () => {
                 <div className="flex space-x-3">
                   <Button className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600">
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    Send Message
+                    {t("tutors.sendMessage")}
                   </Button>
                   <Button className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600">
                     <Calendar className="h-4 w-4 mr-2" />
-                    Book Session
+                    {t("tutors.bookSession")}
                   </Button>
                 </div>
               </div>

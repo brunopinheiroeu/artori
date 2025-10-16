@@ -26,28 +26,28 @@ const Footer = ({
 
   const footerLinks = {
     product: [
-      { name: t("footer.links.features"), href: "/#features" },
-      { name: t("footer.links.pricing"), href: "/pricing" },
-      { name: t("footer.links.forSchools"), href: "/solutions" },
-      { name: t("footer.links.api"), href: "/api" },
+      { name: t("footer:links.features"), href: "/#features" },
+      { name: t("footer:links.pricing"), href: "/pricing" },
+      { name: t("footer:links.forSchools"), href: "/solutions" },
+      { name: t("footer:links.api"), href: "/api" },
     ],
     company: [
-      { name: t("footer.links.about"), href: "/about" },
-      { name: t("footer.links.blog"), href: "/blog" },
-      { name: t("footer.links.careers"), href: "/careers" },
-      { name: t("footer.links.press"), href: "/press" },
+      { name: t("footer:links.about"), href: "/about" },
+      { name: t("footer:links.blog"), href: "/blog" },
+      { name: t("footer:links.careers"), href: "/careers" },
+      { name: t("footer:links.press"), href: "/press" },
     ],
     resources: [
-      { name: t("footer.links.helpCenter"), href: "/help" },
-      { name: t("footer.links.community"), href: "/community" },
-      { name: t("footer.links.guides"), href: "/guides" },
-      { name: t("footer.links.webinars"), href: "/webinars" },
+      { name: t("footer:links.helpCenter"), href: "/help" },
+      { name: t("footer:links.community"), href: "/community" },
+      { name: t("footer:links.guides"), href: "/guides" },
+      { name: t("footer:links.webinars"), href: "/webinars" },
     ],
     legal: [
-      { name: t("footer.links.privacyPolicy"), href: "/privacy" },
-      { name: t("footer.links.termsOfService"), href: "/terms" },
-      { name: t("footer.links.cookiePolicy"), href: "/cookies" },
-      { name: t("footer.links.gdpr"), href: "/gdpr" },
+      { name: t("footer:links.privacyPolicy"), href: "/privacy" },
+      { name: t("footer:links.termsOfService"), href: "/terms" },
+      { name: t("footer:links.cookiePolicy"), href: "/cookies" },
+      { name: t("footer:links.gdpr"), href: "/gdpr" },
     ],
   };
 
@@ -83,7 +83,7 @@ const Footer = ({
                       {brandName}
                     </span>
                     <p className="text-xs text-gray-500">
-                      {t("footer.poweredBy")}
+                      {t("footer:poweredBy")}
                     </p>
                   </div>
                 </>
@@ -100,8 +100,8 @@ const Footer = ({
 
             <p className="text-gray-600 mb-6 leading-relaxed">
               {isSchool
-                ? t("footer.schoolDescription", { brandName })
-                : t("footer.description")}
+                ? t("footer:schoolDescription", { brandName })
+                : t("footer:description")}
             </p>
 
             {/* Contact Info */}
@@ -139,8 +139,8 @@ const Footer = ({
             {/* Copyright integrated into brand section */}
             <div className="text-sm text-gray-600">
               © 2025 {brandName}.{" "}
-              {isSchool ? `${t("footer.poweredBy")} - ` : ""}
-              {t("footer.copyright")}
+              {isSchool ? `${t("footer:poweredBy")} - ` : ""}
+              {t("footer:copyright")}
             </div>
           </div>
 
@@ -149,7 +149,7 @@ const Footer = ({
             {/* Product */}
             <div>
               <h3 className="font-semibold text-gray-800 mb-4">
-                {t("footer.product")}
+                {t("footer:product")}
               </h3>
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
@@ -168,7 +168,7 @@ const Footer = ({
             {/* Company */}
             <div>
               <h3 className="font-semibold text-gray-800 mb-4">
-                {t("footer.company")}
+                {t("footer:company")}
               </h3>
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
@@ -187,7 +187,7 @@ const Footer = ({
             {/* Resources */}
             <div>
               <h3 className="font-semibold text-gray-800 mb-4">
-                {t("footer.resources")}
+                {t("footer:resources")}
               </h3>
               <ul className="space-y-3">
                 {footerLinks.resources.map((link) => (
@@ -206,7 +206,7 @@ const Footer = ({
             {/* Legal */}
             <div>
               <h3 className="font-semibold text-gray-800 mb-4">
-                {t("footer.legal")}
+                {t("footer:legal")}
               </h3>
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (

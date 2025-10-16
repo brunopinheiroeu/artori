@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import { useState } from "react";
 import { format, addDays, startOfWeek, isSameDay, isToday } from "date-fns";
 
 const TutorSchedule = () => {
+  const { t } = useTranslation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -194,8 +196,8 @@ const TutorSchedule = () => {
 
   return (
     <TutorLayout
-      title="Schedule"
-      description="Manage your tutoring sessions and availability."
+      title={t("tutor:schedule.title")}
+      description={t("tutor:schedule.description")}
     >
       <div className="space-y-6">
         {/* Quick Stats */}
@@ -206,7 +208,9 @@ const TutorSchedule = () => {
               <div className="text-2xl font-bold text-blue-600">
                 {selectedDateSessions.length}
               </div>
-              <div className="text-sm text-gray-600">Today's Sessions</div>
+              <div className="text-sm text-gray-600">
+                {t("tutor:schedule.todaysSessions")}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -215,7 +219,9 @@ const TutorSchedule = () => {
               <div className="text-2xl font-bold text-emerald-600">
                 {upcomingSessions.length}
               </div>
-              <div className="text-sm text-gray-600">This Week</div>
+              <div className="text-sm text-gray-600">
+                {t("tutor:schedule.thisWeek")}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -224,7 +230,9 @@ const TutorSchedule = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {sessions.filter((s) => s.type === "online").length}
               </div>
-              <div className="text-sm text-gray-600">Online Sessions</div>
+              <div className="text-sm text-gray-600">
+                {t("tutor:schedule.onlineSessions")}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -233,7 +241,9 @@ const TutorSchedule = () => {
               <div className="text-2xl font-bold text-orange-600">
                 {sessions.filter((s) => s.type === "in-person").length}
               </div>
-              <div className="text-sm text-gray-600">In-Person</div>
+              <div className="text-sm text-gray-600">
+                {t("tutor:schedule.inPerson")}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -242,30 +252,37 @@ const TutorSchedule = () => {
         <Tabs defaultValue="week" className="w-full">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="backdrop-blur-sm bg-white/60 border-white/20">
-              <TabsTrigger value="week">Week View</TabsTrigger>
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="day">Day View</TabsTrigger>
+              <TabsTrigger value="week">
+                {t("tutor:schedule.weekView")}
+              </TabsTrigger>
+              <TabsTrigger value="upcoming">
+                {t("tutor:schedule.upcoming")}
+              </TabsTrigger>
+              <TabsTrigger value="day">
+                {t("tutor:schedule.dayView")}
+              </TabsTrigger>
             </TabsList>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-emerald-500 to-teal-600">
                   <Plus className="h-4 w-4 mr-2" />
-                  Schedule Session
+                  {t("tutor:schedule.scheduleSession")}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Schedule New Session</DialogTitle>
+                  <DialogTitle>
+                    {t("tutor:schedule.scheduleNewSession")}
+                  </DialogTitle>
                   <DialogDescription>
-                    Create a new tutoring session with a student.
+                    {t("tutor:schedule.createNewSession")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="p-4 text-center text-gray-600">
                   <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p>Session scheduling form would go here.</p>
+                  <p>{t("tutor:schedule.schedulingFormPlaceholder")}</p>
                   <p className="text-sm mt-2">
-                    This would include student selection, date/time picker,
-                    subject, and session details.
+                    {t("tutor:schedule.schedulingFormDescription")}
                   </p>
                 </div>
               </DialogContent>
@@ -278,7 +295,10 @@ const TutorSchedule = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2">
                     <Calendar className="h-5 w-5" />
-                    <span>Week of {format(weekStart, "MMM d, yyyy")}</span>
+                    <span>
+                      {t("tutor:schedule.weekOf")}{" "}
+                      {format(weekStart, "MMM d, yyyy")}
+                    </span>
                   </CardTitle>
                   <div className="flex space-x-2">
                     <Button
@@ -356,7 +376,7 @@ const TutorSchedule = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Clock className="h-5 w-5" />
-                  <span>Upcoming Sessions</span>
+                  <span>{t("tutor:schedule.upcomingSessions")}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -375,10 +395,10 @@ const TutorSchedule = () => {
                   <div className="text-center py-8">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No upcoming sessions
+                      {t("tutor:schedule.noUpcomingSessions")}
                     </h3>
                     <p className="text-gray-600">
-                      Schedule your first session to get started.
+                      {t("tutor:schedule.scheduleFirstSession")}
                     </p>
                   </div>
                 )}
@@ -423,10 +443,10 @@ const TutorSchedule = () => {
                   <div className="text-center py-8">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No sessions scheduled
+                      {t("tutor:schedule.noSessionsScheduled")}
                     </h3>
                     <p className="text-gray-600">
-                      No sessions are scheduled for this day.
+                      {t("tutor:schedule.noSessionsThisDay")}
                     </p>
                   </div>
                 )}

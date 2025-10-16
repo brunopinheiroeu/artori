@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -45,6 +46,7 @@ import { toast } from "@/hooks/use-toast";
 import StudentLayout from "@/components/StudentLayout";
 
 const Practice = () => {
+  const { t } = useTranslation("practice");
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: exams, isLoading: examsLoading } = useExams();
@@ -78,13 +80,13 @@ const Practice = () => {
     try {
       await setUserExamMutation.mutateAsync(examId);
       toast({
-        title: "Exam selected",
-        description: "You can now start practicing!",
+        title: t("examSelected"),
+        description: t("canStartPracticing"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to select exam",
+        title: t("common.error"),
+        description: t("failedToSelectExam"),
         variant: "destructive",
       });
     }
@@ -102,8 +104,10 @@ const Practice = () => {
     navigate(`/question/${examId}/${subjectId}?${params.toString()}`);
 
     toast({
-      title: "Exam Started!",
-      description: `Starting ${examSetup.mode} session with ${examSetup.questionCount} questions`,
+      title: t("examStarted"),
+      description: `${t("startingSession")} ${examSetup.mode} ${t(
+        "sessionWith"
+      )} ${examSetup.questionCount} ${t("questions")}`,
     });
   };
 
@@ -112,7 +116,7 @@ const Practice = () => {
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -142,16 +146,15 @@ const Practice = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl"></div>
               <div className="relative z-10 p-8">
                 <Badge className="mb-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
-                  👋 Welcome, {user.name}!
+                  👋 {t("welcome")} {user.name}!
                 </Badge>
                 <h1 className="text-5xl font-bold mb-4">
                   <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    Choose Your Exam
+                    {t("chooseYourExam")}
                   </span>
                 </h1>
                 <p className="text-xl text-gray-600">
-                  Select the exam you're preparing for to start your study
-                  journey
+                  {t("selectExamDescription")}
                 </p>
               </div>
             </div>
@@ -184,7 +187,7 @@ const Practice = () => {
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm font-medium text-gray-700 mb-2">
-                        Subjects:
+                        {t("subjects")}:
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {exam.subjects &&
@@ -206,7 +209,9 @@ const Practice = () => {
                     </div>
 
                     <div className="text-sm text-gray-600">
-                      {exam.total_questions || 0} practice questions available
+                      {t("questionsAvailable", {
+                        count: exam.total_questions || 0,
+                      })}
                     </div>
 
                     <Button
@@ -214,7 +219,7 @@ const Practice = () => {
                         exam.gradient || "from-blue-500 to-purple-500"
                       } hover:shadow-lg transition-all`}
                     >
-                      Start Preparation
+                      {t("startPreparation")}
                     </Button>
                   </div>
                 </CardContent>
@@ -228,10 +233,7 @@ const Practice = () => {
 
   // If user has selected an exam, show practice content with sidebar
   return (
-    <StudentLayout
-      title="Practice"
-      description="Continue your exam preparation with focused practice sessions."
-    >
+    <StudentLayout title={t("title")} description={t("description")}>
       <div className="space-y-6">
         {/* Dynamic Dashboard */}
         {dashboardData && (
@@ -260,12 +262,13 @@ const Practice = () => {
                         "from-blue-600 to-purple-600"
                       } bg-clip-text text-transparent`}
                     >
-                      Practice Sessions
+                      {t("practiceSessions")}
                     </span>
                   </h1>
                   <p className="text-lg text-gray-600">
-                    Continue your {dashboardData.selected_exam.name}{" "}
-                    preparation. Choose a subject to practice!
+                    {t("continuePreparation", {
+                      examName: dashboardData.selected_exam.name,
+                    })}
                   </p>
                 </div>
               </div>
@@ -276,9 +279,11 @@ const Practice = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-xl">Overall Progress</CardTitle>
+                    <CardTitle className="text-xl">
+                      {t("overallProgress")}
+                    </CardTitle>
                     <CardDescription>
-                      Your performance across all sections
+                      {t("performanceAcrossSections")}
                     </CardDescription>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -291,11 +296,15 @@ const Practice = () => {
                           : 0}
                         %
                       </div>
-                      <div className="text-xs text-gray-600">Complete</div>
+                      <div className="text-xs text-gray-600">
+                        {t("complete")}
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-red-600">89</div>
-                      <div className="text-xs text-gray-600">Days left</div>
+                      <div className="text-xs text-gray-600">
+                        {t("daysLeft")}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -311,7 +320,7 @@ const Practice = () => {
                       {dashboardData.user_progress?.questions_solved || 0}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Questions Solved
+                      {t("questionsSolved")}
                     </div>
                   </div>
                   <div>
@@ -321,19 +330,25 @@ const Practice = () => {
                         : 0}
                       %
                     </div>
-                    <div className="text-sm text-gray-600">Accuracy Rate</div>
+                    <div className="text-sm text-gray-600">
+                      {t("accuracyRate")}
+                    </div>
                   </div>
                   <div>
                     <div className="text-lg font-bold text-orange-600">
                       {dashboardData.user_progress?.study_time_hours || 0}h
                     </div>
-                    <div className="text-sm text-gray-600">Study Time</div>
+                    <div className="text-sm text-gray-600">
+                      {t("studyTime")}
+                    </div>
                   </div>
                   <div>
                     <div className="text-lg font-bold text-green-600">
                       {dashboardData.user_progress?.current_streak_days || 0}
                     </div>
-                    <div className="text-sm text-gray-600">Day Streak</div>
+                    <div className="text-sm text-gray-600">
+                      {t("dayStreak")}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -370,7 +385,7 @@ const Practice = () => {
                       <div className="space-y-4">
                         <div>
                           <div className="flex justify-between text-sm text-gray-600 mb-2">
-                            <span>Progress</span>
+                            <span>{t("progress")}</span>
                             <span>
                               {subjectProgress
                                 ? Math.round(subjectProgress.progress)
@@ -385,13 +400,15 @@ const Practice = () => {
                         </div>
 
                         <div className="flex justify-between text-sm text-gray-600">
-                          <span>{subject.total_questions || 0} questions</span>
+                          <span>
+                            {subject.total_questions || 0} {t("questions")}
+                          </span>
                           <span className="flex items-center">
                             <TrendingUp className="h-3 w-3 mr-1" />
                             {subjectProgress
                               ? Math.round(subjectProgress.accuracy_rate)
                               : 0}
-                            % accuracy
+                            % {t("accuracy")}
                           </span>
                         </div>
 
@@ -404,17 +421,18 @@ const Practice = () => {
                               } hover:shadow-lg transition-all`}
                             >
                               <Settings className="h-4 w-4 mr-2" />
-                              Continue Studying
+                              {t("continueStudying")}
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-md">
                             <DialogHeader>
                               <DialogTitle className="flex items-center space-x-2">
                                 <Brain className="h-5 w-5 text-indigo-600" />
-                                <span>Setup Your Practice Session</span>
+                                <span>{t("setupPracticeSession")}</span>
                               </DialogTitle>
                               <DialogDescription>
-                                Customize your {subject.name} practice session
+                                {t("customizeSession")} {subject.name}{" "}
+                                {t("practiceSession")}
                               </DialogDescription>
                             </DialogHeader>
 
@@ -425,7 +443,7 @@ const Practice = () => {
                                   htmlFor="questionCount"
                                   className="text-sm font-medium"
                                 >
-                                  Number of Questions
+                                  {t("numberOfQuestions")}
                                 </Label>
                                 <Select
                                   value={examSetup.questionCount}
@@ -441,19 +459,19 @@ const Practice = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="5">
-                                      5 Questions (Quick)
+                                      {t("5QuestionsQuick")}
                                     </SelectItem>
                                     <SelectItem value="10">
-                                      10 Questions
+                                      {t("10Questions")}
                                     </SelectItem>
                                     <SelectItem value="20">
-                                      20 Questions (Recommended)
+                                      {t("20QuestionsRecommended")}
                                     </SelectItem>
                                     <SelectItem value="30">
-                                      30 Questions
+                                      {t("30Questions")}
                                     </SelectItem>
                                     <SelectItem value="50">
-                                      50 Questions (Full Test)
+                                      {t("50QuestionsFullTest")}
                                     </SelectItem>
                                   </SelectContent>
                                 </Select>
@@ -465,7 +483,7 @@ const Practice = () => {
                                   htmlFor="difficulty"
                                   className="text-sm font-medium"
                                 >
-                                  Difficulty Level
+                                  {t("difficultyLevel")}
                                 </Label>
                                 <Select
                                   value={examSetup.difficulty}
@@ -483,25 +501,25 @@ const Practice = () => {
                                     <SelectItem value="easy">
                                       <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>Easy</span>
+                                        <span>{t("easy")}</span>
                                       </div>
                                     </SelectItem>
                                     <SelectItem value="medium">
                                       <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                                        <span>Medium</span>
+                                        <span>{t("medium")}</span>
                                       </div>
                                     </SelectItem>
                                     <SelectItem value="hard">
                                       <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                                        <span>Hard</span>
+                                        <span>{t("hard")}</span>
                                       </div>
                                     </SelectItem>
                                     <SelectItem value="mixed">
                                       <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full"></div>
-                                        <span>Mixed (Recommended)</span>
+                                        <span>{t("mixedRecommended")}</span>
                                       </div>
                                     </SelectItem>
                                   </SelectContent>
@@ -514,7 +532,7 @@ const Practice = () => {
                                   htmlFor="timeLimit"
                                   className="text-sm font-medium"
                                 >
-                                  Time Limit
+                                  {t("timeLimit")}
                                 </Label>
                                 <Select
                                   value={examSetup.timeLimit}
@@ -532,18 +550,20 @@ const Practice = () => {
                                     <SelectItem value="unlimited">
                                       <div className="flex items-center space-x-2">
                                         <Clock className="h-3 w-3" />
-                                        <span>No Time Limit</span>
+                                        <span>{t("noTimeLimit")}</span>
                                       </div>
                                     </SelectItem>
                                     <SelectItem value="30">
-                                      30 Minutes
+                                      {t("30Minutes")}
                                     </SelectItem>
                                     <SelectItem value="45">
-                                      45 Minutes
+                                      {t("45Minutes")}
                                     </SelectItem>
-                                    <SelectItem value="60">1 Hour</SelectItem>
+                                    <SelectItem value="60">
+                                      {t("1Hour")}
+                                    </SelectItem>
                                     <SelectItem value="90">
-                                      1.5 Hours
+                                      {t("1Point5Hours")}
                                     </SelectItem>
                                   </SelectContent>
                                 </Select>
@@ -555,7 +575,7 @@ const Practice = () => {
                                   htmlFor="mode"
                                   className="text-sm font-medium"
                                 >
-                                  Practice Mode
+                                  {t("practiceMode")}
                                 </Label>
                                 <Select
                                   value={examSetup.mode}
@@ -571,7 +591,7 @@ const Practice = () => {
                                       <div className="flex items-center space-x-2">
                                         <BookOpen className="h-3 w-3" />
                                         <span>
-                                          Practice Mode (with explanations)
+                                          {t("practiceModeWithExplanations")}
                                         </span>
                                       </div>
                                     </SelectItem>
@@ -579,7 +599,7 @@ const Practice = () => {
                                       <div className="flex items-center space-x-2">
                                         <Zap className="h-3 w-3" />
                                         <span>
-                                          Exam Mode (timed, no explanations)
+                                          {t("examModeTimedNoExplanations")}
                                         </span>
                                       </div>
                                     </SelectItem>
@@ -592,26 +612,29 @@ const Practice = () => {
                               {/* Summary */}
                               <div className="bg-indigo-50 p-4 rounded-lg">
                                 <h4 className="font-medium text-indigo-900 mb-2">
-                                  Session Summary
+                                  {t("sessionSummary")}
                                 </h4>
                                 <div className="text-sm text-indigo-700 space-y-1">
                                   <div>
-                                    📝 {examSetup.questionCount} questions
+                                    📝 {examSetup.questionCount}{" "}
+                                    {t("questions")}
                                   </div>
                                   <div>
-                                    🎯 {examSetup.difficulty} difficulty
+                                    🎯 {examSetup.difficulty} {t("difficulty")}
                                   </div>
                                   <div>
                                     ⏱️{" "}
                                     {examSetup.timeLimit === "unlimited"
-                                      ? "No time limit"
-                                      : `${examSetup.timeLimit} minutes`}
+                                      ? t("noTimeLimit")
+                                      : `${examSetup.timeLimit} ${t(
+                                          "minutes"
+                                        )}`}
                                   </div>
                                   <div>
                                     🧠{" "}
                                     {examSetup.mode === "practice"
-                                      ? "Practice mode with AI explanations"
-                                      : "Exam mode (timed)"}
+                                      ? t("practiceModeWithAI")
+                                      : t("examModeTimed")}
                                   </div>
                                 </div>
                               </div>
@@ -627,7 +650,7 @@ const Practice = () => {
                                 size="lg"
                               >
                                 <Target className="h-4 w-4 mr-2" />
-                                Start Practice Session
+                                {t("startPracticeSession")}
                               </Button>
                             </div>
                           </DialogContent>
@@ -646,15 +669,17 @@ const Practice = () => {
                   <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                     <Target className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-lg">Full Practice Test</CardTitle>
+                  <CardTitle className="text-lg">
+                    {t("fullPracticeTest")}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-sm text-gray-600 mb-4">
-                    Take a complete {dashboardData.selected_exam.name} practice
-                    test under timed conditions
+                    {t("takeCompleteTest")} {dashboardData.selected_exam.name}{" "}
+                    {t("underTimedConditions")}
                   </p>
                   <Button variant="outline" className="w-full">
-                    Start Practice Test
+                    {t("startPracticeTest")}
                   </Button>
                 </CardContent>
               </Card>
@@ -664,14 +689,14 @@ const Practice = () => {
                   <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
                     <BookOpen className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-lg">Smart Review</CardTitle>
+                  <CardTitle className="text-lg">{t("smartReview")}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-sm text-gray-600 mb-4">
-                    Review questions you got wrong with AI explanations
+                    {t("reviewWrongQuestions")}
                   </p>
                   <Button variant="outline" className="w-full">
-                    Start Review
+                    {t("startReview")}
                   </Button>
                 </CardContent>
               </Card>
@@ -681,14 +706,14 @@ const Practice = () => {
                   <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center">
                     <Calendar className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-lg">Study Plan</CardTitle>
+                  <CardTitle className="text-lg">{t("studyPlan")}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-sm text-gray-600 mb-4">
-                    View your personalized schedule until test day
+                    {t("viewPersonalizedSchedule")}
                   </p>
                   <Button variant="outline" className="w-full">
-                    View Schedule
+                    {t("viewSchedule")}
                   </Button>
                 </CardContent>
               </Card>

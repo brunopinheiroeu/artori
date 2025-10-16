@@ -131,6 +131,11 @@ JWT_EXPIRES_IN_MINUTES = int(os.getenv("JWT_EXPIRES_IN_MINUTES", "30"))
 # Default language for internationalization
 DEFAULT_LANGUAGE = "en"
 
+def get_translation(key: str, language: str = DEFAULT_LANGUAGE) -> str:
+    """Get translation for a given key and language"""
+    # Simple fallback function - returns the key if no translation system is implemented
+    return key
+
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

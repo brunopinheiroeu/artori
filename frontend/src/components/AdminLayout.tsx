@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AdminSidebar from "./AdminSidebar";
 import Footer from "./Footer";
 import LanguageSelector from "./LanguageSelector";
@@ -19,6 +20,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Check if user is authenticated
@@ -65,18 +67,17 @@ const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
               <AlertTriangle className="h-16 w-16 text-red-500" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Access Denied
+              {t("common.accessDenied")}
             </h2>
             <p className="text-gray-600 mb-6">
-              You don't have permission to access the admin panel. Please
-              contact your administrator if you believe this is an error.
+              {t("common.tutorAccessDeniedMessage")}
             </p>
             <div className="space-y-3">
               <Button
                 onClick={() => navigate("/")}
                 className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
               >
-                Return to Home
+                {t("common.returnToHome")}
               </Button>
               <Button
                 variant="outline"
@@ -87,7 +88,7 @@ const AdminLayout = ({ children, title, description }: AdminLayoutProps) => {
                 className="w-full"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+                {t("common.signOut")}
               </Button>
             </div>
           </CardContent>

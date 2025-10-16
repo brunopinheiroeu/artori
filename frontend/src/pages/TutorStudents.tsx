@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import {
 import { useState } from "react";
 
 const TutorStudents = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Mock student data - in a real app, this would come from an API
@@ -169,7 +171,9 @@ const TutorStudents = () => {
         <div className="space-y-3">
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600">Subjects</span>
+              <span className="text-gray-600">
+                {t("tutor:students.subjects")}
+              </span>
             </div>
             <div className="flex flex-wrap gap-1">
               {student.subjects.map((subject, index) => (
@@ -182,7 +186,9 @@ const TutorStudents = () => {
 
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600">Progress</span>
+              <span className="text-gray-600">
+                {t("tutor:students.progress")}
+              </span>
               <span className="text-gray-900">{student.progress}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -195,13 +201,15 @@ const TutorStudents = () => {
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-gray-600">Sessions:</span>
+              <span className="text-gray-600">
+                {t("tutor:students.sessions")}:
+              </span>
               <span className="ml-1 font-medium">
                 {student.sessionsCompleted}
               </span>
             </div>
             <div>
-              <span className="text-gray-600">Next:</span>
+              <span className="text-gray-600">{t("tutor:students.next")}:</span>
               <span className="ml-1 font-medium text-emerald-600">
                 {student.nextSession}
               </span>
@@ -220,11 +228,11 @@ const TutorStudents = () => {
             className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600"
           >
             <MessageSquare className="h-3 w-3 mr-1" />
-            Message
+            {t("tutor:students.message")}
           </Button>
           <Button size="sm" variant="outline" className="flex-1">
             <Calendar className="h-3 w-3 mr-1" />
-            Schedule
+            {t("tutor:students.schedule")}
           </Button>
         </div>
       </CardContent>
@@ -233,8 +241,8 @@ const TutorStudents = () => {
 
   return (
     <TutorLayout
-      title="My Students"
-      description="Manage your students and track their progress."
+      title={t("tutor:students.title")}
+      description={t("tutor:students.description")}
     >
       <div className="space-y-6">
         {/* Search and Stats */}
@@ -242,7 +250,7 @@ const TutorStudents = () => {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search students or subjects..."
+              placeholder={t("tutor:students.searchStudentsOrSubjects")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 backdrop-blur-sm bg-white/60 border-white/20"
@@ -253,19 +261,23 @@ const TutorStudents = () => {
               <div className="font-semibold text-emerald-600">
                 {activeStudents.length}
               </div>
-              <div className="text-gray-600">Active</div>
+              <div className="text-gray-600">{t("tutor:students.active")}</div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-gray-600">
                 {inactiveStudents.length}
               </div>
-              <div className="text-gray-600">Inactive</div>
+              <div className="text-gray-600">
+                {t("tutor:students.inactive")}
+              </div>
             </div>
             <div className="text-center">
               <div className="font-semibold text-blue-600">
                 {students.reduce((sum, s) => sum + s.sessionsCompleted, 0)}
               </div>
-              <div className="text-gray-600">Total Sessions</div>
+              <div className="text-gray-600">
+                {t("tutor:students.totalSessions")}
+              </div>
             </div>
           </div>
         </div>
@@ -274,13 +286,13 @@ const TutorStudents = () => {
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-3 backdrop-blur-sm bg-white/60 border-white/20">
             <TabsTrigger value="all">
-              All Students ({filteredStudents.length})
+              {t("tutor:students.allStudents")} ({filteredStudents.length})
             </TabsTrigger>
             <TabsTrigger value="active">
-              Active ({activeStudents.length})
+              {t("tutor:students.active")} ({activeStudents.length})
             </TabsTrigger>
             <TabsTrigger value="inactive">
-              Inactive ({inactiveStudents.length})
+              {t("tutor:students.inactive")} ({inactiveStudents.length})
             </TabsTrigger>
           </TabsList>
 
@@ -314,12 +326,12 @@ const TutorStudents = () => {
             <CardContent className="p-12 text-center">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No students found
+                {t("tutor:students.noStudentsFound")}
               </h3>
               <p className="text-gray-600">
                 {searchTerm
-                  ? "Try adjusting your search terms."
-                  : "You haven't added any students yet."}
+                  ? t("tutor:students.adjustSearchTerms")
+                  : t("tutor:students.noStudentsAdded")}
               </p>
             </CardContent>
           </Card>

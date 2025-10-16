@@ -7,6 +7,10 @@ import solutions from "./solutions.json";
 import demo from "./demo.json";
 import footer from "./footer.json";
 import admin from "./admin.json";
+import student from "./student.json";
+import tutor from "./tutor.json";
+import questions from "./questions.json";
+import practice from "./practice.json";
 
 export default {
   common,
@@ -18,4 +22,8 @@ export default {
   demo,
   footer,
   admin,
+  student,
+  tutor,
+  questions,
+  practice,
 };

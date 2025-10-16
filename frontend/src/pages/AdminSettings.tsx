@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import AdminLayout from "@/components/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ interface SettingsState {
 }
 
 const AdminSettings = () => {
+  const { t } = useTranslation("admin");
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
 
@@ -158,7 +160,7 @@ const AdminSettings = () => {
   // Redirect non-super_admin users
   useEffect(() => {
     if (!authLoading && user && !isSuperAdmin) {
-      toast.error("Access denied. Only Super Admins can access settings.");
+      toast.error(t("settings.accessDenied"));
       navigate("/admin");
     }
   }, [user, isSuperAdmin, authLoading, navigate]);
@@ -224,14 +226,10 @@ const AdminSettings = () => {
       { category, settings: categorySettings },
       {
         onSuccess: () => {
-          toast.success(
-            `${
-              category.charAt(0).toUpperCase() + category.slice(1)
-            } settings saved successfully`
-          );
+          toast.success(t("settings.settingsSaved"));
         },
         onError: (error) => {
-          toast.error(`Failed to save ${category} settings: ${error.message}`);
+          toast.error(t("settings.failedToSaveSettings"));
         },
       }
     );
@@ -270,8 +268,8 @@ const AdminSettings = () => {
   if (authLoading) {
     return (
       <AdminLayout
-        title="Settings"
-        description="Configure application settings and preferences."
+        title={t("settings.title")}
+        description={t("settings.description")}
       >
         <div className="space-y-6">
           <Card>
@@ -292,8 +290,8 @@ const AdminSettings = () => {
   if (!isSuperAdmin) {
     return (
       <AdminLayout
-        title="Access Denied"
-        description="You don't have permission to access this page."
+        title={t("settings.accessDeniedTitle")}
+        description={t("settings.accessDeniedDescription")}
       >
         <Card className="max-w-md mx-auto">
           <CardContent className="p-8 text-center">
@@ -301,19 +299,17 @@ const AdminSettings = () => {
               <AlertTriangle className="h-16 w-16 text-red-500" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Super Admin Access Required
+              {t("settings.superAdminRequired")}
             </h2>
             <p className="text-gray-600 mb-6">
-              Only Super Administrators can access the system settings. Please
-              contact your system administrator if you need access to these
-              features.
+              {t("settings.superAdminMessage")}
             </p>
             <div className="space-y-3">
               <Button
                 onClick={() => navigate("/admin")}
                 className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
               >
-                Return to Dashboard
+                {t("settings.returnToDashboard")}
               </Button>
               <Button
                 variant="outline"
@@ -324,7 +320,7 @@ const AdminSettings = () => {
                 className="w-full"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+                {t("common.signOut")}
               </Button>
             </div>
           </CardContent>
@@ -336,14 +332,12 @@ const AdminSettings = () => {
   if (settingsError) {
     return (
       <AdminLayout
-        title="Settings"
-        description="Configure application settings and preferences."
+        title={t("settings.title")}
+        description={t("settings.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load system settings. Using default values.
-          </AlertDescription>
+          <AlertDescription>{t("settings.failedToLoad")}</AlertDescription>
         </Alert>
       </AdminLayout>
     );
@@ -351,8 +345,8 @@ const AdminSettings = () => {
 
   return (
     <AdminLayout
-      title="Settings"
-      description="Configure application settings and preferences."
+      title={t("settings.title")}
+      description={t("settings.description")}
     >
       <div className="space-y-6">
         {/* General Settings */}
@@ -360,7 +354,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Settings className="h-5 w-5" />
-              <span>General Settings</span>
+              <span>{t("settings.generalSettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -378,7 +372,9 @@ const AdminSettings = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="app-name">Application Name</Label>
+                    <Label htmlFor="app-name">
+                      {t("settings.applicationName")}
+                    </Label>
                     <Input
                       id="app-name"
                       value={settings.general.app_name}
@@ -388,7 +384,7 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="app-version">Version</Label>
+                    <Label htmlFor="app-version">{t("settings.version")}</Label>
                     <Input
                       id="app-version"
                       value={settings.general.app_version}
@@ -397,7 +393,9 @@ const AdminSettings = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="app-description">Description</Label>
+                  <Label htmlFor="app-description">
+                    {t("settings.description")}
+                  </Label>
                   <Textarea
                     id="app-description"
                     value={settings.general.app_description}
@@ -419,7 +417,9 @@ const AdminSettings = () => {
                       updateSetting("general", "maintenance_mode", checked)
                     }
                   />
-                  <Label htmlFor="maintenance-mode">Maintenance Mode</Label>
+                  <Label htmlFor="maintenance-mode">
+                    {t("settings.maintenanceMode")}
+                  </Label>
                 </div>
                 <Button
                   onClick={() => handleSave("general")}
@@ -429,7 +429,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save General Settings
+                  {t("settings.saveGeneralSettings")}
                 </Button>
               </>
             )}
@@ -441,7 +441,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Database className="h-5 w-5" />
-              <span>Database Settings</span>
+              <span>{t("settings.databaseSettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -459,7 +459,9 @@ const AdminSettings = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="db-host">Database Host</Label>
+                    <Label htmlFor="db-host">
+                      {t("settings.databaseHost")}
+                    </Label>
                     <Input
                       id="db-host"
                       value={settings.database.host}
@@ -469,7 +471,7 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="db-port">Port</Label>
+                    <Label htmlFor="db-port">{t("settings.port")}</Label>
                     <Input
                       id="db-port"
                       value={settings.database.port}
@@ -480,7 +482,7 @@ const AdminSettings = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="db-name">Database Name</Label>
+                  <Label htmlFor="db-name">{t("settings.databaseName")}</Label>
                   <Input
                     id="db-name"
                     value={settings.database.name}
@@ -497,7 +499,7 @@ const AdminSettings = () => {
                       updateSetting("database", "ssl_enabled", checked)
                     }
                   />
-                  <Label htmlFor="db-ssl">Enable SSL</Label>
+                  <Label htmlFor="db-ssl">{t("settings.enableSSL")}</Label>
                 </div>
                 <Button
                   onClick={() => handleSave("database")}
@@ -507,7 +509,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Database Settings
+                  {t("settings.saveDatabaseSettings")}
                 </Button>
               </>
             )}
@@ -519,7 +521,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Mail className="h-5 w-5" />
-              <span>Email Settings</span>
+              <span>{t("settings.emailSettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -540,7 +542,7 @@ const AdminSettings = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="smtp-host">SMTP Host</Label>
+                    <Label htmlFor="smtp-host">{t("settings.smtpHost")}</Label>
                     <Input
                       id="smtp-host"
                       value={settings.email.smtp_host}
@@ -551,7 +553,7 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="smtp-port">SMTP Port</Label>
+                    <Label htmlFor="smtp-port">{t("settings.smtpPort")}</Label>
                     <Input
                       id="smtp-port"
                       value={settings.email.smtp_port}
@@ -563,7 +565,9 @@ const AdminSettings = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="smtp-user">SMTP Username</Label>
+                    <Label htmlFor="smtp-user">
+                      {t("settings.smtpUsername")}
+                    </Label>
                     <Input
                       id="smtp-user"
                       value={settings.email.smtp_user}
@@ -574,7 +578,9 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="from-email">From Email</Label>
+                    <Label htmlFor="from-email">
+                      {t("settings.fromEmail")}
+                    </Label>
                     <Input
                       id="from-email"
                       value={settings.email.from_email}
@@ -593,7 +599,7 @@ const AdminSettings = () => {
                     }
                   />
                   <Label htmlFor="email-notifications">
-                    Enable Email Notifications
+                    {t("settings.enableEmailNotifications")}
                   </Label>
                 </div>
                 <Button
@@ -604,7 +610,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Email Settings
+                  {t("settings.saveEmailSettings")}
                 </Button>
               </>
             )}
@@ -616,7 +622,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Shield className="h-5 w-5" />
-              <span>Security Settings</span>
+              <span>{t("settings.securitySettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -638,7 +644,7 @@ const AdminSettings = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="session-timeout">
-                      Session Timeout (minutes)
+                      {t("settings.sessionTimeout")}
                     </Label>
                     <Input
                       id="session-timeout"
@@ -655,7 +661,7 @@ const AdminSettings = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="max-login-attempts">
-                      Max Login Attempts
+                      {t("settings.maxLoginAttempts")}
                     </Label>
                     <Input
                       id="max-login-attempts"
@@ -681,7 +687,7 @@ const AdminSettings = () => {
                       }
                     />
                     <Label htmlFor="two-factor">
-                      Enable Two-Factor Authentication
+                      {t("settings.enableTwoFactor")}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -697,7 +703,7 @@ const AdminSettings = () => {
                       }
                     />
                     <Label htmlFor="password-complexity">
-                      Enforce Password Complexity
+                      {t("settings.enforcePasswordComplexity")}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -708,7 +714,9 @@ const AdminSettings = () => {
                         updateSetting("security", "audit_logging", checked)
                       }
                     />
-                    <Label htmlFor="audit-logging">Enable Audit Logging</Label>
+                    <Label htmlFor="audit-logging">
+                      {t("settings.enableAuditLogging")}
+                    </Label>
                   </div>
                 </div>
                 <Button
@@ -719,7 +727,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Security Settings
+                  {t("settings.saveSecuritySettings")}
                 </Button>
               </>
             )}
@@ -731,7 +739,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Globe className="h-5 w-5" />
-              <span>Localization Settings</span>
+              <span>{t("settings.localizationSettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -751,7 +759,9 @@ const AdminSettings = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="default-language">Default Language</Label>
+                    <Label htmlFor="default-language">
+                      {t("settings.defaultLanguage")}
+                    </Label>
                     <Input
                       id="default-language"
                       value={settings.localization.default_language}
@@ -765,7 +775,9 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="timezone">Default Timezone</Label>
+                    <Label htmlFor="timezone">
+                      {t("settings.defaultTimezone")}
+                    </Label>
                     <Input
                       id="timezone"
                       value={settings.localization.timezone}
@@ -781,7 +793,9 @@ const AdminSettings = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date-format">Date Format</Label>
+                    <Label htmlFor="date-format">
+                      {t("settings.dateFormat")}
+                    </Label>
                     <Input
                       id="date-format"
                       value={settings.localization.date_format}
@@ -795,7 +809,7 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="currency">Currency</Label>
+                    <Label htmlFor="currency">{t("settings.currency")}</Label>
                     <Input
                       id="currency"
                       value={settings.localization.currency}
@@ -817,7 +831,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Localization Settings
+                  {t("settings.saveLocalizationSettings")}
                 </Button>
               </>
             )}
@@ -829,7 +843,7 @@ const AdminSettings = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Palette className="h-5 w-5" />
-              <span>Theme Settings</span>
+              <span>{t("settings.themeSettings")}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -846,7 +860,9 @@ const AdminSettings = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="primary-color">Primary Color</Label>
+                    <Label htmlFor="primary-color">
+                      {t("settings.primaryColor")}
+                    </Label>
                     <Input
                       id="primary-color"
                       value={settings.theme.primary_color}
@@ -857,7 +873,9 @@ const AdminSettings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="secondary-color">Secondary Color</Label>
+                    <Label htmlFor="secondary-color">
+                      {t("settings.secondaryColor")}
+                    </Label>
                     <Input
                       id="secondary-color"
                       value={settings.theme.secondary_color}
@@ -880,7 +898,9 @@ const AdminSettings = () => {
                       updateSetting("theme", "dark_mode_default", checked)
                     }
                   />
-                  <Label htmlFor="dark-mode">Enable Dark Mode by Default</Label>
+                  <Label htmlFor="dark-mode">
+                    {t("settings.enableDarkModeDefault")}
+                  </Label>
                 </div>
                 <Button
                   onClick={() => handleSave("theme")}
@@ -890,7 +910,7 @@ const AdminSettings = () => {
                   {updateSettingsMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save Theme Settings
+                  {t("settings.saveThemeSettings")}
                 </Button>
               </>
             )}

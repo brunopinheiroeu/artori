@@ -39,8 +39,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { format, addDays, subDays, differenceInDays } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const StudentGoals = () => {
+  const { t } = useTranslation("student");
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
 
   // Mock goals data - in a real app, this would come from an API
@@ -233,6 +235,19 @@ const StudentGoals = () => {
     }
   };
 
+  const getPriorityText = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return t("goals.high");
+      case "medium":
+        return t("goals.medium");
+      case "low":
+        return t("goals.low");
+      default:
+        return priority;
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
@@ -243,6 +258,19 @@ const StudentGoals = () => {
         return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "completed":
+        return t("goals.completed");
+      case "in-progress":
+        return t("goals.inProgress");
+      case "not-started":
+        return t("goals.notStarted");
+      default:
+        return status.replace("-", " ");
     }
   };
 
@@ -258,10 +286,10 @@ const StudentGoals = () => {
                 {goal.subject}
               </Badge>
               <Badge className={getPriorityColor(goal.priority)}>
-                {goal.priority}
+                {getPriorityText(goal.priority)}
               </Badge>
               <Badge className={getStatusColor(goal.status)}>
-                {goal.status.replace("-", " ")}
+                {getStatusText(goal.status)}
               </Badge>
             </div>
           </div>
@@ -269,7 +297,7 @@ const StudentGoals = () => {
             <div className="text-2xl font-bold text-indigo-600">
               {goal.progress}%
             </div>
-            <div className="text-xs text-gray-600">Complete</div>
+            <div className="text-xs text-gray-600">{t("goals.completed")}</div>
           </div>
         </div>
       </CardHeader>
@@ -277,7 +305,7 @@ const StudentGoals = () => {
         <div className="space-y-4">
           <div>
             <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Progress</span>
+              <span>{t("goals.progress")}</span>
               <span>{goal.progress}%</span>
             </div>
             <Progress value={goal.progress} className="h-2" />
@@ -286,7 +314,9 @@ const StudentGoals = () => {
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-1 text-gray-600">
               <Calendar className="h-3 w-3" />
-              <span>Due: {format(goal.targetDate, "MMM d, yyyy")}</span>
+              <span>
+                {t("goals.dueDate")}: {format(goal.targetDate, "MMM d, yyyy")}
+              </span>
             </div>
             <div className="flex items-center space-x-1 text-gray-600">
               <Clock className="h-3 w-3" />
@@ -298,7 +328,8 @@ const StudentGoals = () => {
 
           <div>
             <div className="text-sm font-medium text-gray-700 mb-2">
-              Milestones ({goal.milestones.filter((m) => m.completed).length}/
+              {t("goals.milestones")} (
+              {goal.milestones.filter((m) => m.completed).length}/
               {goal.milestones.length})
             </div>
             <div className="space-y-1">
@@ -325,7 +356,7 @@ const StudentGoals = () => {
               ))}
               {goal.milestones.length > 3 && (
                 <div className="text-xs text-gray-500 ml-5">
-                  +{goal.milestones.length - 3} more milestones
+                  +{goal.milestones.length - 3} {t("goals.milestones")}
                 </div>
               )}
             </div>
@@ -334,7 +365,7 @@ const StudentGoals = () => {
           {goal.reward && (
             <div className="p-2 bg-yellow-50 rounded-lg">
               <div className="text-xs font-medium text-yellow-800 mb-1">
-                🎁 Reward:
+                🎁 {t("goals.reward")}:
               </div>
               <div className="text-sm text-yellow-700">{goal.reward}</div>
             </div>
@@ -367,8 +398,8 @@ const StudentGoals = () => {
 
   return (
     <StudentLayout
-      title="Study Goals"
-      description="Set, track, and achieve your academic goals."
+      title={t("goals.title")}
+      description={t("goals.description")}
     >
       <div className="space-y-6">
         {/* Overview Stats */}
@@ -379,7 +410,9 @@ const StudentGoals = () => {
               <div className="text-2xl font-bold text-indigo-600">
                 {activeGoals.length}
               </div>
-              <div className="text-sm text-gray-600">Active Goals</div>
+              <div className="text-sm text-gray-600">
+                {t("goals.activeGoals")}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -388,7 +421,9 @@ const StudentGoals = () => {
               <div className="text-2xl font-bold text-green-600">
                 {completedGoals.length}
               </div>
-              <div className="text-sm text-gray-600">Completed</div>
+              <div className="text-sm text-gray-600">
+                {t("goals.completed")}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -401,7 +436,7 @@ const StudentGoals = () => {
                 )}
                 %
               </div>
-              <div className="text-sm text-gray-600">Avg Progress</div>
+              <div className="text-sm text-gray-600">{t("goals.progress")}</div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -410,7 +445,9 @@ const StudentGoals = () => {
               <div className="text-2xl font-bold text-yellow-600">
                 {achievements.length}
               </div>
-              <div className="text-sm text-gray-600">Achievements</div>
+              <div className="text-sm text-gray-600">
+                {t("goals.achievements")}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -420,45 +457,57 @@ const StudentGoals = () => {
           <div className="flex items-center justify-between mb-4">
             <TabsList className="backdrop-blur-sm bg-white/60 border-white/20">
               <TabsTrigger value="active">
-                Active ({activeGoals.length})
+                {t("goals.activeGoals")} ({activeGoals.length})
               </TabsTrigger>
               <TabsTrigger value="completed">
-                Completed ({completedGoals.length})
+                {t("goals.completedGoals")} ({completedGoals.length})
               </TabsTrigger>
-              <TabsTrigger value="all">All Goals ({goals.length})</TabsTrigger>
+              <TabsTrigger value="all">
+                {t("goals.allGoals")} ({goals.length})
+              </TabsTrigger>
               <TabsTrigger value="achievements">
-                Achievements ({achievements.length})
+                {t("goals.achievements")} ({achievements.length})
               </TabsTrigger>
             </TabsList>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
                   <Plus className="h-4 w-4 mr-2" />
-                  New Goal
+                  {t("goals.createGoal")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Create New Goal</DialogTitle>
+                  <DialogTitle>{t("goals.createGoal")}</DialogTitle>
                   <DialogDescription>
-                    Set a new study goal to track your progress.
+                    {t("goals.description")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium">Goal Title</label>
-                    <Input placeholder="Enter goal title..." />
+                    <label className="text-sm font-medium">
+                      {t("goals.title")}
+                    </label>
+                    <Input placeholder={t("goals.title")} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Description</label>
-                    <Textarea placeholder="Describe your goal..." />
+                    <label className="text-sm font-medium">
+                      {t("common.description", { defaultValue: "Description" })}
+                    </label>
+                    <Textarea
+                      placeholder={t("common.description", {
+                        defaultValue: "Description",
+                      })}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Subject</label>
+                      <label className="text-sm font-medium">
+                        {t("common.subject", { defaultValue: "Subject" })}
+                      </label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select subject" />
+                          <SelectValue placeholder={t("goals.selectSubject")} />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="mathematics">
@@ -472,29 +521,41 @@ const StudentGoals = () => {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-sm font-medium">Priority</label>
+                      <label className="text-sm font-medium">
+                        {t("goals.priority")}
+                      </label>
                       <Select>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select priority" />
+                          <SelectValue
+                            placeholder={t("goals.selectPriority")}
+                          />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="high">
+                            {t("goals.high")}
+                          </SelectItem>
+                          <SelectItem value="medium">
+                            {t("goals.medium")}
+                          </SelectItem>
+                          <SelectItem value="low">{t("goals.low")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Target Date</label>
+                    <label className="text-sm font-medium">
+                      {t("goals.dueDate")}
+                    </label>
                     <Input type="date" />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Reward</label>
-                    <Input placeholder="What will you reward yourself with?" />
+                    <label className="text-sm font-medium">
+                      {t("goals.reward")}
+                    </label>
+                    <Input placeholder={t("goals.reward")} />
                   </div>
                   <Button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600">
-                    Create Goal
+                    {t("goals.createGoal")}
                   </Button>
                 </div>
               </DialogContent>
@@ -512,11 +573,9 @@ const StudentGoals = () => {
                 <CardContent className="p-12 text-center">
                   <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No active goals
+                    {t("goals.activeGoals")}
                   </h3>
-                  <p className="text-gray-600">
-                    Create your first study goal to start tracking progress.
-                  </p>
+                  <p className="text-gray-600">{t("goals.description")}</p>
                 </CardContent>
               </Card>
             )}
@@ -551,22 +610,37 @@ const StudentGoals = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <BarChart3 className="h-5 w-5" />
-                  <span>Achievement Progress</span>
+                  <span>
+                    {t("goals.achievements")} {t("goals.progress")}
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Study Streak Champion (25 days)</span>
-                      <span>24/25 days</span>
+                      <span>
+                        {t("dashboard.studyStreak")} (25{" "}
+                        {t("dashboard.daysInRow", { defaultValue: "days" })})
+                      </span>
+                      <span>
+                        24/25{" "}
+                        {t("dashboard.daysInRow", { defaultValue: "days" })}
+                      </span>
                     </div>
                     <Progress value={96} className="h-2" />
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>Problem Solver (200 problems)</span>
-                      <span>156/200 problems</span>
+                      <span>
+                        {t("dashboard.questionsSolved")} (200{" "}
+                        {t("dashboard.questions", { defaultValue: "problems" })}
+                        )
+                      </span>
+                      <span>
+                        156/200{" "}
+                        {t("dashboard.questions", { defaultValue: "problems" })}
+                      </span>
                     </div>
                     <Progress value={78} className="h-2" />
                   </div>

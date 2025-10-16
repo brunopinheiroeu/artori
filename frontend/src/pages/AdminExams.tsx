@@ -202,13 +202,13 @@ const AdminExams = () => {
   const subjectColumns = [
     {
       key: "name",
-      label: "Subject Name",
+      label: t("exams.subjectName"),
       sortable: true,
       render: (value: string) => <div className="font-medium">{value}</div>,
     },
     {
       key: "description",
-      label: "Description",
+      label: t("exams.description"),
       render: (value: string) => (
         <div className="max-w-xs truncate" title={value}>
           {value}
@@ -217,15 +217,17 @@ const AdminExams = () => {
     },
     {
       key: "total_questions",
-      label: "Questions",
+      label: t("exams.questions"),
       sortable: true,
       render: (value: number) => (
-        <Badge variant="outline">{value || 0} questions</Badge>
+        <Badge variant="outline">
+          {value || 0} {t("exams.questionsCount")}
+        </Badge>
       ),
     },
     {
       key: "duration",
-      label: "Duration",
+      label: t("exams.duration"),
       render: (value: string) => (
         <Badge variant="secondary">{value || "N/A"}</Badge>
       ),
@@ -236,7 +238,7 @@ const AdminExams = () => {
   const questionColumns = [
     {
       key: "question",
-      label: "Question",
+      label: t("exams.question"),
       render: (value: string) => (
         <div className="max-w-md truncate" title={value}>
           {value}
@@ -245,17 +247,17 @@ const AdminExams = () => {
     },
     {
       key: "question_type",
-      label: "Type",
+      label: t("exams.type"),
       render: (value: string) => (
         <Badge variant="outline">
           {value?.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()) ||
-            "Multiple Choice"}
+            t("exams.multipleChoice")}
         </Badge>
       ),
     },
     {
       key: "difficulty",
-      label: "Difficulty",
+      label: t("exams.difficulty"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -267,26 +269,27 @@ const AdminExams = () => {
               : "bg-red-100 text-red-800"
           }
         >
-          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Medium"}
+          {value?.charAt(0).toUpperCase() + value?.slice(1) ||
+            t("exams.medium")}
         </Badge>
       ),
     },
     {
       key: "options",
-      label: "Options",
+      label: t("exams.options"),
       render: (value: Option[], row: AdminQuestionResponse) =>
-        `${row.options?.length || 0} options`,
+        `${row.options?.length || 0} ${t("exams.optionsCount")}`,
     },
     {
       key: "correct_answer",
-      label: "Answer",
+      label: t("exams.answer"),
       render: (value: string) => (
         <Badge className="bg-blue-100 text-blue-800">{value}</Badge>
       ),
     },
     {
       key: "status",
-      label: "Status",
+      label: t("exams.status"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -298,13 +301,13 @@ const AdminExams = () => {
               : "bg-gray-100 text-gray-800"
           }
         >
-          {value?.charAt(0).toUpperCase() + value?.slice(1) || "Draft"}
+          {value?.charAt(0).toUpperCase() + value?.slice(1) || t("exams.draft")}
         </Badge>
       ),
     },
     {
       key: "created_at",
-      label: "Created",
+      label: t("exams.created"),
       sortable: true,
       render: (value: string) =>
         formatDistanceToNow(new Date(value), { addSuffix: true }),
@@ -370,11 +373,7 @@ const AdminExams = () => {
       itemName = item.name;
     }
 
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${itemName}"? This action cannot be undone.`
-      )
-    ) {
+    if (window.confirm(t("exams.confirmDelete", { name: itemName }))) {
       if (currentView === "exams" && "name" in item && "country" in item) {
         deleteExamMutation.mutate(item.id);
       } else if (currentView === "questions" && "question" in item) {
@@ -387,7 +386,7 @@ const AdminExams = () => {
     e.preventDefault();
     if (currentView === "exams") {
       if (!examForm.name || !examForm.country || !examForm.description) {
-        toast.error("Please fill in all required fields");
+        toast.error(t("exams.fillRequiredFields"));
         return;
       }
       createExamMutation.mutate(examForm, {
@@ -403,7 +402,7 @@ const AdminExams = () => {
       });
     } else if (currentView === "questions" && selectedSubject) {
       if (!questionForm.question || !questionForm.correct_answer) {
-        toast.error("Please fill in all required fields");
+        toast.error(t("exams.fillRequiredFields"));
         return;
       }
       createQuestionMutation.mutate(
@@ -442,14 +441,12 @@ const AdminExams = () => {
   if (examsError) {
     return (
       <AdminLayout
-        title="Exam Management"
-        description="Create, edit, and manage exams across different countries and educational systems."
+        title={t("exams.title")}
+        description={t("exams.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load exams. Please try refreshing the page.
-          </AlertDescription>
+          <AlertDescription>{t("exams.failedToLoad")}</AlertDescription>
         </Alert>
       </AdminLayout>
     );
@@ -472,13 +469,15 @@ const AdminExams = () => {
         className="flex items-center space-x-1"
       >
         <ArrowLeft className="h-4 w-4" />
-        <span>Back</span>
+        <span>{t("exams.back")}</span>
       </Button>
       <span className="text-gray-400">/</span>
       <span className="text-gray-600">
-        {currentView === "exams" && "All Exams"}
-        {currentView === "subjects" && `${selectedExam?.name} Subjects`}
-        {currentView === "questions" && `${selectedSubject?.name} Questions`}
+        {currentView === "exams" && t("exams.allExams")}
+        {currentView === "subjects" &&
+          `${selectedExam?.name} ${t("exams.subjects")}`}
+        {currentView === "questions" &&
+          `${selectedSubject?.name} ${t("exams.questions")}`}
       </span>
     </div>
   );
@@ -486,24 +485,28 @@ const AdminExams = () => {
   const getTitle = () => {
     switch (currentView) {
       case "exams":
-        return "Exam Management";
+        return t("exams.title");
       case "subjects":
-        return `${selectedExam?.name} Subjects`;
+        return `${selectedExam?.name} ${t("exams.subjects")}`;
       case "questions":
-        return `${selectedSubject?.name} Questions`;
+        return `${selectedSubject?.name} ${t("exams.questions")}`;
       default:
-        return "Exam Management";
+        return t("exams.title");
     }
   };
 
   const getDescription = () => {
     switch (currentView) {
       case "exams":
-        return "Create, edit, and manage exams across different countries and educational systems.";
+        return t("exams.description");
       case "subjects":
-        return `Manage subjects and topics for ${selectedExam?.name} exam.`;
+        return `${t("exams.manageSubjectsFor")} ${selectedExam?.name} ${t(
+          "exams.exam"
+        )}.`;
       case "questions":
-        return `Manage questions for ${selectedSubject?.name} subject.`;
+        return `${t("exams.manageQuestionsFor")} ${selectedSubject?.name} ${t(
+          "exams.subject"
+        )}.`;
       default:
         return "";
     }
@@ -532,16 +535,16 @@ const AdminExams = () => {
             </div>
           ) : (
             <AdminDataTable
-              title="All Exams"
-              description="Manage exams, subjects, and questions for your platform"
+              title={t("exams.allExams")}
+              description={t("exams.allExamsDescription")}
               data={exams || []}
               columns={examColumns}
-              searchPlaceholder="Search exams..."
+              searchPlaceholder={t("exams.searchPlaceholder")}
               onAdd={handleAdd}
               onEdit={handleEdit}
               onDelete={handleDelete}
               onRowClick={handleExamView}
-              addButtonText="Create Exam"
+              addButtonText={t("exams.createExam")}
             />
           )}
         </>
@@ -549,16 +552,18 @@ const AdminExams = () => {
 
       {currentView === "subjects" && selectedExam && (
         <AdminDataTable
-          title={`${selectedExam.name} Subjects`}
-          description={`Manage subjects for ${selectedExam.name} exam`}
+          title={`${selectedExam.name} ${t("exams.subjects")}`}
+          description={`${t("exams.manageSubjectsFor")} ${
+            selectedExam.name
+          } ${t("exams.exam")}`}
           data={selectedExam.subjects || []}
           columns={subjectColumns}
-          searchPlaceholder="Search subjects..."
+          searchPlaceholder={t("exams.searchSubjectsPlaceholder")}
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onRowClick={handleSubjectView}
-          addButtonText="Add Subject"
+          addButtonText={t("exams.addSubject")}
         />
       )}
 
@@ -583,20 +588,22 @@ const AdminExams = () => {
             <Alert className="border-red-200 bg-red-50">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Failed to load questions. Please try refreshing the page.
+                {t("exams.failedToLoadQuestions")}
               </AlertDescription>
             </Alert>
           ) : (
             <AdminDataTable
-              title={`${selectedSubject.name} Questions`}
-              description={`Manage questions for ${selectedSubject.name} subject`}
+              title={`${selectedSubject.name} ${t("exams.questions")}`}
+              description={`${t("exams.manageQuestionsFor")} ${
+                selectedSubject.name
+              } ${t("exams.subject")}`}
               data={questions}
               columns={questionColumns}
-              searchPlaceholder="Search questions..."
+              searchPlaceholder={t("exams.searchQuestionsPlaceholder")}
               onAdd={handleAdd}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              addButtonText="Add Question"
+              addButtonText={t("exams.addQuestion")}
               currentPage={questionsPagination.currentPage}
               onPageChange={questionsPagination.handlePageChange}
               onPageSizeChange={questionsPagination.handlePageSizeChange}
@@ -612,15 +619,16 @@ const AdminExams = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              Create New{" "}
+              {t("exams.createNew")}{" "}
               {currentView === "exams"
-                ? "Exam"
+                ? t("exams.exam")
                 : currentView === "subjects"
-                ? "Subject"
-                : "Question"}
+                ? t("exams.subject")
+                : t("exams.question")}
             </DialogTitle>
             <DialogDescription>
-              Add a new {currentView.slice(0, -1)} to the platform.
+              {t("exams.addNew")} {currentView.slice(0, -1)}{" "}
+              {t("exams.toPlatform")}.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateSubmit} className="space-y-4">
@@ -628,10 +636,10 @@ const AdminExams = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Exam Name</Label>
+                    <Label htmlFor="name">{t("exams.examName")}</Label>
                     <Input
                       id="name"
-                      placeholder="e.g., SAT"
+                      placeholder={t("exams.examNamePlaceholder")}
                       value={examForm.name}
                       onChange={(e) =>
                         setExamForm({ ...examForm, name: e.target.value })
@@ -640,10 +648,10 @@ const AdminExams = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="country">Country</Label>
+                    <Label htmlFor="country">{t("exams.country")}</Label>
                     <Input
                       id="country"
-                      placeholder="e.g., USA"
+                      placeholder={t("exams.countryPlaceholder")}
                       value={examForm.country}
                       onChange={(e) =>
                         setExamForm({ ...examForm, country: e.target.value })
@@ -653,10 +661,10 @@ const AdminExams = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">{t("exams.description")}</Label>
                   <Textarea
                     id="description"
-                    placeholder="Brief description of the exam"
+                    placeholder={t("exams.descriptionPlaceholder")}
                     value={examForm.description}
                     onChange={(e) =>
                       setExamForm({ ...examForm, description: e.target.value })
@@ -666,10 +674,10 @@ const AdminExams = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="flag">Flag Emoji</Label>
+                    <Label htmlFor="flag">{t("exams.flagEmoji")}</Label>
                     <Input
                       id="flag"
-                      placeholder="🇺🇸"
+                      placeholder={t("exams.flagPlaceholder")}
                       value={examForm.flag || ""}
                       onChange={(e) =>
                         setExamForm({ ...examForm, flag: e.target.value })
@@ -677,7 +685,7 @@ const AdminExams = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
+                    <Label htmlFor="status">{t("exams.status")}</Label>
                     <Select
                       value={examForm.status}
                       onValueChange={(value) =>
@@ -688,12 +696,18 @@ const AdminExams = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder={t("exams.selectStatus")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="archived">Archived</SelectItem>
+                        <SelectItem value="active">
+                          {t("exams.active")}
+                        </SelectItem>
+                        <SelectItem value="draft">
+                          {t("exams.draft")}
+                        </SelectItem>
+                        <SelectItem value="archived">
+                          {t("exams.archived")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -704,10 +718,10 @@ const AdminExams = () => {
             {currentView === "questions" && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="question-text">Question</Label>
+                  <Label htmlFor="question-text">{t("exams.question")}</Label>
                   <Textarea
                     id="question-text"
-                    placeholder="Enter the question text"
+                    placeholder={t("exams.questionPlaceholder")}
                     value={questionForm.question}
                     onChange={(e) =>
                       setQuestionForm({
@@ -720,7 +734,7 @@ const AdminExams = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="question-type">Type</Label>
+                    <Label htmlFor="question-type">{t("exams.type")}</Label>
                     <Select
                       value={questionForm.question_type}
                       onValueChange={(value) =>
@@ -734,21 +748,23 @@ const AdminExams = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder={t("exams.selectType")} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="multiple_choice">
-                          Multiple Choice
+                          {t("exams.multipleChoice")}
                         </SelectItem>
-                        <SelectItem value="true_false">True/False</SelectItem>
+                        <SelectItem value="true_false">
+                          {t("exams.trueFalse")}
+                        </SelectItem>
                         <SelectItem value="short_answer">
-                          Short Answer
+                          {t("exams.shortAnswer")}
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="difficulty">Difficulty</Label>
+                    <Label htmlFor="difficulty">{t("exams.difficulty")}</Label>
                     <Select
                       value={questionForm.difficulty}
                       onValueChange={(value) =>
@@ -759,12 +775,16 @@ const AdminExams = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
+                        <SelectValue
+                          placeholder={t("exams.selectDifficulty")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="easy">Easy</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="hard">Hard</SelectItem>
+                        <SelectItem value="easy">{t("exams.easy")}</SelectItem>
+                        <SelectItem value="medium">
+                          {t("exams.medium")}
+                        </SelectItem>
+                        <SelectItem value="hard">{t("exams.hard")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -772,7 +792,7 @@ const AdminExams = () => {
 
                 {/* Options */}
                 <div className="space-y-2">
-                  <Label>Answer Options</Label>
+                  <Label>{t("exams.answerOptions")}</Label>
                   {questionForm.options.map((option, index) => (
                     <div
                       key={option.id}
@@ -780,7 +800,9 @@ const AdminExams = () => {
                     >
                       <Label className="w-8">{option.id}:</Label>
                       <Input
-                        placeholder={`Option ${option.id}`}
+                        placeholder={t("exams.optionPlaceholder", {
+                          id: option.id,
+                        })}
                         value={option.text}
                         onChange={(e) => {
                           const newOptions = [...questionForm.options];
@@ -800,7 +822,9 @@ const AdminExams = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="correct-answer">Correct Answer</Label>
+                  <Label htmlFor="correct-answer">
+                    {t("exams.correctAnswer")}
+                  </Label>
                   <Select
                     value={questionForm.correct_answer}
                     onValueChange={(value) =>
@@ -811,12 +835,14 @@ const AdminExams = () => {
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select correct answer" />
+                      <SelectValue
+                        placeholder={t("exams.selectCorrectAnswer")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {questionForm.options.map((option) => (
                         <SelectItem key={option.id} value={option.id}>
-                          {option.id} - {option.text || "Empty option"}
+                          {option.id} - {option.text || t("exams.emptyOption")}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -825,11 +851,11 @@ const AdminExams = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="explanation-concept">
-                    Explanation Concept
+                    {t("exams.explanationConcept")}
                   </Label>
                   <Input
                     id="explanation-concept"
-                    placeholder="Main concept being tested"
+                    placeholder={t("exams.conceptPlaceholder")}
                     value={questionForm.explanation.concept}
                     onChange={(e) =>
                       setQuestionForm({
@@ -844,10 +870,12 @@ const AdminExams = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="explanation-reasoning">Reasoning</Label>
+                  <Label htmlFor="explanation-reasoning">
+                    {t("exams.reasoning")}
+                  </Label>
                   <Textarea
                     id="explanation-reasoning"
-                    placeholder="Explain why this is the correct answer"
+                    placeholder={t("exams.reasoningPlaceholder")}
                     value={questionForm.explanation.reasoning[0] || ""}
                     onChange={(e) =>
                       setQuestionForm({
@@ -873,7 +901,7 @@ const AdminExams = () => {
                   createQuestionMutation.isPending
                 }
               >
-                Cancel
+                {t("exams.cancel")}
               </Button>
               <Button
                 type="submit"
@@ -887,12 +915,12 @@ const AdminExams = () => {
                   createQuestionMutation.isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create{" "}
+                {t("exams.create")}{" "}
                 {currentView === "exams"
-                  ? "Exam"
+                  ? t("exams.exam")
                   : currentView === "subjects"
-                  ? "Subject"
-                  : "Question"}
+                  ? t("exams.subject")
+                  : t("exams.question")}
               </Button>
             </div>
           </form>

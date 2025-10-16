@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -35,6 +36,7 @@ interface TutorSidebarProps {
 }
 
 const TutorSidebar = ({ className }: TutorSidebarProps) => {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(true); // Start collapsed on mobile
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,8 +49,8 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
 
       // Show success message
       toast({
-        title: "Logged out successfully",
-        description: "You have been signed out of your account.",
+        title: t("tutor:sidebar.loggedOutSuccessfully"),
+        description: t("tutor:sidebar.signedOutMessage"),
       });
 
       // Redirect to login page
@@ -56,8 +58,8 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
     } catch (error) {
       console.error("Logout error:", error);
       toast({
-        title: "Logout Error",
-        description: "There was an issue logging out. Please try again.",
+        title: t("tutor:sidebar.logoutError"),
+        description: t("tutor:sidebar.logoutErrorMessage"),
         variant: "destructive",
       });
     }
@@ -66,37 +68,37 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
   // Navigation items for tutors
   const navigation = [
     {
-      name: "Dashboard",
+      name: t("tutor:sidebar.dashboard"),
       href: "/tutor",
       icon: LayoutDashboard,
       current: location.pathname === "/tutor",
     },
     {
-      name: "My Students",
+      name: t("tutor:sidebar.myStudents"),
       href: "/tutor/students",
       icon: Users,
       current: location.pathname.startsWith("/tutor/students"),
     },
     {
-      name: "Schedule",
+      name: t("tutor:sidebar.schedule"),
       href: "/tutor/schedule",
       icon: Calendar,
       current: location.pathname.startsWith("/tutor/schedule"),
     },
     {
-      name: "Sessions",
+      name: t("tutor:sidebar.sessions"),
       href: "/tutor/sessions",
       icon: BookOpen,
       current: location.pathname.startsWith("/tutor/sessions"),
     },
     {
-      name: "Messages",
+      name: t("tutor:sidebar.messages"),
       href: "/tutor/messages",
       icon: MessageSquare,
       current: location.pathname.startsWith("/tutor/messages"),
     },
     {
-      name: "Earnings",
+      name: t("tutor:sidebar.earnings"),
       href: "/tutor/earnings",
       icon: DollarSign,
       current: location.pathname.startsWith("/tutor/earnings"),
@@ -151,7 +153,9 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
           <div className="flex items-center px-6 py-6 border-b border-emerald-700">
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <div className="ml-3">
-              <p className="text-xs text-emerald-300">Tutor Panel</p>
+              <p className="text-xs text-emerald-300">
+                {t("tutor:sidebar.tutorPanel")}
+              </p>
             </div>
           </div>
 
@@ -192,7 +196,7 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
                     {tutorUser.rating > 0 && (
                       <p className="text-xs text-emerald-300">
                         ⭐ {tutorUser.rating.toFixed(1)} •{" "}
-                        {tutorUser.totalSessions} sessions
+                        {tutorUser.totalSessions} {t("tutor:sidebar.sessions")}
                       </p>
                     )}
                   </div>
@@ -214,8 +218,9 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
                     </Badge>
                     {tutorUser.rating > 0 && (
                       <div className="text-xs text-emerald-300">
-                        ⭐ {tutorUser.rating.toFixed(1)} rating •{" "}
-                        {tutorUser.totalSessions} sessions
+                        ⭐ {tutorUser.rating.toFixed(1)}{" "}
+                        {t("tutor:sidebar.rating")} • {tutorUser.totalSessions}{" "}
+                        {t("tutor:sidebar.sessions")}
                       </div>
                     )}
                   </div>
@@ -228,7 +233,7 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
                 >
                   <Link to="/tutor/profile">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                    <span>{t("tutor:sidebar.profile")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -238,7 +243,7 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
                 >
                   <Link to="/tutor/settings">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>{t("tutor:sidebar.settings")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -249,7 +254,7 @@ const TutorSidebar = ({ className }: TutorSidebarProps) => {
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>{t("tutor:sidebar.logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -28,10 +28,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { format, addDays, startOfWeek, isSameDay, isToday } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const StudentSchedule = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { t } = useTranslation("student");
 
   // Mock schedule data - in a real app, this would come from an API
   const sessions = [
@@ -239,7 +241,7 @@ const StudentSchedule = () => {
                   : "bg-yellow-100 text-yellow-800"
               }
             >
-              {session.status}
+              {t(`schedule.${session.status}`)}
             </Badge>
             <div className="flex items-center space-x-1 mt-2">
               {session.type === "online" ? (
@@ -272,7 +274,9 @@ const StudentSchedule = () => {
               <BookOpen className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-900">Self Study</h4>
+              <h4 className="font-semibold text-gray-900">
+                {t("schedule.selfStudy", { defaultValue: "Self Study" })}
+              </h4>
               <p className="text-sm text-gray-600">
                 {block.subject} • {block.topic}
               </p>
@@ -289,7 +293,7 @@ const StudentSchedule = () => {
           </div>
           <div className="text-right">
             <Badge className="bg-purple-100 text-purple-800">
-              {block.status}
+              {t(`schedule.${block.status}`)}
             </Badge>
             <div className="flex items-center space-x-1 mt-2">
               <MapPin className="h-3 w-3 text-purple-500" />
@@ -308,8 +312,8 @@ const StudentSchedule = () => {
 
   return (
     <StudentLayout
-      title="Schedule"
-      description="Manage your tutoring sessions and study schedule."
+      title={t("schedule.title")}
+      description={t("schedule.description")}
     >
       <div className="space-y-6">
         {/* Quick Stats */}
@@ -320,7 +324,11 @@ const StudentSchedule = () => {
               <div className="text-2xl font-bold text-blue-600">
                 {selectedDateSessions.length + selectedDateStudyBlocks.length}
               </div>
-              <div className="text-sm text-gray-600">Today's Activities</div>
+              <div className="text-sm text-gray-600">
+                {t("schedule.todaysActivities", {
+                  defaultValue: "Today's Activities",
+                })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -329,7 +337,11 @@ const StudentSchedule = () => {
               <div className="text-2xl font-bold text-indigo-600">
                 {upcomingSessions.length}
               </div>
-              <div className="text-sm text-gray-600">Tutor Sessions</div>
+              <div className="text-sm text-gray-600">
+                {t("schedule.tutorSessions", {
+                  defaultValue: "Tutor Sessions",
+                })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -338,7 +350,9 @@ const StudentSchedule = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {studyBlocks.length}
               </div>
-              <div className="text-sm text-gray-600">Study Blocks</div>
+              <div className="text-sm text-gray-600">
+                {t("schedule.studyBlocks", { defaultValue: "Study Blocks" })}
+              </div>
             </CardContent>
           </Card>
           <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
@@ -351,7 +365,9 @@ const StudentSchedule = () => {
                 }, 0)}
                 h
               </div>
-              <div className="text-sm text-gray-600">This Week</div>
+              <div className="text-sm text-gray-600">
+                {t("schedule.thisWeek", { defaultValue: "This Week" })}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -360,30 +376,49 @@ const StudentSchedule = () => {
         <Tabs defaultValue="week" className="w-full">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="backdrop-blur-sm bg-white/60 border-white/20">
-              <TabsTrigger value="week">Week View</TabsTrigger>
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="day">Day View</TabsTrigger>
+              <TabsTrigger value="week">
+                {t("schedule.weekView", { defaultValue: "Week View" })}
+              </TabsTrigger>
+              <TabsTrigger value="upcoming">
+                {t("schedule.upcoming", { defaultValue: "Upcoming" })}
+              </TabsTrigger>
+              <TabsTrigger value="day">
+                {t("schedule.dayView", { defaultValue: "Day View" })}
+              </TabsTrigger>
             </TabsList>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Activity
+                  {t("schedule.addActivity", { defaultValue: "Add Activity" })}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Activity</DialogTitle>
+                  <DialogTitle>
+                    {t("schedule.addNewActivity", {
+                      defaultValue: "Add New Activity",
+                    })}
+                  </DialogTitle>
                   <DialogDescription>
-                    Schedule a new study session or book a tutor.
+                    {t("schedule.addNewActivityDescription", {
+                      defaultValue:
+                        "Schedule a new study session or book a tutor.",
+                    })}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="p-4 text-center text-gray-600">
                   <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p>Activity scheduling form would go here.</p>
+                  <p>
+                    {t("schedule.activityFormPlaceholder", {
+                      defaultValue: "Activity scheduling form would go here.",
+                    })}
+                  </p>
                   <p className="text-sm mt-2">
-                    This would include activity type selection, date/time
-                    picker, subject, and session details.
+                    {t("schedule.activityFormDescription", {
+                      defaultValue:
+                        "This would include activity type selection, date/time picker, subject, and session details.",
+                    })}
                   </p>
                 </div>
               </DialogContent>
@@ -396,7 +431,10 @@ const StudentSchedule = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2">
                     <Calendar className="h-5 w-5" />
-                    <span>Week of {format(weekStart, "MMM d, yyyy")}</span>
+                    <span>
+                      {t("schedule.weekOf", { defaultValue: "Week of" })}{" "}
+                      {format(weekStart, "MMM d, yyyy")}
+                    </span>
                   </CardTitle>
                   <div className="flex space-x-2">
                     <Button
@@ -452,7 +490,10 @@ const StudentSchedule = () => {
                                   key={idx}
                                   className="text-xs p-1 bg-blue-200 text-blue-800 rounded truncate"
                                 >
-                                  {session.startTime} Tutor
+                                  {session.startTime}{" "}
+                                  {t("schedule.tutor", {
+                                    defaultValue: "Tutor",
+                                  })}
                                 </div>
                               ))}
                               {dayStudyBlocks.slice(0, 1).map((block, idx) => (
@@ -460,12 +501,16 @@ const StudentSchedule = () => {
                                   key={idx}
                                   className="text-xs p-1 bg-purple-200 text-purple-800 rounded truncate"
                                 >
-                                  {block.startTime} Study
+                                  {block.startTime}{" "}
+                                  {t("schedule.study", {
+                                    defaultValue: "Study",
+                                  })}
                                 </div>
                               ))}
                               {totalActivities > 2 && (
                                 <div className="text-xs text-gray-600">
-                                  +{totalActivities - 2} more
+                                  +{totalActivities - 2}{" "}
+                                  {t("schedule.more", { defaultValue: "more" })}
                                 </div>
                               )}
                             </div>
@@ -484,7 +529,11 @@ const StudentSchedule = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Clock className="h-5 w-5" />
-                  <span>Upcoming Activities</span>
+                  <span>
+                    {t("schedule.upcomingActivities", {
+                      defaultValue: "Upcoming Activities",
+                    })}
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -503,10 +552,15 @@ const StudentSchedule = () => {
                   <div className="text-center py-8">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No upcoming sessions
+                      {t("schedule.noUpcomingSessions", {
+                        defaultValue: "No upcoming sessions",
+                      })}
                     </h3>
                     <p className="text-gray-600">
-                      Book your first tutoring session to get started.
+                      {t("schedule.bookFirstSession", {
+                        defaultValue:
+                          "Book your first tutoring session to get started.",
+                      })}
                     </p>
                   </div>
                 )}
@@ -546,7 +600,9 @@ const StudentSchedule = () => {
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-medium text-gray-900 mb-3">
-                        Tutor Sessions
+                        {t("schedule.tutorSessions", {
+                          defaultValue: "Tutor Sessions",
+                        })}
                       </h4>
                       {selectedDateSessions.length > 0 ? (
                         selectedDateSessions.map((session) => (
@@ -554,14 +610,18 @@ const StudentSchedule = () => {
                         ))
                       ) : (
                         <p className="text-gray-600 text-sm">
-                          No tutor sessions scheduled
+                          {t("schedule.noTutorSessions", {
+                            defaultValue: "No tutor sessions scheduled",
+                          })}
                         </p>
                       )}
                     </div>
 
                     <div>
                       <h4 className="font-medium text-gray-900 mb-3">
-                        Study Blocks
+                        {t("schedule.studyBlocks", {
+                          defaultValue: "Study Blocks",
+                        })}
                       </h4>
                       {selectedDateStudyBlocks.length > 0 ? (
                         selectedDateStudyBlocks.map((block) => (
@@ -569,7 +629,9 @@ const StudentSchedule = () => {
                         ))
                       ) : (
                         <p className="text-gray-600 text-sm">
-                          No study blocks scheduled
+                          {t("schedule.noStudyBlocks", {
+                            defaultValue: "No study blocks scheduled",
+                          })}
                         </p>
                       )}
                     </div>
@@ -578,10 +640,15 @@ const StudentSchedule = () => {
                   <div className="text-center py-8">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No activities scheduled
+                      {t("schedule.noActivitiesScheduled", {
+                        defaultValue: "No activities scheduled",
+                      })}
                     </h3>
                     <p className="text-gray-600">
-                      No activities are scheduled for this day.
+                      {t("schedule.noActivitiesForDay", {
+                        defaultValue:
+                          "No activities are scheduled for this day.",
+                      })}
                     </p>
                   </div>
                 )}

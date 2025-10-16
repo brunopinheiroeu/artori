@@ -43,7 +43,7 @@ const Index = () => {
     {
       name: "SAT",
       country: "USA",
-      description: t("landing.exams.sat"),
+      description: t("landing:exams.sat"),
       gradient: "from-blue-500 to-red-500",
       borderColor: "border-blue-500",
       bgColor: "bg-blue-50",
@@ -53,7 +53,7 @@ const Index = () => {
     {
       name: "ENEM",
       country: "Brazil",
-      description: t("landing.exams.enem"),
+      description: t("landing:exams.enem"),
       gradient: "from-green-400 to-yellow-400",
       borderColor: "border-green-500",
       bgColor: "bg-green-50",
@@ -63,7 +63,7 @@ const Index = () => {
     {
       name: "Leaving Certificate",
       country: "Ireland",
-      description: t("landing.exams.leavingCertificate"),
+      description: t("landing:exams.leavingCertificate"),
       gradient: "from-green-600 to-orange-500",
       borderColor: "border-green-600",
       bgColor: "bg-green-50",
@@ -73,7 +73,7 @@ const Index = () => {
     {
       name: "Selectividad",
       country: "Spain",
-      description: t("landing.exams.selectividad"),
+      description: t("landing:exams.selectividad"),
       gradient: "from-red-600 to-yellow-500",
       borderColor: "border-red-600",
       bgColor: "bg-red-50",
@@ -83,7 +83,7 @@ const Index = () => {
     {
       name: "A-levels",
       country: "UK",
-      description: t("landing.exams.aLevels"),
+      description: t("landing:exams.aLevels"),
       gradient: "from-red-500 to-blue-600",
       borderColor: "border-red-500",
       bgColor: "bg-red-50",
@@ -93,7 +93,7 @@ const Index = () => {
     {
       name: "Abitur",
       country: "Germany",
-      description: t("landing.exams.abitur"),
+      description: t("landing:exams.abitur"),
       gradient: "from-yellow-400 to-red-500",
       borderColor: "border-yellow-500",
       bgColor: "bg-yellow-50",
@@ -103,7 +103,7 @@ const Index = () => {
     {
       name: "IB",
       country: "International",
-      description: t("landing.exams.ib"),
+      description: t("landing:exams.ib"),
       gradient: "from-purple-500 to-pink-500",
       borderColor: "border-purple-500",
       bgColor: "bg-purple-50",
@@ -113,7 +113,7 @@ const Index = () => {
     {
       name: "BAC",
       country: "France",
-      description: t("landing.exams.bac"),
+      description: t("landing:exams.bac"),
       gradient: "from-blue-600 to-red-600",
       borderColor: "border-blue-600",
       bgColor: "bg-blue-50",
@@ -125,43 +125,43 @@ const Index = () => {
   const features = [
     {
       icon: Brain,
-      title: t("landing.features.explainableAi"),
-      description: t("landing.features.explainableAiDescription"),
+      title: t("landing:features.explainableAi"),
+      description: t("landing:features.explainableAiDescription"),
       gradient: "from-purple-400 to-pink-400",
       bgColor: "bg-purple-50",
     },
     {
       icon: Target,
-      title: t("landing.features.adaptiveLearning"),
-      description: t("landing.features.adaptiveLearningDescription"),
+      title: t("landing:features.adaptiveLearning"),
+      description: t("landing:features.adaptiveLearningDescription"),
       gradient: "from-blue-400 to-cyan-400",
       bgColor: "bg-blue-50",
     },
     {
       icon: Shield,
-      title: t("landing.features.biasDetection"),
-      description: t("landing.features.biasDetectionDescription"),
+      title: t("landing:features.biasDetection"),
+      description: t("landing:features.biasDetectionDescription"),
       gradient: "from-green-400 to-emerald-400",
       bgColor: "bg-green-50",
     },
     {
       icon: Users,
-      title: t("landing.features.teacherCollaboration"),
-      description: t("landing.features.teacherCollaborationDescription"),
+      title: t("landing:features.teacherCollaboration"),
+      description: t("landing:features.teacherCollaborationDescription"),
       gradient: "from-orange-400 to-red-400",
       bgColor: "bg-orange-50",
     },
     {
       icon: BookOpen,
-      title: t("landing.features.reflectionActivities"),
-      description: t("landing.features.reflectionActivitiesDescription"),
+      title: t("landing:features.reflectionActivities"),
+      description: t("landing:features.reflectionActivitiesDescription"),
       gradient: "from-indigo-400 to-purple-400",
       bgColor: "bg-indigo-50",
     },
     {
       icon: TrendingUp,
-      title: t("landing.features.studyJourneys"),
-      description: t("landing.features.studyJourneysDescription"),
+      title: t("landing:features.studyJourneys"),
+      description: t("landing:features.studyJourneysDescription"),
       gradient: "from-pink-400 to-rose-400",
       bgColor: "bg-pink-50",
     },
@@ -169,68 +169,68 @@ const Index = () => {
 
   const pricingPlans = [
     {
-      name: t("pricing.plans.free.name"),
-      description: t("pricing.plans.free.description"),
+      name: t("pricing:plans.free.name"),
+      description: t("pricing:plans.free.description"),
       price: { monthly: 0, annual: 0 },
       features: [
-        t("pricing.plans.free.features.practiceQuestions"),
-        t("pricing.plans.free.features.basicExplanations"),
-        t("pricing.plans.free.features.progressTracking"),
-        t("pricing.plans.free.features.oneExamType"),
-        t("pricing.plans.free.features.communitySupport"),
+        t("pricing:plans.free.features.practiceQuestions"),
+        t("pricing:plans.free.features.basicExplanations"),
+        t("pricing:plans.free.features.progressTracking"),
+        t("pricing:plans.free.features.oneExamType"),
+        t("pricing:plans.free.features.communitySupport"),
       ],
-      cta: t("pricing.plans.free.cta"),
+      cta: t("pricing:plans.free.cta"),
       popular: false,
       gradient: "from-gray-400 to-gray-500",
       isSchool: false,
     },
     {
-      name: t("pricing.plans.student.name"),
-      description: t("pricing.plans.student.description"),
+      name: t("pricing:plans.student.name"),
+      description: t("pricing:plans.student.description"),
       price: { monthly: 19, annual: 15 },
       features: [
-        t("pricing.plans.student.features.unlimitedQuestions"),
-        t("pricing.plans.student.features.advancedExplanations"),
-        t("pricing.plans.student.features.personalizedRecommendations"),
-        t("pricing.plans.student.features.allExamTypes"),
-        t("pricing.plans.student.features.detailedAnalytics"),
-        t("pricing.plans.student.features.prioritySupport"),
+        t("pricing:plans.student.features.unlimitedQuestions"),
+        t("pricing:plans.student.features.advancedExplanations"),
+        t("pricing:plans.student.features.personalizedRecommendations"),
+        t("pricing:plans.student.features.allExamTypes"),
+        t("pricing:plans.student.features.detailedAnalytics"),
+        t("pricing:plans.student.features.prioritySupport"),
       ],
-      cta: t("pricing.plans.student.cta"),
+      cta: t("pricing:plans.student.cta"),
       popular: true,
       gradient: "from-indigo-500 to-purple-600",
       isSchool: false,
     },
     {
-      name: t("pricing.plans.pro.name"),
-      description: t("pricing.plans.pro.description"),
+      name: t("pricing:plans.pro.name"),
+      description: t("pricing:plans.pro.description"),
       price: { monthly: 39, annual: 31 },
       features: [
-        t("pricing.plans.pro.features.everythingInStudent"),
-        t("pricing.plans.pro.features.aiStudySchedule"),
-        t("pricing.plans.pro.features.customTests"),
-        t("pricing.plans.pro.features.performancePredictions"),
-        t("pricing.plans.pro.features.studyGroupFeatures"),
-        t("pricing.plans.pro.features.expertTutorMatching"),
+        t("pricing:plans.pro.features.everythingInStudent"),
+        t("pricing:plans.pro.features.aiStudySchedule"),
+        t("pricing:plans.pro.features.customTests"),
+        t("pricing:plans.pro.features.performancePredictions"),
+        t("pricing:plans.pro.features.studyGroupFeatures"),
+        t("pricing:plans.pro.features.expertTutorMatching"),
       ],
-      cta: t("pricing.plans.pro.cta"),
+      cta: t("pricing:plans.pro.cta"),
       popular: false,
       gradient: "from-violet-500 to-pink-600",
       isSchool: false,
     },
     {
-      name: t("pricing.plans.school.name"),
-      description: t("pricing.plans.school.description"),
-      price: { monthly: t("pricing.custom"), annual: t("pricing.custom") },
+      name: t("pricing:plans.school.name"),
+      description: t("pricing:plans.school.description"),
+      price: { monthly: t("pricing:custom"), annual: t("pricing:custom") },
       features: [
-        t("pricing.plans.school.features.everythingInPro"),
-        t("pricing.plans.school.features.unlimitedUsers"),
-        t("pricing.plans.school.features.advancedDashboards"),
-        t("pricing.plans.school.features.customBranding"),
-        t("pricing.plans.school.features.ssoIntegration"),
-        t("pricing.plans.school.features.dedicatedSupport"),
+        t("pricing:plans.school.features.everythingInPro"),
+        t("pricing:plans.school.features.unlimitedUsers"),
+        t("pricing:plans.school.features.advancedDashboards"),
+        t("pricing:plans.school.features.customBranding"),
+        t("pricing:plans.school.features.ssoIntegration"),
+        t("pricing:plans.school.features.dedicatedSupport"),
       ],
-      cta: t("pricing.plans.school.cta"),
+      cta: t("pricing:plans.school.cta"),
       popular: false,
       gradient: "from-emerald-500 to-teal-600",
       isSchool: true,
@@ -239,25 +239,25 @@ const Index = () => {
 
   const testimonials = [
     {
-      name: t("landing.testimonials.sarahChen"),
-      role: t("landing.testimonials.satStudent"),
-      content: t("landing.testimonials.sarahTestimonial"),
+      name: t("landing:testimonials.sarahChen"),
+      role: t("landing:testimonials.satStudent"),
+      content: t("landing:testimonials.sarahTestimonial"),
       avatar: "👩‍🎓",
-      score: t("landing.testimonials.sarahScore"),
+      score: t("landing:testimonials.sarahScore"),
     },
     {
-      name: t("landing.testimonials.miguelSantos"),
-      role: t("landing.testimonials.enemStudent"),
-      content: t("landing.testimonials.miguelTestimonial"),
+      name: t("landing:testimonials.miguelSantos"),
+      role: t("landing:testimonials.enemStudent"),
+      content: t("landing:testimonials.miguelTestimonial"),
       avatar: "👨‍🎓",
-      score: t("landing.testimonials.miguelScore"),
+      score: t("landing:testimonials.miguelScore"),
     },
     {
-      name: t("landing.testimonials.emmaThompson"),
-      role: t("landing.testimonials.aLevelStudent"),
-      content: t("landing.testimonials.emmaTestimonial"),
+      name: t("landing:testimonials.emmaThompson"),
+      role: t("landing:testimonials.aLevelStudent"),
+      content: t("landing:testimonials.emmaTestimonial"),
       avatar: "👩‍💼",
-      score: t("landing.testimonials.emmaScore"),
+      score: t("landing:testimonials.emmaScore"),
     },
   ];
 
@@ -293,19 +293,19 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16 text-center">
         <GlassmorphismCard padding="p-12">
           <Badge className="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-4 py-2 text-sm font-medium">
-            {t("landing.hero.aiPoweredExamPrep")}
+            {t("landing:hero.aiPoweredExamPrep")}
           </Badge>
 
           <h1 className="text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t("landing.hero.yourAiStudyCompanion")}
+              {t("landing:hero.yourAiStudyCompanion")}
             </span>
           </h1>
 
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            {t("landing.hero.heroDescription")}
+            {t("landing:hero.heroDescription")}
             <span className="font-semibold text-indigo-600">
-              {t("landing.hero.joinStudents")}
+              {t("landing:hero.joinStudents")}
             </span>
           </p>
 
@@ -315,7 +315,7 @@ const Index = () => {
                 size="lg"
                 className="w-full sm:w-auto text-lg px-8 py-4"
               >
-                {t("landing.hero.startPracticingFree")}
+                {t("landing:hero.startPracticingFree")}
               </GradientButton>
             </Link>
             <GradientButton
@@ -323,7 +323,7 @@ const Index = () => {
               variant="outline"
               className="w-full sm:w-auto text-lg px-8 py-4"
             >
-              {t("landing.hero.learnMore")}
+              {t("landing:hero.learnMore")}
             </GradientButton>
           </div>
         </GlassmorphismCard>
@@ -334,19 +334,19 @@ const Index = () => {
         <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
           <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
             <span className="text-green-500 mr-2">🔒</span>
-            {t("landing.trustBadges.soc2Compliant")}
+            {t("landing:trustBadges.soc2Compliant")}
           </Badge>
           <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
             <span className="text-blue-500 mr-2">🛡️</span>
-            {t("landing.trustBadges.gdprReady")}
+            {t("landing:trustBadges.gdprReady")}
           </Badge>
           <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
             <Star className="h-4 w-4 text-yellow-500 mr-2" />
-            {t("landing.trustBadges.studentRating")}
+            {t("landing:trustBadges.studentRating")}
           </Badge>
           <Badge className="bg-white/50 text-gray-700 border-white/20 backdrop-blur-sm">
             <span className="text-orange-500 mr-2">🏆</span>
-            {t("landing.trustBadges.edtechAward")}
+            {t("landing:trustBadges.edtechAward")}
           </Badge>
         </div>
       </section>
@@ -356,11 +356,11 @@ const Index = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {t("landing.exams.supportedExams")}
+              {t("landing:exams.supportedExams")}
             </span>
           </h2>
           <p className="text-gray-600 text-lg mb-8">
-            {t("landing.exams.practiceForExam")}
+            {t("landing:exams.practiceForExam")}
           </p>
 
           {/* Search Filter */}
@@ -368,7 +368,7 @@ const Index = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder={t("landing.exams.searchExamsCountries")}
+                placeholder={t("landing:exams.searchExamsCountries")}
                 value={examFilter}
                 onChange={(e) => setExamFilter(e.target.value)}
                 className="pl-10 bg-white/50 backdrop-blur-sm border-white/20 shadow-lg"
@@ -390,8 +390,8 @@ const Index = () => {
               bgColor={exam.bgColor}
               buttonText={
                 exam.isSupported
-                  ? t("landing.exams.startPracticing")
-                  : t("landing.exams.comingSoon")
+                  ? t("landing:exams.startPracticing")
+                  : t("landing:exams.comingSoon")
               }
               onSelect={exam.isSupported ? () => navigate("/login") : () => {}}
             />
@@ -399,14 +399,14 @@ const Index = () => {
 
           {/* More Exams Card */}
           <ExamCard
-            name={t("landing.exams.moreExams")}
-            country={t("landing.exams.comingSoon")}
-            description={t("landing.exams.requestExamType")}
+            name={t("landing:exams.moreExams")}
+            country={t("landing:exams.comingSoon")}
+            description={t("landing:exams.requestExamType")}
             flag="➕"
             gradient="from-gray-400 to-gray-500"
             borderColor="border-gray-300"
             bgColor="bg-white/40"
-            buttonText={t("landing.exams.requestExam")}
+            buttonText={t("landing:exams.requestExam")}
             onSelect={() => {}}
           />
         </div>
@@ -417,11 +417,11 @@ const Index = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t("landing.features.responsibleAiFeatures")}
+              {t("landing:features.responsibleAiFeatures")}
             </span>
           </h2>
           <p className="text-gray-600 text-lg">
-            {t("landing.features.builtForStudents")}
+            {t("landing:features.builtForStudents")}
           </p>
         </div>
 
@@ -444,10 +444,10 @@ const Index = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-              {t("pricing.title")}
+              {t("pricing:title")}
             </span>
           </h2>
-          <p className="text-gray-600 text-lg mb-8">{t("pricing.subtitle")}</p>
+          <p className="text-gray-600 text-lg mb-8">{t("pricing:subtitle")}</p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center space-x-4 mb-8">
@@ -456,7 +456,7 @@ const Index = () => {
                 !isAnnual ? "text-indigo-600 font-medium" : "text-gray-500"
               }`}
             >
-              {t("pricing.billing.monthly")}
+              {t("pricing:billing.monthly")}
             </span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
@@ -477,11 +477,11 @@ const Index = () => {
                 isAnnual ? "text-indigo-600 font-medium" : "text-gray-500"
               }`}
             >
-              {t("pricing.billing.annual")}
+              {t("pricing:billing.annual")}
             </span>
             {isAnnual && (
               <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
-                {t("pricing.billing.saveUpTo")}
+                {t("pricing:billing.saveUpTo")}
               </Badge>
             )}
           </div>
@@ -502,7 +502,7 @@ const Index = () => {
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 px-3 py-1">
-                    {t("pricing.mostPopular")}
+                    {t("pricing:mostPopular")}
                   </Badge>
                 </div>
               )}
@@ -511,7 +511,7 @@ const Index = () => {
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 px-3 py-1">
                     <Building2 className="h-3 w-3 mr-1" />
-                    {t("pricing.forInstitutions")}
+                    {t("pricing:forInstitutions")}
                   </Badge>
                 </div>
               )}
@@ -527,26 +527,26 @@ const Index = () => {
                 <div className="mb-6">
                   <div className="text-5xl font-bold text-gray-800 mb-2">
                     {typeof getPrice(plan) === "string" ? (
-                      <span className="text-2xl">{t("pricing.custom")}</span>
+                      <span className="text-2xl">{t("pricing:custom")}</span>
                     ) : (
                       <>
                         ${getPrice(plan)}
                         <span className="text-lg font-normal text-gray-500">
-                          {t("pricing.perMonth")}
+                          {t("pricing:perMonth")}
                         </span>
                       </>
                     )}
                   </div>
                   {isAnnual && getSavings(plan) && (
                     <div className="text-sm text-green-600 font-medium">
-                      {t("pricing.billing.saveAnnually", {
+                      {t("pricing:billing.saveAnnually", {
                         percentage: getSavings(plan),
                       })}
                     </div>
                   )}
                   {plan.isSchool && (
                     <div className="text-sm text-emerald-600 font-medium">
-                      {t("pricing.tailoredToNeeds")}
+                      {t("pricing:tailoredToNeeds")}
                     </div>
                   )}
                 </div>
@@ -583,7 +583,7 @@ const Index = () => {
                 {plan.isSchool && (
                   <div className="mt-4 pt-4 border-t border-white/20">
                     <p className="text-xs text-gray-500 text-center">
-                      {t("pricing.customPricingNote")}
+                      {t("pricing:customPricingNote")}
                     </p>
                   </div>
                 )}
@@ -593,13 +593,13 @@ const Index = () => {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-gray-600 mb-4">{t("pricing.needMoreFeatures")}</p>
+          <p className="text-gray-600 mb-4">{t("pricing:needMoreFeatures")}</p>
           <Link to="/solutions">
             <GradientButton
               variant="outline"
               className="border-indigo-200 hover:bg-indigo-50"
             >
-              {t("pricing.contactSales")}
+              {t("pricing:contactSales")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </GradientButton>
           </Link>
@@ -613,21 +613,21 @@ const Index = () => {
             <div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">
                 <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {t("landing.newsletter.stayUpdated")}
+                  {t("landing:newsletter.stayUpdated")}
                 </span>
               </h3>
               <p className="text-gray-600">
-                {t("landing.newsletter.getLatestUpdates")}
+                {t("landing:newsletter.getLatestUpdates")}
               </p>
             </div>
             <div className="flex space-x-3">
               <Input
                 type="email"
-                placeholder={t("landing.newsletter.enterEmail")}
+                placeholder={t("landing:newsletter.enterEmail")}
                 className="flex-1 bg-white/50 backdrop-blur-sm border-white/20"
               />
               <GradientButton className="px-6 py-2">
-                {t("landing.newsletter.subscribe")}
+                {t("landing:newsletter.subscribe")}
               </GradientButton>
             </div>
           </div>
@@ -639,11 +639,11 @@ const Index = () => {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-              {t("landing.testimonials.lovedByStudents")}
+              {t("landing:testimonials.lovedByStudents")}
             </span>
           </h2>
           <p className="text-gray-600 text-lg">
-            {t("landing.testimonials.seeHowArtori")}
+            {t("landing:testimonials.seeHowArtori")}
           </p>
         </div>
 
@@ -684,7 +684,7 @@ const Index = () => {
         <GlassmorphismCard className="text-center" padding="p-12">
           <h2 className="text-3xl font-bold mb-8">
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {t("landing.stats.trustedByStudents")}
+              {t("landing:stats.trustedByStudents")}
             </span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -693,19 +693,19 @@ const Index = () => {
                 50K+
               </div>
               <div className="text-gray-600">
-                {t("landing.stats.activeStudents")}
+                {t("landing:stats.activeStudents")}
               </div>
             </div>
             <div>
               <div className="text-4xl font-bold text-purple-600 mb-2">1M+</div>
               <div className="text-gray-600">
-                {t("landing.stats.questionsAnswered")}
+                {t("landing:stats.questionsAnswered")}
               </div>
             </div>
             <div>
               <div className="text-4xl font-bold text-pink-600 mb-2">95%</div>
               <div className="text-gray-600">
-                {t("landing.stats.satisfactionRate")}
+                {t("landing:stats.satisfactionRate")}
               </div>
             </div>
             <div>
@@ -713,7 +713,7 @@ const Index = () => {
                 200+
               </div>
               <div className="text-gray-600">
-                {t("landing.stats.partnerSchools")}
+                {t("landing:stats.partnerSchools")}
               </div>
             </div>
           </div>
@@ -725,13 +725,13 @@ const Index = () => {
         <GlassmorphismCard padding="p-12">
           <h2 className="text-4xl font-bold mb-6">
             <span className="bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
-              {t("landing.cta.readyToTransform")}
+              {t("landing:cta.readyToTransform")}
             </span>
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            {t("landing.cta.joinThousands")}
+            {t("landing:cta.joinThousands")}
             <span className="font-semibold text-violet-600">
-              {t("landing.cta.startFreeToday")}
+              {t("landing:cta.startFreeToday")}
             </span>
           </p>
           <Link to="/login">
@@ -740,7 +740,7 @@ const Index = () => {
               gradient="from-violet-500 to-pink-600"
               className="text-lg px-12 py-4"
             >
-              {t("landing.cta.startFreePractice")}
+              {t("landing:cta.startFreePractice")}
             </GradientButton>
           </Link>
         </GlassmorphismCard>

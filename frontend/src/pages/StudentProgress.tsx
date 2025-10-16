@@ -25,9 +25,11 @@ import {
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
+import { useTranslation } from "react-i18next";
 
 const StudentProgress = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("this-month");
+  const { t } = useTranslation("student");
 
   // Fetch dashboard data for progress information
   const { data: dashboardData, isLoading } = useQuery({
@@ -91,8 +93,8 @@ const StudentProgress = () => {
 
   return (
     <StudentLayout
-      title="Study Progress"
-      description="Track your learning journey and identify areas for improvement."
+      title={t("progress.title")}
+      description={t("progress.description")}
     >
       <div className="space-y-6">
         {/* Key Metrics */}
@@ -102,14 +104,16 @@ const StudentProgress = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Study Streak
+                    {t("dashboard.studyStreak")}
                   </p>
                   <p className="text-3xl font-bold text-orange-600">
                     {progressData.studyStreak}
                   </p>
                   <p className="text-sm text-orange-600 flex items-center mt-1">
                     <Zap className="h-3 w-3 mr-1" />
-                    Days in a row
+                    {t("dashboard.daysInRow", {
+                      defaultValue: "Days in a row",
+                    })}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-orange-100">
@@ -124,14 +128,16 @@ const StudentProgress = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Total Study Time
+                    {t("progress.totalStudyTime", {
+                      defaultValue: "Total Study Time",
+                    })}
                   </p>
                   <p className="text-3xl font-bold text-blue-600">
                     {progressData.totalStudyTime}h
                   </p>
                   <p className="text-sm text-blue-600 flex items-center mt-1">
                     <Clock className="h-3 w-3 mr-1" />
-                    This month
+                    {t("progress.thisMonth", { defaultValue: "This month" })}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-blue-100">
@@ -146,14 +152,18 @@ const StudentProgress = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Questions Answered
+                    {t("progress.questionsAnswered", {
+                      defaultValue: "Questions Answered",
+                    })}
                   </p>
                   <p className="text-3xl font-bold text-green-600">
                     {progressData.questionsAnswered}
                   </p>
                   <p className="text-sm text-green-600 flex items-center mt-1">
                     <BookOpen className="h-3 w-3 mr-1" />
-                    Total solved
+                    {t("progress.totalSolved", {
+                      defaultValue: "Total solved",
+                    })}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-green-100">
@@ -168,14 +178,16 @@ const StudentProgress = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">
-                    Average Accuracy
+                    {t("progress.averageAccuracy", {
+                      defaultValue: "Average Accuracy",
+                    })}
                   </p>
                   <p className="text-3xl font-bold text-purple-600">
                     {progressData.averageAccuracy}%
                   </p>
                   <p className="text-sm text-purple-600 flex items-center mt-1">
                     <Target className="h-3 w-3 mr-1" />
-                    Great job!
+                    {t("progress.greatJob", { defaultValue: "Great job!" })}
                   </p>
                 </div>
                 <div className="p-3 rounded-full bg-purple-100">
@@ -190,22 +202,38 @@ const StudentProgress = () => {
         <Tabs defaultValue="overview" className="w-full">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="backdrop-blur-sm bg-white/60 border-white/20">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="subjects">By Subject</TabsTrigger>
-              <TabsTrigger value="strengths">
-                Strengths & Weaknesses
+              <TabsTrigger value="overview">
+                {t("progress.overview", { defaultValue: "Overview" })}
               </TabsTrigger>
-              <TabsTrigger value="trends">Trends</TabsTrigger>
+              <TabsTrigger value="subjects">
+                {t("progress.bySubject", { defaultValue: "By Subject" })}
+              </TabsTrigger>
+              <TabsTrigger value="strengths">
+                {t("progress.strengthsWeaknesses", {
+                  defaultValue: "Strengths & Weaknesses",
+                })}
+              </TabsTrigger>
+              <TabsTrigger value="trends">
+                {t("progress.trends", { defaultValue: "Trends" })}
+              </TabsTrigger>
             </TabsList>
             <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
               <SelectTrigger className="w-40 bg-white/60 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="this-week">This Week</SelectItem>
-                <SelectItem value="this-month">This Month</SelectItem>
-                <SelectItem value="last-3-months">Last 3 Months</SelectItem>
-                <SelectItem value="all-time">All Time</SelectItem>
+                <SelectItem value="this-week">
+                  {t("progress.thisWeek", { defaultValue: "This Week" })}
+                </SelectItem>
+                <SelectItem value="this-month">
+                  {t("progress.thisMonth", { defaultValue: "This Month" })}
+                </SelectItem>
+                <SelectItem value="last-3-months">
+                  {t("progress.last3Months", { defaultValue: "Last 3 Months" })}
+                </SelectItem>
+                <SelectItem value="all-time">
+                  {t("progress.allTime", { defaultValue: "All Time" })}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -216,7 +244,11 @@ const StudentProgress = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <BarChart3 className="h-5 w-5" />
-                    <span>Weekly Progress</span>
+                    <span>
+                      {t("progress.weeklyProgress", {
+                        defaultValue: "Weekly Progress",
+                      })}
+                    </span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -226,18 +258,28 @@ const StudentProgress = () => {
                         <div className="flex justify-between text-sm">
                           <span className="font-medium">{week.week}</span>
                           <span className="text-gray-600">
-                            {week.questionsAnswered} questions
+                            {week.questionsAnswered}{" "}
+                            {t("progress.questions", {
+                              defaultValue: "questions",
+                            })}
                           </span>
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-xs">
                           <div>
-                            <span className="text-gray-600">Accuracy: </span>
+                            <span className="text-gray-600">
+                              {t("progress.accuracy")}:{" "}
+                            </span>
                             <span className="font-medium">
                               {week.accuracy}%
                             </span>
                           </div>
                           <div>
-                            <span className="text-gray-600">Study Time: </span>
+                            <span className="text-gray-600">
+                              {t("progress.studyTime", {
+                                defaultValue: "Study Time",
+                              })}
+                              :{" "}
+                            </span>
                             <span className="font-medium">
                               {week.studyTime}h
                             </span>
@@ -254,7 +296,11 @@ const StudentProgress = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Award className="h-5 w-5" />
-                    <span>Recent Achievements</span>
+                    <span>
+                      {t("progress.recentAchievements", {
+                        defaultValue: "Recent Achievements",
+                      })}
+                    </span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -262,24 +308,46 @@ const StudentProgress = () => {
                     <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
                       <div className="text-2xl">🔥</div>
                       <div>
-                        <p className="font-medium">12-Day Study Streak</p>
-                        <p className="text-sm text-gray-600">Keep it up!</p>
+                        <p className="font-medium">
+                          {t("progress.studyStreakAchievement", {
+                            defaultValue: "12-Day Study Streak",
+                          })}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {t("progress.keepItUp", {
+                            defaultValue: "Keep it up!",
+                          })}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
                       <div className="text-2xl">🎯</div>
                       <div>
-                        <p className="font-medium">90% Accuracy in Biology</p>
+                        <p className="font-medium">
+                          {t("progress.accuracyAchievement", {
+                            defaultValue: "90% Accuracy in Biology",
+                          })}
+                        </p>
                         <p className="text-sm text-gray-600">
-                          Excellent performance!
+                          {t("progress.excellentPerformance", {
+                            defaultValue: "Excellent performance!",
+                          })}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
                       <div className="text-2xl">📚</div>
                       <div>
-                        <p className="font-medium">500 Questions Milestone</p>
-                        <p className="text-sm text-gray-600">You're on fire!</p>
+                        <p className="font-medium">
+                          {t("progress.questionsMilestone", {
+                            defaultValue: "500 Questions Milestone",
+                          })}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {t("progress.onFire", {
+                            defaultValue: "You're on fire!",
+                          })}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -301,14 +369,17 @@ const StudentProgress = () => {
                         {subject.subject}
                       </CardTitle>
                       <Badge variant="outline">
-                        {subject.progress}% Complete
+                        {subject.progress}%{" "}
+                        {t("progress.complete", { defaultValue: "Complete" })}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
                       <div className="flex justify-between text-sm mb-2">
-                        <span>Progress</span>
+                        <span>
+                          {t("progress.progress", { defaultValue: "Progress" })}
+                        </span>
                         <span>{subject.progress}%</span>
                       </div>
                       <Progress value={subject.progress} className="h-3" />
@@ -318,19 +389,29 @@ const StudentProgress = () => {
                         <div className="font-semibold text-blue-600">
                           {subject.questionsAnswered}
                         </div>
-                        <div className="text-gray-600">Questions</div>
+                        <div className="text-gray-600">
+                          {t("progress.questions", {
+                            defaultValue: "Questions",
+                          })}
+                        </div>
                       </div>
                       <div className="text-center">
                         <div className="font-semibold text-green-600">
                           {subject.accuracy}%
                         </div>
-                        <div className="text-gray-600">Accuracy</div>
+                        <div className="text-gray-600">
+                          {t("progress.accuracy")}
+                        </div>
                       </div>
                       <div className="text-center">
                         <div className="font-semibold text-purple-600">
                           {subject.timeSpent}h
                         </div>
-                        <div className="text-gray-600">Time Spent</div>
+                        <div className="text-gray-600">
+                          {t("progress.timeSpent", {
+                            defaultValue: "Time Spent",
+                          })}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -345,7 +426,7 @@ const StudentProgress = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-green-600">
                     <Star className="h-5 w-5" />
-                    <span>Strengths</span>
+                    <span>{t("progress.strengths")}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -373,7 +454,7 @@ const StudentProgress = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-orange-600">
                     <Brain className="h-5 w-5" />
-                    <span>Areas for Improvement</span>
+                    <span>{t("progress.weaknesses")}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -404,18 +485,26 @@ const StudentProgress = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="h-5 w-5" />
-                  <span>Performance Trends</span>
+                  <span>
+                    {t("progress.performanceTrends", {
+                      defaultValue: "Performance Trends",
+                    })}
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
                   <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Detailed Analytics Coming Soon
+                    {t("progress.analyticsComingSoon", {
+                      defaultValue: "Detailed Analytics Coming Soon",
+                    })}
                   </h3>
                   <p className="text-gray-600">
-                    We're working on advanced analytics and trend visualization
-                    to help you track your progress over time.
+                    {t("progress.analyticsDescription", {
+                      defaultValue:
+                        "We're working on advanced analytics and trend visualization to help you track your progress over time.",
+                    })}
                   </p>
                 </div>
               </CardContent>

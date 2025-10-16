@@ -121,7 +121,7 @@ const AdminUsers = () => {
   const columns = [
     {
       key: "name",
-      label: t("admin.users.user"),
+      label: t("admin:users.user"),
       sortable: true,
       render: (value: string, row: AdminUserResponse) => (
         <div className="flex items-center space-x-3">
@@ -137,7 +137,7 @@ const AdminUsers = () => {
     },
     {
       key: "role",
-      label: t("admin.users.role"),
+      label: t("admin:users.role"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -153,7 +153,7 @@ const AdminUsers = () => {
     },
     {
       key: "status",
-      label: t("admin.users.status"),
+      label: t("admin:users.status"),
       sortable: true,
       render: (value: string) => (
         <Badge
@@ -171,7 +171,7 @@ const AdminUsers = () => {
     },
     {
       key: "login_count",
-      label: t("admin.users.logins"),
+      label: t("admin:users.logins"),
       sortable: true,
       render: (value: number) => (
         <span className="font-medium">{value.toLocaleString()}</span>
@@ -179,16 +179,16 @@ const AdminUsers = () => {
     },
     {
       key: "last_login",
-      label: t("admin.users.lastLogin"),
+      label: t("admin:users.lastLogin"),
       sortable: true,
       render: (value: string | null) =>
         value
           ? formatDistanceToNow(new Date(value), { addSuffix: true })
-          : t("admin.users.never"),
+          : t("admin:users.never"),
     },
     {
       key: "created_at",
-      label: t("admin.users.created"),
+      label: t("admin:users.created"),
       sortable: true,
       render: (value: string) => new Date(value).toLocaleDateString(),
     },
@@ -219,7 +219,7 @@ const AdminUsers = () => {
   };
 
   const handleDelete = (user: AdminUserResponse) => {
-    if (window.confirm(t("admin.users.confirmDelete", { name: user.name }))) {
+    if (window.confirm(t("admin:users.confirmDelete", { name: user.name }))) {
       deleteUserMutation.mutate(user.id);
     }
   };
@@ -267,7 +267,7 @@ const AdminUsers = () => {
   };
 
   const handleResetUser = (user: AdminUserResponse) => {
-    if (window.confirm(t("admin.users.confirmReset", { name: user.name }))) {
+    if (window.confirm(t("admin:users.confirmReset", { name: user.name }))) {
       resetUserMutation.mutate(user.id);
     }
   };
@@ -276,12 +276,12 @@ const AdminUsers = () => {
   if (usersError) {
     return (
       <AdminLayout
-        title={t("admin.users.title")}
-        description={t("admin.users.description")}
+        title={t("admin:users.title")}
+        description={t("admin:users.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{t("admin.users.failedToLoad")}</AlertDescription>
+          <AlertDescription>{t("admin:users.failedToLoad")}</AlertDescription>
         </Alert>
       </AdminLayout>
     );
@@ -289,8 +289,8 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout
-      title={t("admin.users.title")}
-      description={t("admin.users.description")}
+      title={t("admin:users.title")}
+      description={t("admin:users.description")}
     >
       {usersLoading ? (
         <div className="space-y-4">
@@ -309,16 +309,16 @@ const AdminUsers = () => {
         </div>
       ) : (
         <AdminDataTable
-          title={t("admin.users.allUsers")}
-          description={t("admin.users.allUsersDescription")}
+          title={t("admin:users.allUsers")}
+          description={t("admin:users.allUsersDescription")}
           data={users}
           columns={columns}
-          searchPlaceholder={t("admin.users.searchPlaceholder")}
+          searchPlaceholder={t("admin:users.searchPlaceholder")}
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
-          addButtonText={t("admin.users.addUser")}
+          addButtonText={t("admin:users.addUser")}
           currentPage={currentPage}
           pageSize={pageSize}
           totalCount={totalUsers}

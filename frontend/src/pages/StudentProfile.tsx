@@ -20,10 +20,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useApi";
+import { useTranslation } from "react-i18next";
 
 const StudentProfile = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const { t } = useTranslation("student");
 
   // Mock additional profile data
   const profileData = {
@@ -50,8 +52,8 @@ const StudentProfile = () => {
 
   return (
     <StudentLayout
-      title="Profile"
-      description="Manage your personal information and study preferences."
+      title={t("profile.title")}
+      description={t("profile.description")}
     >
       <div className="space-y-6">
         {/* Profile Header */}
@@ -92,12 +94,12 @@ const StudentProfile = () => {
                     {isEditing ? (
                       <>
                         <Save className="h-4 w-4 mr-2" />
-                        Save Changes
+                        {t("profile.saveChanges")}
                       </>
                     ) : (
                       <>
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit Profile
+                        {t("profile.editProfile")}
                       </>
                     )}
                   </Button>
@@ -128,13 +130,15 @@ const StudentProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="h-5 w-5" />
-                <span>Personal Information</span>
+                <span>{t("profile.personalInfo")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">
+                    {t("profile.fullName", { defaultValue: "Full Name" })}
+                  </Label>
                   <Input
                     id="name"
                     value={user?.name || ""}
@@ -143,7 +147,9 @@ const StudentProfile = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    {t("profile.email", { defaultValue: "Email" })}
+                  </Label>
                   <Input
                     id="email"
                     value={user?.email || ""}
@@ -154,7 +160,9 @@ const StudentProfile = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone">
+                    {t("profile.phone", { defaultValue: "Phone" })}
+                  </Label>
                   <Input
                     id="phone"
                     value={profileData.phone}
@@ -163,7 +171,9 @@ const StudentProfile = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location">
+                    {t("profile.location", { defaultValue: "Location" })}
+                  </Label>
                   <Input
                     id="location"
                     value={profileData.location}
@@ -173,7 +183,9 @@ const StudentProfile = () => {
                 </div>
               </div>
               <div>
-                <Label htmlFor="bio">Bio</Label>
+                <Label htmlFor="bio">
+                  {t("profile.bio", { defaultValue: "Bio" })}
+                </Label>
                 <Textarea
                   id="bio"
                   value={profileData.bio}
@@ -190,13 +202,19 @@ const StudentProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BookOpen className="h-5 w-5" />
-                <span>Academic Information</span>
+                <span>
+                  {t("profile.academicInfo", {
+                    defaultValue: "Academic Information",
+                  })}
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="school">School</Label>
+                  <Label htmlFor="school">
+                    {t("profile.school", { defaultValue: "School" })}
+                  </Label>
                   <Input
                     id="school"
                     value={profileData.school}
@@ -205,7 +223,9 @@ const StudentProfile = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="grade">Grade</Label>
+                  <Label htmlFor="grade">
+                    {t("profile.grade", { defaultValue: "Grade" })}
+                  </Label>
                   <Input
                     id="grade"
                     value={profileData.grade}
@@ -216,7 +236,9 @@ const StudentProfile = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="targetExam">Target Exam</Label>
+                  <Label htmlFor="targetExam">
+                    {t("profile.targetExam", { defaultValue: "Target Exam" })}
+                  </Label>
                   <Input
                     id="targetExam"
                     value={profileData.targetExam}
@@ -225,7 +247,9 @@ const StudentProfile = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="targetScore">Target Score</Label>
+                  <Label htmlFor="targetScore">
+                    {t("profile.targetScore", { defaultValue: "Target Score" })}
+                  </Label>
                   <Input
                     id="targetScore"
                     value={profileData.targetScore}
@@ -244,7 +268,7 @@ const StudentProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Target className="h-5 w-5" />
-                <span>Study Goals</span>
+                <span>{t("profile.goals")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -266,7 +290,7 @@ const StudentProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Award className="h-5 w-5" />
-                <span>Achievements</span>
+                <span>{t("profile.achievements")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -288,7 +312,7 @@ const StudentProfile = () => {
         {/* Interests */}
         <Card className="backdrop-blur-sm bg-white/60 border-white/20 shadow-xl">
           <CardHeader>
-            <CardTitle>Interests & Subjects</CardTitle>
+            <CardTitle>{t("profile.interests")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">

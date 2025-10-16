@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import TutorLayout from "@/components/TutorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { apiClient, User as UserType, TutorProfileUpdate } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 
 const TutorProfile = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [newSubject, setNewSubject] = useState("");
@@ -48,16 +50,16 @@ const TutorProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tutorProfile"] });
       toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
+        title: t("tutor:profile.profileUpdated"),
+        description: t("tutor:profile.profileUpdatedDescription"),
       });
       setIsEditing(false);
     },
     onError: (error: Error) => {
       toast({
-        title: "Update failed",
+        title: t("tutor:profile.updateFailed"),
         description:
-          error.message || "Failed to update profile. Please try again.",
+          error.message || t("tutor:profile.updateFailedDescription"),
         variant: "destructive",
       });
     },
@@ -156,14 +158,12 @@ const TutorProfile = () => {
   if (profileError) {
     return (
       <TutorLayout
-        title="Profile"
-        description="Manage your tutor profile and settings."
+        title={t("tutor:profile.title")}
+        description={t("tutor:profile.description")}
       >
         <Alert className="border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Failed to load profile data. Please try refreshing the page.
-          </AlertDescription>
+          <AlertDescription>{t("tutor:profile.failedToLoad")}</AlertDescription>
         </Alert>
       </TutorLayout>
     );
@@ -171,8 +171,8 @@ const TutorProfile = () => {
 
   return (
     <TutorLayout
-      title="Profile"
-      description="Manage your tutor profile and settings."
+      title={t("tutor:profile.title")}
+      description={t("tutor:profile.description")}
     >
       <div className="space-y-6">
         {/* Profile Header */}
@@ -219,7 +219,9 @@ const TutorProfile = () => {
                       : "bg-gradient-to-r from-emerald-500 to-teal-600"
                   }
                 >
-                  {isEditing ? "Cancel" : "Edit Profile"}
+                  {isEditing
+                    ? t("tutor:profile.cancel")
+                    : t("tutor:profile.editProfile")}
                 </Button>
               </div>
             )}
@@ -232,7 +234,7 @@ const TutorProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="h-5 w-5" />
-                <span>Basic Information</span>
+                <span>{t("tutor:profile.basicInformation")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -245,10 +247,10 @@ const TutorProfile = () => {
               ) : (
                 <>
                   <div>
-                    <Label htmlFor="bio">Bio</Label>
+                    <Label htmlFor="bio">{t("tutor:profile.bio")}</Label>
                     <Textarea
                       id="bio"
-                      placeholder="Tell students about yourself..."
+                      placeholder={t("tutor:profile.bioPlaceholder")}
                       value={
                         isEditing
                           ? formData.bio
@@ -263,7 +265,9 @@ const TutorProfile = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="experience">Experience (years)</Label>
+                      <Label htmlFor="experience">
+                        {t("tutor:profile.experienceYears")}
+                      </Label>
                       <Input
                         id="experience"
                         type="number"
@@ -283,7 +287,9 @@ const TutorProfile = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="rate">Hourly Rate ($)</Label>
+                      <Label htmlFor="rate">
+                        {t("tutor:profile.hourlyRate")}
+                      </Label>
                       <Input
                         id="rate"
                         type="number"
@@ -313,7 +319,7 @@ const TutorProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <BookOpen className="h-5 w-5" />
-                <span>Subjects</span>
+                <span>{t("tutor:profile.subjects")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -348,7 +354,7 @@ const TutorProfile = () => {
                   {isEditing && (
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Add subject..."
+                        placeholder={t("tutor:profile.addSubjectPlaceholder")}
                         value={newSubject}
                         onChange={(e) => setNewSubject(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && addSubject()}
@@ -370,7 +376,7 @@ const TutorProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <GraduationCap className="h-5 w-5" />
-                <span>Qualifications</span>
+                <span>{t("tutor:profile.qualifications")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -404,7 +410,9 @@ const TutorProfile = () => {
                   {isEditing && (
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Add qualification..."
+                        placeholder={t(
+                          "tutor:profile.addQualificationPlaceholder"
+                        )}
                         value={newQualification}
                         onChange={(e) => setNewQualification(e.target.value)}
                         onKeyPress={(e) =>
@@ -426,7 +434,7 @@ const TutorProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Globe className="h-5 w-5" />
-                <span>Languages</span>
+                <span>{t("tutor:profile.languages")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -460,7 +468,7 @@ const TutorProfile = () => {
                   {isEditing && (
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Add language..."
+                        placeholder={t("tutor:profile.addLanguagePlaceholder")}
                         value={newLanguage}
                         onChange={(e) => setNewLanguage(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && addLanguage()}
@@ -485,7 +493,9 @@ const TutorProfile = () => {
               className="bg-gradient-to-r from-emerald-500 to-teal-600"
             >
               <Save className="h-4 w-4 mr-2" />
-              {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+              {updateProfileMutation.isPending
+                ? t("tutor:profile.saving")
+                : t("tutor:profile.saveChanges")}
             </Button>
           </div>
         )}

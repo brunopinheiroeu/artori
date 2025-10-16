@@ -48,8 +48,8 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
 
       // Show success message
       toast({
-        title: t("admin.sidebar.loggedOutSuccessfully"),
-        description: t("admin.sidebar.signedOutMessage"),
+        title: t("admin:sidebar.loggedOutSuccessfully"),
+        description: t("admin:sidebar.signedOutMessage"),
       });
 
       // Redirect to login page
@@ -57,8 +57,8 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
     } catch (error) {
       console.error("Logout error:", error);
       toast({
-        title: t("admin.sidebar.logoutError"),
-        description: t("admin.sidebar.logoutErrorMessage"),
+        title: t("admin:sidebar.logoutError"),
+        description: t("admin:sidebar.logoutErrorMessage"),
         variant: "destructive",
       });
     }
@@ -67,19 +67,19 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
   // Base navigation items available to all admin users
   const baseNavigation = [
     {
-      name: t("admin.sidebar.dashboard"),
+      name: t("admin:sidebar.dashboard"),
       href: "/admin",
       icon: LayoutDashboard,
       current: location.pathname === "/admin",
     },
     {
-      name: t("admin.sidebar.exams"),
+      name: t("admin:sidebar.exams"),
       href: "/admin/exams",
       icon: BookOpen,
       current: location.pathname.startsWith("/admin/exams"),
     },
     {
-      name: t("admin.sidebar.users"),
+      name: t("admin:sidebar.users"),
       href: "/admin/users",
       icon: Users,
       current: location.pathname.startsWith("/admin/users"),
@@ -88,7 +88,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
 
   // Settings navigation item only for super_admin users
   const settingsNavigation = {
-    name: t("admin.sidebar.settings"),
+    name: t("admin:sidebar.settings"),
     href: "/admin/settings",
     icon: Settings,
     current: location.pathname.startsWith("/admin/settings"),
@@ -107,10 +107,10 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
         email: user.email,
         role:
           user.role === "super_admin"
-            ? t("admin.roles.superAdmin")
+            ? t("admin:roles.superAdmin")
             : user.role === "admin"
-            ? t("admin.roles.admin")
-            : t("admin.roles.user"),
+            ? t("admin:roles.admin")
+            : t("admin:roles.user"),
       }
     : {
         name: "Loading...",
@@ -150,7 +150,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
             <img src="/artori-logo.png" alt="Artori" className="h-8 w-auto" />
             <div className="ml-3">
               <p className="text-xs text-slate-400">
-                {t("admin.sidebar.adminPanel")}
+                {t("admin:sidebar.adminPanel")}
               </p>
             </div>
           </div>
@@ -212,7 +212,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                 >
                   <Link to="/admin/profile">
                     <User className="mr-2 h-4 w-4" />
-                    <span>{t("admin.sidebar.profile")}</span>
+                    <span>{t("admin:sidebar.profile")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -224,7 +224,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                   >
                     <Link to="/admin/settings">
                       <Settings className="mr-2 h-4 w-4" />
-                      <span>{t("admin.sidebar.settings")}</span>
+                      <span>{t("admin:sidebar.settings")}</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -235,7 +235,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                 >
                   <Link to="/admin/analytics">
                     <BarChart3 className="mr-2 h-4 w-4" />
-                    <span>{t("admin.sidebar.analytics")}</span>
+                    <span>{t("admin:sidebar.analytics")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -245,7 +245,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                 >
                   <Link to="/admin/help">
                     <HelpCircle className="mr-2 h-4 w-4" />
-                    <span>{t("admin.sidebar.helpSupport")}</span>
+                    <span>{t("admin:sidebar.helpSupport")}</span>
                   </Link>
                 </DropdownMenuItem>
 
@@ -256,7 +256,7 @@ const AdminSidebar = ({ className }: AdminSidebarProps) => {
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t("admin.sidebar.logout")}</span>
+                  <span>{t("admin:sidebar.logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
