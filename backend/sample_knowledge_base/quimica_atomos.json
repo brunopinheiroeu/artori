@@ -1,0 +1,19 @@
+{
+  "subject": "Química",
+  "topic": "Átomos y Moléculas",
+  "content_language": "es",
+  "exam_type": "Selectividad",
+  "difficulty": "basic",
+  "content": [
+    {
+      "question": "¿Qué es un átomo?",
+      "explanation": "Un átomo es la unidad básica de la materia. Está compuesto por un núcleo central que contiene protones y neutrones, rodeado por electrones que orbitan en capas de energía.",
+      "concept": "Estructura atómica básica",
+      "components": [
+        "Núcleo: contiene protones (carga positiva) y neutrones (sin carga)",
+        "Electrones: partículas con carga negativa que orbitan el núcleo",
+        "El número de protones determina el elemento químico"
+      ]
+    }
+  ]
+}

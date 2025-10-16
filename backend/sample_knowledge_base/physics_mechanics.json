@@ -1,0 +1,29 @@
+{
+  "subject": "Physics",
+  "topic": "Mechanics",
+  "content_language": "en",
+  "exam_type": "AP Physics",
+  "difficulty": "medium",
+  "content": [
+    {
+      "question": "What is Newton's Second Law of Motion?",
+      "explanation": "Newton's Second Law states that the acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass. The formula is F = ma, where F is force, m is mass, and a is acceleration.",
+      "concept": "Force and acceleration relationship",
+      "applications": [
+        "Calculating force needed to accelerate a car",
+        "Understanding why heavier objects need more force to accelerate",
+        "Analyzing motion in sports and engineering"
+      ]
+    },
+    {
+      "question": "How do you calculate kinetic energy?",
+      "explanation": "Kinetic energy is the energy of motion. It's calculated using the formula KE = ½mv², where m is mass and v is velocity. The energy increases with the square of velocity.",
+      "concept": "Energy and motion",
+      "examples": [
+        "A 2kg ball moving at 5 m/s has KE = ½(2)(5²) = 25 J",
+        "Doubling speed quadruples kinetic energy",
+        "Used in collision analysis and energy conservation"
+      ]
+    }
+  ]
+}

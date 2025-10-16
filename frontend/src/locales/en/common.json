@@ -1,6 +1,9 @@
 {
   "error": "Error",
   "loading": "Loading...",
+  "common": {
+    "error": "Error"
+  },
   "buttons": {
     "login": "Login",
     "logout": "Logout",

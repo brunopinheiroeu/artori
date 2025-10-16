@@ -1,0 +1,31 @@
+{
+  "subject": "Mathematics",
+  "topic": "Algebra",
+  "content_language": "en",
+  "exam_type": "SAT",
+  "difficulty": "medium",
+  "content": [
+    {
+      "question": "What is the solution to the equation 2x + 5 = 13?",
+      "explanation": "To solve 2x + 5 = 13, we need to isolate x. First, subtract 5 from both sides: 2x = 8. Then divide both sides by 2: x = 4.",
+      "concept": "Linear equations and algebraic manipulation",
+      "steps": [
+        "Start with the equation: 2x + 5 = 13",
+        "Subtract 5 from both sides: 2x = 13 - 5 = 8",
+        "Divide both sides by 2: x = 8/2 = 4",
+        "Verify: 2(4) + 5 = 8 + 5 = 13 ✓"
+      ]
+    },
+    {
+      "question": "How do you factor x² - 5x + 6?",
+      "explanation": "To factor x² - 5x + 6, we need to find two numbers that multiply to 6 and add to -5. These numbers are -2 and -3. So x² - 5x + 6 = (x - 2)(x - 3).",
+      "concept": "Quadratic factoring",
+      "steps": [
+        "Identify the quadratic: x² - 5x + 6",
+        "Find factors of 6 that add to -5: -2 and -3",
+        "Write as factors: (x - 2)(x - 3)",
+        "Verify: (x - 2)(x - 3) = x² - 3x - 2x + 6 = x² - 5x + 6 ✓"
+      ]
+    }
+  ]
+}

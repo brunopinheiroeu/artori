@@ -1,0 +1,20 @@
+{
+  "subject": "Matemática",
+  "topic": "Geometria",
+  "content_language": "pt",
+  "exam_type": "ENEM",
+  "difficulty": "medium",
+  "content": [
+    {
+      "question": "Como calcular a área de um círculo?",
+      "explanation": "A área de um círculo é calculada usando a fórmula A = πr², onde r é o raio do círculo. Pi (π) é aproximadamente 3,14159.",
+      "concept": "Área de figuras geométricas",
+      "steps": [
+        "Identifique o raio do círculo",
+        "Eleve o raio ao quadrado (r²)",
+        "Multiplique por π (pi)",
+        "A = π × r²"
+      ]
+    }
+  ]
+}

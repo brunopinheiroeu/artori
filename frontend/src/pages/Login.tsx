@@ -173,7 +173,7 @@ const Login = () => {
         // Signup logic
         if (!name.trim()) {
           toast({
-            title: t("common.error"),
+            title: t("error"),
             description: t("auth:nameRequired"),
             variant: "destructive",
           });
@@ -199,7 +199,7 @@ const Login = () => {
       }
     } catch (error) {
       toast({
-        title: t("common.error"),
+        title: t("error"),
         description:
           error instanceof Error
             ? error.message

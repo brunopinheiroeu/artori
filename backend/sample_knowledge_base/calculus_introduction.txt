@@ -1,0 +1,24 @@
+
+    Introduction to Calculus
+
+    Calculus is a branch of mathematics that deals with rates of change and accumulation of quantities.
+    It has two main branches: differential calculus and integral calculus.
+
+    Differential Calculus:
+    - Studies rates of change and slopes of curves
+    - Key concept: the derivative
+    - Applications: optimization, motion analysis, marginal analysis
+
+    Integral Calculus:
+    - Studies accumulation of quantities and areas under curves
+    - Key concept: the integral
+    - Applications: area calculation, volume calculation, probability
+
+    The Fundamental Theorem of Calculus connects these two branches, showing that
+    differentiation and integration are inverse operations.
+
+    Key Formulas:
+    - Derivative of x^n: nx^(n-1)
+    - Integral of x^n: x^(n+1)/(n+1) + C
+    - Chain rule: d/dx[f(g(x))] = f'(g(x)) × g'(x)
+    

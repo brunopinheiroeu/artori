@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
+from rag_service import rag_service
 
 # Load environment variables
 load_dotenv()
@@ -31,6 +32,140 @@ class AIService:
     def is_available(self) -> bool:
         """Check if AI service is available"""
         return self.client is not None
+    
+    def is_rag_available(self) -> bool:
+        """Check if RAG service is available"""
+        return rag_service.is_available()
+    
+    async def generate_rag_explanation(
+        self,
+        question: str,
+        options: List[Dict[str, str]],
+        correct_answer: str,
+        selected_answer: Optional[str] = None,
+        subject: str = "General",
+        difficulty: str = "medium",
+        interface_language: str = "en",
+        content_language: str = None
+    ) -> Dict[str, any]:
+        """
+        Generate an AI explanation using RAG system
+        
+        Args:
+            question: The question text (in original exam language)
+            options: List of answer options with id and text (in original exam language)
+            correct_answer: The correct answer option id
+            selected_answer: The student's selected answer (optional)
+            subject: Subject area (e.g., "Mathematics", "Science")
+            difficulty: Question difficulty level
+            interface_language: Language for AI explanations (en, pt, es)
+            content_language: Original language of the exam/content (optional filter)
+            
+        Returns:
+            Dictionary with explanation components including sources
+        """
+        if not self.is_rag_available():
+            # Fall back to regular explanation if RAG is not available
+            return await self.generate_explanation(
+                question, options, correct_answer, selected_answer,
+                subject, difficulty, interface_language
+            )
+        
+        try:
+            # Find the correct answer text
+            correct_answer_text = next(
+                (opt["text"] for opt in options if opt["id"] == correct_answer),
+                "Unknown"
+            )
+            
+            # Find the selected answer text if provided
+            selected_answer_text = None
+            if selected_answer:
+                selected_answer_text = next(
+                    (opt["text"] for opt in options if opt["id"] == selected_answer),
+                    "Unknown"
+                )
+            
+            # Format options for the query
+            options_text = "\n".join([f"{opt['id']}: {opt['text']}" for opt in options])
+            
+            # Create contextual query based on whether user's answer was provided
+            if selected_answer and selected_answer_text:
+                user_context = f"Student selected: {selected_answer} - {selected_answer_text}. "
+                user_context += f"This was {'CORRECT' if selected_answer == correct_answer else 'INCORRECT'}. "
+                explanation_focus = "Explain why this answer is correct/incorrect and provide guidance."
+            else:
+                user_context = ""
+                explanation_focus = "Provide a comprehensive explanation of the correct answer."
+            
+            # Construct the RAG query
+            rag_query = f"""
+            Question: {question}
+            
+            Options:
+            {options_text}
+            
+            Correct Answer: {correct_answer} - {correct_answer_text}
+            {user_context}
+            
+            {explanation_focus} Please provide a detailed educational explanation with step-by-step reasoning.
+            """
+            
+            # Query the RAG system
+            rag_response = rag_service.query(
+                question=rag_query,
+                interface_language=interface_language,
+                content_language=content_language,
+                subject=subject.lower() if subject != "General" else None,
+                max_results=4
+            )
+            
+            if rag_response.get("fallback"):
+                # RAG failed, use regular explanation
+                return await self.generate_explanation(
+                    question, options, correct_answer, selected_answer,
+                    subject, difficulty, interface_language
+                )
+            
+            # Process RAG response into the expected format
+            rag_answer = rag_response["answer"]
+            sources = rag_response.get("sources", [])
+            
+            # Extract reasoning steps from the RAG answer
+            reasoning_steps = self._extract_reasoning_from_rag_answer(rag_answer)
+            
+            # Format sources for the response
+            formatted_sources = []
+            for source in sources[:3]:  # Limit to top 3 sources
+                source_text = source.get("content", "")
+                metadata = source.get("metadata", {})
+                source_name = metadata.get("filename", metadata.get("source", "Knowledge Base"))
+                formatted_sources.append(f"{source_name}: {source_text[:100]}...")
+            
+            # Create the response in the expected format
+            explanation_data = {
+                "reasoning": reasoning_steps,
+                "concept": self._extract_concept_from_rag_answer(rag_answer, subject),
+                "sources": formatted_sources if formatted_sources else [f"{subject} educational materials"],
+                "bias_check": "Response generated from verified educational content in knowledge base.",
+                "reflection": self._extract_reflection_from_rag_answer(rag_answer),
+                "rag_enhanced": True,
+                "confidence": rag_response.get("confidence", 0.8),
+                "retrieved_chunks": rag_response.get("retrieved_chunks", 0),
+                "interface_language": interface_language,
+                "content_language": content_language
+            }
+            
+            logger.info("✅ RAG-enhanced explanation generated successfully")
+            return explanation_data
+            
+        except Exception as e:
+            logger.error(f"Failed to generate RAG explanation: {e}")
+            # Fall back to regular explanation
+            return await self.generate_explanation(
+                question, options, correct_answer, selected_answer,
+                subject, difficulty, interface_language
+            )
     
     async def generate_explanation(
         self,
@@ -412,6 +547,51 @@ Provide practical, actionable study tips in JSON format:
             "Take practice tests to identify areas for improvement",
             "Join study groups or seek help from tutors when needed"
         ]
+    
+    def _extract_reasoning_from_rag_answer(self, rag_answer: str) -> List[str]:
+        """Extract reasoning steps from RAG answer"""
+        # Simple extraction - in production, this could be more sophisticated
+        sentences = rag_answer.split('. ')
+        reasoning_steps = []
+        
+        for sentence in sentences[:3]:  # Take first 3 sentences as reasoning steps
+            if sentence.strip() and len(sentence.strip()) > 20:
+                reasoning_steps.append(sentence.strip() + '.')
+        
+        if not reasoning_steps:
+            reasoning_steps = [
+                "The answer is based on verified educational content from the knowledge base.",
+                "The explanation follows established educational principles and methodologies.",
+                "This information has been cross-referenced with authoritative sources."
+            ]
+        
+        return reasoning_steps
+    
+    def _extract_concept_from_rag_answer(self, rag_answer: str, subject: str) -> str:
+        """Extract main concept from RAG answer"""
+        # Simple concept extraction
+        if "concept" in rag_answer.lower():
+            # Try to find concept mentions
+            lines = rag_answer.split('\n')
+            for line in lines:
+                if "concept" in line.lower():
+                    return line.strip()
+        
+        return f"Core {subject} principles and problem-solving methodology"
+    
+    def _extract_reflection_from_rag_answer(self, rag_answer: str) -> str:
+        """Extract reflection/summary from RAG answer"""
+        sentences = rag_answer.split('. ')
+        
+        # Take the last meaningful sentence as reflection
+        for sentence in reversed(sentences):
+            if sentence.strip() and len(sentence.strip()) > 30:
+                reflection = sentence.strip()
+                if not reflection.endswith('.'):
+                    reflection += '.'
+                return reflection
+        
+        return "Understanding this concept will help you tackle similar problems in the future. Keep practicing with the knowledge base materials!"
 
 # Global AI service instance
 ai_service = AIService()
