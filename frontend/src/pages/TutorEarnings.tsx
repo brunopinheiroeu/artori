@@ -31,7 +31,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { format, subDays, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import dayjs from "dayjs";
 
 const TutorEarnings = () => {
   const { t } = useTranslation();
@@ -66,18 +66,18 @@ const TutorEarnings = () => {
       id: "2",
       studentName: "Bob Smith",
       subject: "Physics",
-      date: subDays(new Date(), 1),
+      date: dayjs().subtract(1, "day").toDate(),
       duration: "45 minutes",
       rate: 45,
       amount: 35,
       status: "completed",
-      payoutDate: subDays(new Date(), 1),
+      payoutDate: dayjs().subtract(1, "day").toDate(),
     },
     {
       id: "3",
       studentName: "Carol Davis",
       subject: "Chemistry",
-      date: subDays(new Date(), 2),
+      date: dayjs().subtract(2, "day").toDate(),
       duration: "1.5 hours",
       rate: 45,
       amount: 65,
@@ -88,29 +88,29 @@ const TutorEarnings = () => {
       id: "4",
       studentName: "David Wilson",
       subject: "Mathematics",
-      date: subDays(new Date(), 3),
+      date: dayjs().subtract(3, "day").toDate(),
       duration: "1 hour",
       rate: 45,
       amount: 45,
       status: "completed",
-      payoutDate: subDays(new Date(), 3),
+      payoutDate: dayjs().subtract(3, "day").toDate(),
     },
     {
       id: "5",
       studentName: "Emma Brown",
       subject: "English",
-      date: subDays(new Date(), 5),
+      date: dayjs().subtract(5, "day").toDate(),
       duration: "1 hour",
       rate: 50,
       amount: 50,
       status: "completed",
-      payoutDate: subDays(new Date(), 5),
+      payoutDate: dayjs().subtract(5, "day").toDate(),
     },
     {
       id: "6",
       studentName: "Frank Miller",
       subject: "Biology",
-      date: subDays(new Date(), 7),
+      date: dayjs().subtract(7, "day").toDate(),
       duration: "1 hour",
       rate: 45,
       amount: 45,
@@ -442,7 +442,7 @@ const TutorEarnings = () => {
                       </TableCell>
                       <TableCell>{transaction.subject}</TableCell>
                       <TableCell>
-                        {format(transaction.date, "MMM d, yyyy")}
+                        {dayjs(transaction.date).format("MMM D, YYYY")}
                       </TableCell>
                       <TableCell>{transaction.duration}</TableCell>
                       <TableCell>${transaction.rate}/hr</TableCell>
@@ -459,7 +459,7 @@ const TutorEarnings = () => {
                       </TableCell>
                       <TableCell>
                         {transaction.payoutDate
-                          ? format(transaction.payoutDate, "MMM d, yyyy")
+                          ? dayjs(transaction.payoutDate).format("MMM D, YYYY")
                           : "-"}
                       </TableCell>
                     </TableRow>
@@ -489,7 +489,7 @@ const TutorEarnings = () => {
                       </TableCell>
                       <TableCell>{transaction.subject}</TableCell>
                       <TableCell>
-                        {format(transaction.date, "MMM d, yyyy")}
+                        {dayjs(transaction.date).format("MMM D, YYYY")}
                       </TableCell>
                       <TableCell>{transaction.duration}</TableCell>
                       <TableCell>${transaction.rate}/hr</TableCell>
@@ -498,7 +498,7 @@ const TutorEarnings = () => {
                       </TableCell>
                       <TableCell>
                         {transaction.payoutDate
-                          ? format(transaction.payoutDate, "MMM d, yyyy")
+                          ? dayjs(transaction.payoutDate).format("MMM D, YYYY")
                           : "-"}
                       </TableCell>
                     </TableRow>
@@ -528,7 +528,7 @@ const TutorEarnings = () => {
                       </TableCell>
                       <TableCell>{transaction.subject}</TableCell>
                       <TableCell>
-                        {format(transaction.date, "MMM d, yyyy")}
+                        {dayjs(transaction.date).format("MMM D, YYYY")}
                       </TableCell>
                       <TableCell>{transaction.duration}</TableCell>
                       <TableCell>${transaction.rate}/hr</TableCell>

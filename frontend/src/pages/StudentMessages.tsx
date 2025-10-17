@@ -31,14 +31,12 @@ import {
   Calendar,
 } from "lucide-react";
 import { useState } from "react";
-import {
-  format,
-  isToday,
-  isYesterday,
-  subDays,
-  subHours,
-  subMinutes,
-} from "date-fns";
+import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
+import isYesterday from "dayjs/plugin/isYesterday";
+
+dayjs.extend(isToday);
+dayjs.extend(isYesterday);
 
 const StudentMessages = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +65,7 @@ const StudentMessages = () => {
       tutorName: "Prof. Michael Chen",
       tutorAvatar: "/placeholder.svg",
       lastMessage: "Can we reschedule tomorrow's physics session to 4 PM?",
-      lastMessageTime: subHours(new Date(), 2), // 2 hours ago
+      lastMessageTime: dayjs().subtract(2, "hour").toDate(), // 2 hours ago
       unreadCount: 1,
       isOnline: false,
       subject: "Physics",
@@ -80,7 +78,7 @@ const StudentMessages = () => {
       tutorAvatar: "/placeholder.svg",
       lastMessage:
         "I've prepared some extra practice problems for organic chemistry. Check your email!",
-      lastMessageTime: subDays(new Date(), 1),
+      lastMessageTime: dayjs().subtract(1, "day").toDate(),
       unreadCount: 2,
       isOnline: true,
       subject: "Chemistry",
@@ -93,7 +91,7 @@ const StudentMessages = () => {
       tutorAvatar: "/placeholder.svg",
       lastMessage:
         "The cell biology diagrams you requested are attached. Review them before our session.",
-      lastMessageTime: subDays(new Date(), 2),
+      lastMessageTime: dayjs().subtract(2, "day").toDate(),
       unreadCount: 0,
       isOnline: false,
       subject: "Biology",
@@ -106,7 +104,7 @@ const StudentMessages = () => {
       tutorAvatar: "/placeholder.svg",
       lastMessage:
         "Your essay analysis was excellent! You're really improving your critical thinking skills.",
-      lastMessageTime: subDays(new Date(), 3),
+      lastMessageTime: dayjs().subtract(3, "day").toDate(),
       unreadCount: 0,
       isOnline: true,
       subject: "English Literature",
@@ -123,7 +121,7 @@ const StudentMessages = () => {
       senderName: "You",
       content:
         "Hi Dr. Johnson! I'm struggling with the integration by parts problems from chapter 7.",
-      timestamp: subHours(new Date(), 3), // 3 hours ago
+      timestamp: dayjs().subtract(3, "hour").toDate(), // 3 hours ago
       status: "read",
     },
     {
@@ -132,7 +130,7 @@ const StudentMessages = () => {
       senderName: "Dr. Sarah Johnson",
       content:
         "Hi! I'd be happy to help you with integration by parts. Which specific problems are giving you trouble?",
-      timestamp: subMinutes(new Date(), 150), // 2.5 hours ago
+      timestamp: dayjs().subtract(150, "minute").toDate(), // 2.5 hours ago
       status: "read",
     },
     {
@@ -141,7 +139,7 @@ const StudentMessages = () => {
       senderName: "You",
       content:
         "Problems 15-18 are really confusing me. I don't know how to choose u and dv correctly.",
-      timestamp: subHours(new Date(), 2), // 2 hours ago
+      timestamp: dayjs().subtract(2, "hour").toDate(), // 2 hours ago
       status: "read",
     },
     {
@@ -150,7 +148,7 @@ const StudentMessages = () => {
       senderName: "Dr. Sarah Johnson",
       content:
         "Great question! Remember the LIATE rule: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential. Choose u in that order of preference. For problem 15: ∫x·ln(x)dx, we'd choose u = ln(x) and dv = x dx. Does that help?",
-      timestamp: subMinutes(new Date(), 90), // 1.5 hours ago
+      timestamp: dayjs().subtract(90, "minute").toDate(), // 1.5 hours ago
       status: "read",
     },
     {
@@ -159,7 +157,7 @@ const StudentMessages = () => {
       senderName: "You",
       content:
         "Oh wow, that makes so much more sense! So for ∫x²·e^x dx, I should choose u = x² and dv = e^x dx?",
-      timestamp: subHours(new Date(), 1), // 1 hour ago
+      timestamp: dayjs().subtract(1, "hour").toDate(), // 1 hour ago
       status: "read",
     },
     {
@@ -168,7 +166,7 @@ const StudentMessages = () => {
       senderName: "Dr. Sarah Johnson",
       content:
         "Exactly! You've got it. You'll need to apply integration by parts twice for that one since u = x² will give you du = 2x dx. Keep practicing and you'll master this technique! 🎉",
-      timestamp: subMinutes(new Date(), 30), // 30 minutes ago
+      timestamp: dayjs().subtract(30, "minute").toDate(), // 30 minutes ago
       status: "read",
     },
     {
@@ -191,12 +189,12 @@ const StudentMessages = () => {
   const selectedConv = conversations.find((c) => c.id === selectedConversation);
 
   const formatMessageTime = (date: Date) => {
-    if (isToday(date)) {
-      return format(date, "HH:mm");
-    } else if (isYesterday(date)) {
+    if (dayjs(date).isToday()) {
+      return dayjs(date).format("HH:mm");
+    } else if (dayjs(date).isYesterday()) {
       return "Yesterday";
     } else {
-      return format(date, "MMM d");
+      return dayjs(date).format("MMM D");
     }
   };
 
@@ -429,7 +427,7 @@ const StudentMessages = () => {
                             }`}
                           >
                             <span className="text-xs">
-                              {format(message.timestamp, "HH:mm")}
+                              {dayjs(message.timestamp).format("HH:mm")}
                             </span>
                             {message.senderId === "student" &&
                               getMessageStatus(message.status)}

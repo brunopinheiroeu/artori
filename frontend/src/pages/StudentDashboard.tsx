@@ -23,7 +23,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
 import { Link } from "react-router-dom";
-import { format, addDays } from "date-fns";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
 const StudentDashboard = () => {
@@ -45,7 +45,7 @@ const StudentDashboard = () => {
         id: "1",
         tutorName: "Dr. Sarah Johnson",
         subject: "Mathematics",
-        time: addDays(new Date(), 1),
+        time: dayjs().add(1, "day").toDate(),
         duration: "1 hour",
         type: "Algebra Review",
       },
@@ -53,7 +53,7 @@ const StudentDashboard = () => {
         id: "2",
         tutorName: "Prof. Michael Chen",
         subject: "Physics",
-        time: addDays(new Date(), 2),
+        time: dayjs().add(2, "day").toDate(),
         duration: "45 minutes",
         type: "Mechanics Help",
       },
@@ -64,7 +64,7 @@ const StudentDashboard = () => {
         title: "Complete 50 Math Questions",
         progress: 32,
         target: 50,
-        dueDate: addDays(new Date(), 3),
+        dueDate: dayjs().add(3, "day").toDate(),
       },
       {
         id: "2",
@@ -85,7 +85,7 @@ const StudentDashboard = () => {
         id: "2",
         title: "Math Master",
         icon: "🧮",
-        earnedDate: addDays(new Date(), -2),
+        earnedDate: dayjs().subtract(2, "day").toDate(),
       },
     ],
   };
@@ -403,7 +403,7 @@ const StudentDashboard = () => {
                           {session.subject} • {session.type}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {format(session.time, "MMM d, h:mm a")} •{" "}
+                          {dayjs(session.time).format("MMM D, h:mm A")} •{" "}
                           {session.duration}
                         </p>
                       </div>
@@ -441,7 +441,7 @@ const StudentDashboard = () => {
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="text-sm font-medium">{goal.title}</h4>
                       <Badge variant="outline" className="text-xs">
-                        {format(goal.dueDate, "MMM d")}
+                        {dayjs(goal.dueDate).format("MMM D")}
                       </Badge>
                     </div>
                     <div className="space-y-2">
@@ -488,7 +488,7 @@ const StudentDashboard = () => {
                   <div className="text-3xl mb-2">{achievement.icon}</div>
                   <div className="text-sm font-medium">{achievement.title}</div>
                   <div className="text-xs text-gray-600 mt-1">
-                    {format(achievement.earnedDate, "MMM d, yyyy")}
+                    {dayjs(achievement.earnedDate).format("MMM D, YYYY")}
                   </div>
                 </div>
               ))}

@@ -37,7 +37,10 @@ import {
   useAdminAnalyticsPerformance,
   useAdminAnalyticsTrends,
 } from "@/hooks/useAdminApi";
-import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const AdminAnalytics = () => {
   const { t } = useTranslation("admin");
@@ -506,9 +509,7 @@ const AdminAnalytics = () => {
                             ` (${activity.resource_id.slice(-6)})`}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {formatDistanceToNow(new Date(activity.timestamp), {
-                            addSuffix: true,
-                          })}
+                          {dayjs(activity.timestamp).fromNow()}
                         </p>
                       </div>
                       <Badge

@@ -37,7 +37,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { format, subDays, addDays } from "date-fns";
+import dayjs from "dayjs";
 
 const TutorSessions = () => {
   const { t } = useTranslation();
@@ -74,7 +74,7 @@ const TutorSessions = () => {
       studentAvatar: "/placeholder.svg",
       subject: "Physics",
       topic: "Newton's Laws",
-      date: subDays(new Date(), 1),
+      date: dayjs().subtract(1, "day").toDate(),
       startTime: "14:30",
       endTime: "15:15",
       duration: "45 minutes",
@@ -94,7 +94,7 @@ const TutorSessions = () => {
       studentAvatar: "/placeholder.svg",
       subject: "Chemistry",
       topic: "Organic Reactions",
-      date: addDays(new Date(), 1),
+      date: dayjs().add(1, "day").toDate(),
       startTime: "15:00",
       endTime: "16:30",
       duration: "1.5 hours",
@@ -113,7 +113,7 @@ const TutorSessions = () => {
       studentAvatar: "/placeholder.svg",
       subject: "Mathematics",
       topic: "Geometry Proofs",
-      date: subDays(new Date(), 3),
+      date: dayjs().subtract(3, "day").toDate(),
       startTime: "10:00",
       endTime: "11:00",
       duration: "1 hour",
@@ -132,7 +132,7 @@ const TutorSessions = () => {
       studentAvatar: "/placeholder.svg",
       subject: "English",
       topic: "Essay Writing",
-      date: subDays(new Date(), 2),
+      date: dayjs().subtract(2, "day").toDate(),
       startTime: "16:00",
       endTime: "17:00",
       duration: "1 hour",
@@ -244,8 +244,8 @@ const TutorSessions = () => {
               <div className="flex items-center space-x-2 mt-1">
                 <Calendar className="h-3 w-3 text-gray-500" />
                 <span className="text-xs text-gray-600">
-                  {format(session.date, "MMM d, yyyy")} • {session.startTime} -{" "}
-                  {session.endTime}
+                  {dayjs(session.date).format("MMM D, YYYY")} •{" "}
+                  {session.startTime} - {session.endTime}
                 </span>
               </div>
             </div>
@@ -523,7 +523,7 @@ const TutorSessions = () => {
                       {t("tutor:sessions.date")}:
                     </span>
                     <span className="ml-2">
-                      {format(selectedSession.date, "MMM d, yyyy")}
+                      {dayjs(selectedSession.date).format("MMM D, YYYY")}
                     </span>
                   </div>
                   <div>

@@ -55,7 +55,10 @@ import type {
   Option,
   Explanation,
 } from "@/lib/api";
-import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const AdminExams = () => {
   const { t } = useTranslation("admin");
@@ -309,8 +312,7 @@ const AdminExams = () => {
       key: "created_at",
       label: t("exams.created"),
       sortable: true,
-      render: (value: string) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true }),
+      render: (value: string) => dayjs(value).fromNow(),
     },
   ];
 

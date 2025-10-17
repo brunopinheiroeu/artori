@@ -38,7 +38,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
-import { format, addDays, subDays, differenceInDays } from "date-fns";
+import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
 const StudentGoals = () => {
@@ -57,8 +57,8 @@ const StudentGoals = () => {
       priority: "high",
       status: "in-progress",
       progress: 75,
-      targetDate: addDays(new Date(), 14),
-      createdDate: subDays(new Date(), 21),
+      targetDate: dayjs().add(14, "day").toDate(),
+      createdDate: dayjs().subtract(21, "day").toDate(),
       milestones: [
         { id: "m1", title: "Learn integration by parts", completed: true },
         { id: "m2", title: "Master substitution method", completed: true },
@@ -81,8 +81,8 @@ const StudentGoals = () => {
       priority: "high",
       status: "in-progress",
       progress: 60,
-      targetDate: addDays(new Date(), 30),
-      createdDate: subDays(new Date(), 10),
+      targetDate: dayjs().add(30, "day").toDate(),
+      createdDate: dayjs().subtract(10, "day").toDate(),
       milestones: [
         { id: "m6", title: "Review wave-particle duality", completed: true },
         { id: "m7", title: "Practice Schrödinger equation", completed: true },
@@ -109,8 +109,8 @@ const StudentGoals = () => {
       priority: "medium",
       status: "in-progress",
       progress: 50,
-      targetDate: addDays(new Date(), 45),
-      createdDate: subDays(new Date(), 15),
+      targetDate: dayjs().add(45, "day").toDate(),
+      createdDate: dayjs().subtract(15, "day").toDate(),
       milestones: [
         { id: "m11", title: "Complete synthesis lab report", completed: true },
         { id: "m12", title: "Finish spectroscopy analysis", completed: true },
@@ -129,8 +129,8 @@ const StudentGoals = () => {
       priority: "medium",
       status: "in-progress",
       progress: 80,
-      targetDate: addDays(new Date(), 6),
-      createdDate: subDays(new Date(), 24),
+      targetDate: dayjs().add(6, "day").toDate(),
+      createdDate: dayjs().subtract(24, "day").toDate(),
       milestones: [
         { id: "m16", title: "Complete first week", completed: true },
         { id: "m17", title: "Reach 14-day streak", completed: true },
@@ -149,8 +149,8 @@ const StudentGoals = () => {
       priority: "high",
       status: "completed",
       progress: 100,
-      targetDate: subDays(new Date(), 5),
-      createdDate: subDays(new Date(), 60),
+      targetDate: dayjs().subtract(5, "day").toDate(),
+      createdDate: dayjs().subtract(60, "day").toDate(),
       milestones: [
         { id: "m21", title: "Create study schedule", completed: true },
         { id: "m22", title: "Complete all practice tests", completed: true },
@@ -169,7 +169,7 @@ const StudentGoals = () => {
       priority: "low",
       status: "not-started",
       progress: 0,
-      targetDate: addDays(new Date(), 90),
+      targetDate: dayjs().add(90, "day").toDate(),
       createdDate: new Date(),
       milestones: [
         { id: "m26", title: "Study DNA replication", completed: false },
@@ -189,7 +189,7 @@ const StudentGoals = () => {
       title: "First Goal Completed",
       description: "Completed your first study goal",
       icon: Trophy,
-      unlockedDate: subDays(new Date(), 30),
+      unlockedDate: dayjs().subtract(30, "day").toDate(),
       category: "milestone",
     },
     {
@@ -197,7 +197,7 @@ const StudentGoals = () => {
       title: "Study Streak Master",
       description: "Maintained a 21-day study streak",
       icon: Flame,
-      unlockedDate: subDays(new Date(), 3),
+      unlockedDate: dayjs().subtract(3, "day").toDate(),
       category: "habit",
     },
     {
@@ -205,7 +205,7 @@ const StudentGoals = () => {
       title: "Math Wizard",
       description: "Solved 100 calculus problems",
       icon: Zap,
-      unlockedDate: subDays(new Date(), 7),
+      unlockedDate: dayjs().subtract(7, "day").toDate(),
       category: "subject",
     },
     {
@@ -213,7 +213,7 @@ const StudentGoals = () => {
       title: "Perfect Score",
       description: "Achieved 100% on a practice test",
       icon: Star,
-      unlockedDate: subDays(new Date(), 14),
+      unlockedDate: dayjs().subtract(14, "day").toDate(),
       category: "performance",
     },
   ];
@@ -315,13 +315,14 @@ const StudentGoals = () => {
             <div className="flex items-center space-x-1 text-gray-600">
               <Calendar className="h-3 w-3" />
               <span>
-                {t("goals.dueDate")}: {format(goal.targetDate, "MMM d, yyyy")}
+                {t("goals.dueDate")}:{" "}
+                {dayjs(goal.targetDate).format("MMM D, YYYY")}
               </span>
             </div>
             <div className="flex items-center space-x-1 text-gray-600">
               <Clock className="h-3 w-3" />
               <span>
-                {differenceInDays(goal.targetDate, new Date())} days left
+                {dayjs(goal.targetDate).diff(dayjs(), "day")} days left
               </span>
             </div>
           </div>
@@ -390,7 +391,7 @@ const StudentGoals = () => {
         </h4>
         <p className="text-sm text-gray-600 mb-2">{achievement.description}</p>
         <div className="text-xs text-gray-500">
-          Unlocked {format(achievement.unlockedDate, "MMM d, yyyy")}
+          Unlocked {dayjs(achievement.unlockedDate).format("MMM D, YYYY")}
         </div>
       </CardContent>
     </Card>

@@ -19,7 +19,10 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient, TutorDashboardStats } from "@/lib/api";
-import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const TutorDashboard = () => {
   const { t } = useTranslation();
@@ -293,9 +296,7 @@ const TutorDashboard = () => {
                           {session.subject} • {session.duration}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {formatDistanceToNow(session.time, {
-                            addSuffix: true,
-                          })}
+                          {dayjs(session.time).fromNow()}
                         </p>
                         <Badge variant="outline" className="text-xs mt-1">
                           {session.type}

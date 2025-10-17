@@ -30,14 +30,12 @@ import {
   MoreVertical,
 } from "lucide-react";
 import { useState } from "react";
-import {
-  format,
-  isToday,
-  isYesterday,
-  subDays,
-  subHours,
-  subMinutes,
-} from "date-fns";
+import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
+import isYesterday from "dayjs/plugin/isYesterday";
+
+dayjs.extend(isToday);
+dayjs.extend(isYesterday);
 
 const TutorMessages = () => {
   const { t } = useTranslation();
@@ -65,7 +63,7 @@ const TutorMessages = () => {
       studentName: "Bob Smith",
       studentAvatar: "/placeholder.svg",
       lastMessage: "Can we reschedule tomorrow's session to 3 PM instead?",
-      lastMessageTime: subHours(new Date(), 2), // 2 hours ago
+      lastMessageTime: dayjs().subtract(2, "hour").toDate(), // 2 hours ago
       unreadCount: 2,
       isOnline: false,
       subject: "Physics",
@@ -75,7 +73,7 @@ const TutorMessages = () => {
       studentName: "Carol Davis",
       studentAvatar: "/placeholder.svg",
       lastMessage: "I've uploaded the chemistry homework you requested.",
-      lastMessageTime: subDays(new Date(), 1),
+      lastMessageTime: dayjs().subtract(1, "day").toDate(),
       unreadCount: 1,
       isOnline: true,
       subject: "Chemistry",
@@ -85,7 +83,7 @@ const TutorMessages = () => {
       studentName: "David Wilson",
       studentAvatar: "/placeholder.svg",
       lastMessage: "Thanks for the geometry help! See you next week.",
-      lastMessageTime: subDays(new Date(), 2),
+      lastMessageTime: dayjs().subtract(2, "day").toDate(),
       unreadCount: 0,
       isOnline: false,
       subject: "Mathematics",
@@ -95,7 +93,7 @@ const TutorMessages = () => {
       studentName: "Emma Brown",
       studentAvatar: "/placeholder.svg",
       lastMessage: "Could you send me the essay examples we discussed?",
-      lastMessageTime: subDays(new Date(), 3),
+      lastMessageTime: dayjs().subtract(3, "day").toDate(),
       unreadCount: 3,
       isOnline: true,
       subject: "English",
@@ -109,7 +107,7 @@ const TutorMessages = () => {
       senderId: "student",
       senderName: "Alice Johnson",
       content: "Hi! I'm having trouble with the quadratic equations homework.",
-      timestamp: subHours(new Date(), 3), // 3 hours ago
+      timestamp: dayjs().subtract(3, "hour").toDate(), // 3 hours ago
       status: "read",
     },
     {
@@ -118,7 +116,7 @@ const TutorMessages = () => {
       senderName: "You",
       content:
         "Hi Alice! I'd be happy to help. Which specific problems are you struggling with?",
-      timestamp: subMinutes(new Date(), 150), // 2.5 hours ago
+      timestamp: dayjs().subtract(150, "minute").toDate(), // 2.5 hours ago
       status: "read",
     },
     {
@@ -127,7 +125,7 @@ const TutorMessages = () => {
       senderName: "Alice Johnson",
       content:
         "Problems 5-8 in chapter 3. I don't understand how to factor them.",
-      timestamp: subHours(new Date(), 2), // 2 hours ago
+      timestamp: dayjs().subtract(2, "hour").toDate(), // 2 hours ago
       status: "read",
     },
     {
@@ -136,7 +134,7 @@ const TutorMessages = () => {
       senderName: "You",
       content:
         "Let's break it down step by step. For problem 5: x² + 5x + 6, we need to find two numbers that multiply to 6 and add to 5. Can you think of what those numbers might be?",
-      timestamp: subMinutes(new Date(), 90), // 1.5 hours ago
+      timestamp: dayjs().subtract(90, "minute").toDate(), // 1.5 hours ago
       status: "read",
     },
     {
@@ -144,7 +142,7 @@ const TutorMessages = () => {
       senderId: "student",
       senderName: "Alice Johnson",
       content: "Oh! Is it 2 and 3? Because 2 × 3 = 6 and 2 + 3 = 5?",
-      timestamp: subHours(new Date(), 1), // 1 hour ago
+      timestamp: dayjs().subtract(1, "hour").toDate(), // 1 hour ago
       status: "read",
     },
     {
@@ -153,7 +151,7 @@ const TutorMessages = () => {
       senderName: "You",
       content:
         "Exactly! So the factored form would be (x + 2)(x + 3). Great job! 🎉",
-      timestamp: subMinutes(new Date(), 30), // 30 minutes ago
+      timestamp: dayjs().subtract(30, "minute").toDate(), // 30 minutes ago
       status: "read",
     },
     {
@@ -176,12 +174,12 @@ const TutorMessages = () => {
   const selectedConv = conversations.find((c) => c.id === selectedConversation);
 
   const formatMessageTime = (date: Date) => {
-    if (isToday(date)) {
-      return format(date, "HH:mm");
-    } else if (isYesterday(date)) {
+    if (dayjs(date).isToday()) {
+      return dayjs(date).format("HH:mm");
+    } else if (dayjs(date).isYesterday()) {
       return "Yesterday";
     } else {
-      return format(date, "MMM d");
+      return dayjs(date).format("MMM D");
     }
   };
 
@@ -398,7 +396,7 @@ const TutorMessages = () => {
                             }`}
                           >
                             <span className="text-xs">
-                              {format(message.timestamp, "HH:mm")}
+                              {dayjs(message.timestamp).format("HH:mm")}
                             </span>
                             {message.senderId === "tutor" &&
                               getMessageStatus(message.status)}
@@ -497,7 +495,10 @@ const TutorMessages = () => {
           <CardContent className="p-4 text-center">
             <Clock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
             <div className="text-2xl font-bold text-purple-600">
-              {conversations.filter((c) => isToday(c.lastMessageTime)).length}
+              {
+                conversations.filter((c) => dayjs(c.lastMessageTime).isToday())
+                  .length
+              }
             </div>
             <div className="text-sm text-gray-600">
               {t("tutor:messages.messagesToday")}

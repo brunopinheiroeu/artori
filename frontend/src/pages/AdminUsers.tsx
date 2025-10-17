@@ -51,7 +51,10 @@ import type {
   AdminUserUpdate,
   AdminUsersListResponse,
 } from "@/lib/api";
-import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const AdminUsers = () => {
   const { t } = useTranslation();
@@ -182,9 +185,7 @@ const AdminUsers = () => {
       label: t("admin:users.lastLogin"),
       sortable: true,
       render: (value: string | null) =>
-        value
-          ? formatDistanceToNow(new Date(value), { addSuffix: true })
-          : t("admin:users.never"),
+        value ? dayjs(value).fromNow() : t("admin:users.never"),
     },
     {
       key: "created_at",
@@ -747,10 +748,7 @@ const AdminUsers = () => {
                       </Label>
                       <p className="text-lg">
                         {selectedUser.last_login
-                          ? formatDistanceToNow(
-                              new Date(selectedUser.last_login),
-                              { addSuffix: true }
-                            )
+                          ? dayjs(selectedUser.last_login).fromNow()
                           : "Never"}
                       </p>
                     </div>

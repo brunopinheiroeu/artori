@@ -22,7 +22,10 @@ import {
   useAdminActivityLogs,
   useSystemHealth,
 } from "@/hooks/useAdminApi";
-import { formatDistanceToNow } from "date-fns";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
@@ -319,9 +322,7 @@ const AdminDashboard = () => {
                               ` (${activity.resource_id.slice(-6)})`}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {formatDistanceToNow(new Date(activity.timestamp), {
-                              addSuffix: true,
-                            })}
+                            {dayjs(activity.timestamp).fromNow()}
                           </p>
                         </div>
                       </div>

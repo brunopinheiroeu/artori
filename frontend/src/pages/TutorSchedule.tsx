@@ -25,7 +25,12 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
-import { format, addDays, startOfWeek, isSameDay, isToday } from "date-fns";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 const TutorSchedule = () => {
   const { t } = useTranslation();
@@ -67,7 +72,7 @@ const TutorSchedule = () => {
       studentName: "Carol Davis",
       studentAvatar: "/placeholder.svg",
       subject: "Chemistry",
-      date: addDays(new Date(), 1),
+      date: dayjs().add(1, "day").toDate(),
       startTime: "15:00",
       endTime: "16:30",
       duration: "1.5 hours",
@@ -81,7 +86,7 @@ const TutorSchedule = () => {
       studentName: "David Wilson",
       studentAvatar: "/placeholder.svg",
       subject: "Mathematics",
-      date: addDays(new Date(), 2),
+      date: dayjs().add(2, "day").toDate(),
       startTime: "10:00",
       endTime: "11:00",
       duration: "1 hour",
@@ -95,7 +100,7 @@ const TutorSchedule = () => {
       studentName: "Emma Brown",
       studentAvatar: "/placeholder.svg",
       subject: "English",
-      date: addDays(new Date(), 3),
+      date: dayjs().add(3, "day").toDate(),
       startTime: "16:00",
       endTime: "17:00",
       duration: "1 hour",
@@ -108,14 +113,15 @@ const TutorSchedule = () => {
 
   // Get sessions for the selected date
   const selectedDateSessions = sessions
-    .filter((session) => isSameDay(session.date, selectedDate))
+    .filter((session) => dayjs(session.date).isSame(dayjs(selectedDate), "day"))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
   // Get upcoming sessions (next 7 days)
   const upcomingSessions = sessions
     .filter(
       (session) =>
-        session.date >= new Date() && session.date <= addDays(new Date(), 7)
+        dayjs(session.date).isSameOrAfter(dayjs(), "day") &&
+        dayjs(session.date).isSameOrBefore(dayjs().add(7, "day"), "day")
     )
     .sort(
       (a, b) =>
@@ -124,11 +130,15 @@ const TutorSchedule = () => {
     );
 
   // Generate week days for calendar view
-  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday start
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  const weekStart = dayjs(currentDate).startOf("week").add(1, "day"); // Monday start
+  const weekDays = Array.from({ length: 7 }, (_, i) =>
+    weekStart.add(i, "day").toDate()
+  );
 
   const getSessionsForDate = (date: Date) => {
-    return sessions.filter((session) => isSameDay(session.date, date));
+    return sessions.filter((session) =>
+      dayjs(session.date).isSame(dayjs(date), "day")
+    );
   };
 
   const SessionCard = ({ session }: { session: (typeof sessions)[0] }) => (
@@ -297,21 +307,29 @@ const TutorSchedule = () => {
                     <Calendar className="h-5 w-5" />
                     <span>
                       {t("tutor:schedule.weekOf")}{" "}
-                      {format(weekStart, "MMM d, yyyy")}
+                      {dayjs(weekStart).format("MMM D, YYYY")}
                     </span>
                   </CardTitle>
                   <div className="flex space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentDate(addDays(currentDate, -7))}
+                      onClick={() =>
+                        setCurrentDate(
+                          dayjs(currentDate).subtract(7, "day").toDate()
+                        )
+                      }
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setCurrentDate(addDays(currentDate, 7))}
+                      onClick={() =>
+                        setCurrentDate(
+                          dayjs(currentDate).add(7, "day").toDate()
+                        )
+                      }
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -326,7 +344,7 @@ const TutorSchedule = () => {
                       <div
                         key={index}
                         className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                          isToday(day)
+                          dayjs(day).isSame(dayjs(), "day")
                             ? "bg-emerald-100 border-emerald-300"
                             : "bg-white/40 border-white/20 hover:bg-white/60"
                         }`}
@@ -334,16 +352,16 @@ const TutorSchedule = () => {
                       >
                         <div className="text-center">
                           <div className="text-xs text-gray-600 mb-1">
-                            {format(day, "EEE")}
+                            {dayjs(day).format("ddd")}
                           </div>
                           <div
                             className={`text-lg font-semibold ${
-                              isToday(day)
+                              dayjs(day).isSame(dayjs(), "day")
                                 ? "text-emerald-700"
                                 : "text-gray-900"
                             }`}
                           >
-                            {format(day, "d")}
+                            {dayjs(day).format("D")}
                           </div>
                           {daySessions.length > 0 && (
                             <div className="mt-2 space-y-1">
@@ -385,7 +403,7 @@ const TutorSchedule = () => {
                     {upcomingSessions.map((session) => (
                       <div key={session.id}>
                         <div className="text-sm font-medium text-gray-700 mb-2">
-                          {format(session.date, "EEEE, MMMM d")}
+                          {dayjs(session.date).format("dddd, MMMM D")}
                         </div>
                         <SessionCard session={session} />
                       </div>
@@ -412,20 +430,30 @@ const TutorSchedule = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2">
                     <Calendar className="h-5 w-5" />
-                    <span>{format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
+                    <span>
+                      {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}
+                    </span>
                   </CardTitle>
                   <div className="flex space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedDate(addDays(selectedDate, -1))}
+                      onClick={() =>
+                        setSelectedDate(
+                          dayjs(selectedDate).subtract(1, "day").toDate()
+                        )
+                      }
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+                      onClick={() =>
+                        setSelectedDate(
+                          dayjs(selectedDate).add(1, "day").toDate()
+                        )
+                      }
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
